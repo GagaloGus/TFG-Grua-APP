@@ -1,0 +1,8 @@
+.marco{
+    width: 20vw;
+    height: fit-content;
+}
+.marco img{
+    width: 100%;
+    height: auto;
+}

@@ -1,5 +1,5 @@
 {
-  "name": "grua-web-angular",
+  "name": "app-seguridad",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:grua-web-angular": "node dist/grua-web-angular/server/server.mjs"
+    "serve:ssr:AppSeguridad": "node dist/AppSeguridad/server/server.mjs"
   },
   "prettier": {
     "printWidth": 100,

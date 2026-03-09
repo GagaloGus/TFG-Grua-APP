@@ -1,0 +1,28 @@
+#gameLibrary {
+    width: inherit;
+    padding: 20px;
+}
+
+#gameGrid {
+    width: 100%;
+    background-color: #282777;
+    padding: 5px;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 30px;
+
+    justify-items: center;
+}
+
+.gamePortrait {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+
+    transition: transform 0.3s ease;
+}
+
+.gamePortrait:hover {
+    transform: scale(1.1);
+}

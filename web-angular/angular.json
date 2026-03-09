@@ -2,11 +2,12 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "npm",
+    "analytics": false
   },
   "newProjectRoot": "projects",
   "projects": {
-    "grua-web-angular": {
+    "AppSeguridad": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -25,6 +26,8 @@
               }
             ],
             "styles": [
+              "src/headerFooterStyle.css",
+              "src/bootstrapCSS.css",
               "src/styles.css"
             ],
             "server": "src/main.server.ts",
@@ -61,10 +64,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "grua-web-angular:build:production"
+              "buildTarget": "AppSeguridad:build:production"
             },
             "development": {
-              "buildTarget": "grua-web-angular:build:development"
+              "buildTarget": "AppSeguridad:build:development"
             }
           },
           "defaultConfiguration": "development"

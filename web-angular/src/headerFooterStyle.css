@@ -1,0 +1,46 @@
+.header{
+    align-items: center;
+    background-color: rgb(18, 14, 49);
+    padding: 10px 30px;
+    height: fit-content;
+    max-height: 10vh;
+}
+
+/* El header esta horizontal */
+.navHeader{
+    display: flex;
+    gap: 20px;
+}
+
+.pagTitulo{
+    letter-spacing: 2px;
+    font-size: 1.8rem;
+    margin: 10px 0px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.452);
+}
+
+.pagTituloSel{
+    color: rgb(238, 234, 230) !important;
+    text-decoration: underline;
+
+}
+
+/* El footer esta normal, en vertical */
+.navFooter>*{
+    margin-bottom: 0.5rem;
+}
+
+.main{
+    background: linear-gradient(180deg, rgba(23, 19, 61, 1) 9%, rgba(40, 39, 119, 1) 89%);
+    height: fit-content;
+    min-height: 70vh;
+    padding: 20px 30px;
+}
+
+.footer{
+    padding: 20px 30px;
+    height: fit-content;
+    color: rgba(255, 255, 255, 0.452) !important;
+}

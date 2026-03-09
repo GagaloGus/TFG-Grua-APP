@@ -1,1 +1,79 @@
 /* You can add global styles to this file, and also import other style files */
+/* RESET CSS */
+* {
+    margin: 0;
+    padding: 0
+}
+
+@font-face {
+    font-family: fredoka;
+    src: url("/fonts/fredoka-one.woff");
+}
+
+body{
+    font-family: fredoka;
+    background-color: rgb(29, 27, 80);
+    color: rgb(238, 234, 230);
+}
+
+.titulo{
+    font-size: 2.2rem;
+    text-decoration: underline;
+    letter-spacing: 2px;
+}
+
+.subtitulo{
+    font-size: 1.6rem;
+    margin: 0.8rem 0;
+    letter-spacing: 2px;
+    font-weight: lighter;
+}
+
+.texto{
+    color: rgba(238, 234, 230, 0.603);
+    font-weight: lighter;
+    margin: 0.3rem 0;
+}
+
+.textBox{
+    margin: 0.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.miniBoton{
+    padding: 2px 5px;
+    border: 2px solid rgb(97, 84, 182);
+    border-radius: 10px;
+    text-decoration: none;
+    color: rgb(97, 84, 182);
+    font-size: 16px;
+    background-color: transparent;
+    font-family: fredoka;
+}
+
+.subTexto{
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 1.3rem;
+    margin: 10px 0px;
+    color: white;
+}
+
+.username{
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 1.3rem;
+    margin: 10px 0px;
+    color: rgb(35, 255, 54);
+}
+
+.divider{ 
+    display: flex;
+    justify-content: space-between;
+}
+
+.inputText{
+    width: 20%;
+    height: 1.3rem;
+    margin-bottom: 2rem;
+}

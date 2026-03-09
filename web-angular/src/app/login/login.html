@@ -1,0 +1,16 @@
+<section>
+    <h2 class="subtitulo">Login</h2>
+
+    <section class="textBox">
+        <p class="texto">Usuario</p>
+        <input [(ngModel)]="username" type="text" placeholder="Usuario" class="inputText">
+        <br>
+        <p class="texto">Contraseña</p>
+        <input [(ngModel)]="password" type="password" placeholder="Contraseña" class="inputText">
+        <br>
+        @if (error) {
+        <p class="texto">Credenciales Incorrectas</p>
+        }
+        <button class="miniBoton" (click)="login()">Entrar</button>
+    </section>
+</section>
