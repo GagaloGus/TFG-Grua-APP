@@ -1,23 +1,28 @@
-<section class="header">
+<section class="header container-fluid">
     <div class="navHeader" style="justify-content: end;">
         @if (isLoggedIn()){
-        <p class="username">{{getUsername()}}</p>
-        <button class="miniBoton" (click)="logout()">Cerrar sesión</button>
+        <p >{{getUsername()}}</p>
+        <button (click)="logout()">Cerrar sesión</button>
         }
         @else {
-        <a class="miniBoton" routerLink="/login">Iniciar sesión</a>
-        <a class="miniBoton" routerLink="/createUser">Crear usuario</a>
+        <button class="btn btn-primary" routerLink="/login">Iniciar sesión</button>
+        <button class="btn btn-primary" routerLink="/createUser">Crear usuario</button>
         }
     </div>
-    <div class="navHeader">
-        <a class="pagTitulo" routerLinkActive="pagTituloSel" 
-            [routerLinkActiveOptions]="{ exact: true }" routerLink="/home">Libreria</a>
-        <a class="pagTitulo" routerLinkActive="pagTituloSel" routerLink="/about">Acerca de</a>
+    <ul class="list-inline navPrincipal" >
+        <li class="list-inline-item">
+            <h1><a  routerLinkActive="pagTituloSel" [routerLinkActiveOptions]="{ exact: true }" routerLink="/home">Libreria</a></h1>
+        </li>
+        <li class="list-inline-item">
+            <h1><a routerLinkActive="pagTituloSel" routerLink="/about">Acerca de</a></h1>
+        </li>
 
         @if (isAdmin()){
-        <a class="pagTitulo" routerLinkActive="pagTituloSel" routerLink="/admin">Administrador</a>
+        <li class="list-inline-item">
+            <h1><a routerLinkActive="pagTituloSel" routerLink="/admin">Administrador</a></h1>
+        </li>
         }
-    </div>
+    </ul>
 
 </section>
 

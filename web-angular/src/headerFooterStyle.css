@@ -1,9 +1,8 @@
 .header{
     align-items: center;
     background-color: rgb(18, 14, 49);
-    padding: 10px 30px;
+    padding: 10px 30px !important;
     height: fit-content;
-    max-height: 10vh;
 }
 
 /* El header esta horizontal */
@@ -12,12 +11,21 @@
     gap: 20px;
 }
 
-.pagTitulo{
-    letter-spacing: 2px;
-    font-size: 1.8rem;
-    margin: 10px 0px;
+.navPrincipal{
+    margin: 0;
+    margin-top: 2vh;
+}
+
+.navPrincipal>*{
     text-transform: uppercase;
-    text-decoration: none;
+    letter-spacing: 2px;
+}
+
+.navPrincipal>*:not(:last-child){
+    margin-right: 1.2rem !important;
+}
+
+.pagTitulo{
     color: rgba(255, 255, 255, 0.452);
 }
 

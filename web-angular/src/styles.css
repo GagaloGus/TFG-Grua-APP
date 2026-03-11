@@ -1,9 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 /* RESET CSS */
-* {
-    margin: 0;
-    padding: 0
-}
+
 
 @font-face {
     font-family: fredoka;
