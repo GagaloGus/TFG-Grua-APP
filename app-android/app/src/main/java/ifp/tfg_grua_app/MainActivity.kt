@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnToMaps.setOnClickListener {
-            ChangeActivity(this, MapsActivity::class.java)
+            ChangeActivity(this, MapGPS::class.java)
         }
     }
 

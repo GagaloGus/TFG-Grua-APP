@@ -2,10 +2,13 @@ package ifp.tfg_grua_app
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -15,12 +18,13 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import ifp.tfg_grua_app.databinding.ActivityMapGpsBinding
 import ifp.tfg_grua_app.databinding.ActivityMapsBinding
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+class MapGPS : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
-    private lateinit var binding: ActivityMapsBinding
+    private lateinit var binding: ActivityMapGpsBinding
 
     private var currentPosition = LatLng(40.4168, -3.7038)
     private var marker: Marker? = null
@@ -31,21 +35,30 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         LatLng(40.4185, -3.7000),
         LatLng(40.4195, -3.6980)
     )
+
     private val markers = mutableListOf<Marker>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
-        binding = ActivityMapsBinding.inflate(layoutInflater)
+        binding = ActivityMapGpsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Obtener el fragmento del mapa
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
 
         mapFragment.getMapAsync(this)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
     }
 
-    // Metodo para ajustar el tamaño del icono del gps
+    // Ajustar tamaño del icono
     fun getScaledMarker(drawable: Int): BitmapDescriptor {
         val bitmap = BitmapFactory.decodeResource(resources, drawable)
         val scaled = Bitmap.createScaledBitmap(bitmap, 80, 80, false)
@@ -53,9 +66,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
+
         mMap = googleMap
 
-        // recorrer lista de ubicaciones
+        // Crear marcadores de la lista
         for (pos in ubicaciones) {
 
             val marker = mMap.addMarker(
@@ -70,6 +84,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
+        // Marcador del usuario
         marker = mMap.addMarker(
             MarkerOptions()
                 .position(currentPosition)
@@ -89,17 +104,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val runnable = object : Runnable {
             override fun run() {
 
-                // mover un poco a la derecha
                 currentPosition = LatLng(
                     currentPosition.latitude,
                     currentPosition.longitude + 0.0005
                 )
 
                 marker?.position = currentPosition
-
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(currentPosition))
 
-                handler.postDelayed(this, 5000) // cada 5 segundos
+                handler.postDelayed(this, 5000)
             }
         }
 
