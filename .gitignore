@@ -43,3 +43,6 @@ yarn-error.log*
 .externalNativeBuild
 .cxx
 local.properties
+
+# Custom
+/web-angular-antigua

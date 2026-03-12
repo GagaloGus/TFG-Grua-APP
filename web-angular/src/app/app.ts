@@ -1,32 +1,12 @@
-import { Component, signal , inject } from '@angular/core';
-import { Router, RouterLink, RouterOutlet, RouterLinkWithHref, RouterModule } from "@angular/router";
-import { AuthService } from './services/auth';
+import { Component, signal } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLinkWithHref, RouterModule],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('AppSeguridad');
-    authService = inject(AuthService)
-  router = inject(Router)
-  
-  logout(){
-    this.authService.logout()
-    this.router.navigate(["/home"])
-  }
-
-  isLoggedIn():boolean{
-    return this.authService.isLoggedIn()
-  }
-
-  isAdmin():boolean{
-    return this.authService.isAdmin()
-  }
-  
-  getUsername():string{
-    return this.authService.getUsername()
-  }
+  protected readonly title = signal('web-angular');
 }

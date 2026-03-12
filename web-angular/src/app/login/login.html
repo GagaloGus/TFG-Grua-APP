@@ -1,16 +1,44 @@
-<section>
-    <h2 class="subtitulo">Login</h2>
+<section class="container-fluid vh-100 p-5 d-flex flex-column justify-content-center align-items-center background">
 
-    <section class="textBox">
-        <p class="texto">Usuario</p>
-        <input [(ngModel)]="username" type="text" placeholder="Usuario" class="inputText">
-        <br>
-        <p class="texto">Contraseña</p>
-        <input [(ngModel)]="password" type="password" placeholder="Contraseña" class="inputText">
-        <br>
-        @if (error) {
-        <p class="texto">Credenciales Incorrectas</p>
-        }
-        <button class="miniBoton" (click)="login()">Entrar</button>
-    </section>
+    <div class="row row-center">
+        <div class="col-sm-4 text-center border">
+            <h1>Bienvenido!</h1>
+        </div>
+
+        <div class="card col-sm-5 offset-sm-2 p-3 border">
+            <img src="https://media.tenor.com/Y10r2fAk3rUAAAAM/stray-ps5.gif" class="card-img-top" alt="imagen">
+            <div class="card-body">
+                <form>
+                    <h4 class="card-title">Login</h4>
+                    <div class="form-group">
+                        <label for="loginInputEmail">Dirección de correo</label>
+                        <input class="form-control" type="email" id="loginInputEmail" placeholder="Correo">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginInputEmail">Contraseña</label>
+                        <input class="form-control" type="email" id="loginInputEmail" placeholder="Contraseña">
+                    </div>
+                </form>
+                <div class="d-flex justify-content-end">
+                    <a href="#" class="btn btn-primary">Hola</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-1 border">col1</div>
+        <div class="col-sm-1 border">col1</div>
+        <div class="col-sm-1 border">col1</div>
+        <div class="col-sm-1 border">col1</div>
+        <div class="col-sm-1 border">col1</div>
+        <div class="col-sm-1 border">col1</div>
+        <div class="col-sm-1 border">col1</div>
+        <div class="col-sm-1 border">col1</div>
+        <div class="col-sm-1 border">col1</div>
+        <div class="col-sm-1 border">col1</div>
+        <div class="col-sm-1 border">col1</div>
+        <div class="col-sm-1 border">col1</div>
+    </div>
+
 </section>
