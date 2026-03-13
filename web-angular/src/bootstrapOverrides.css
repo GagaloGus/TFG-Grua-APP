@@ -1,3 +1,12 @@
+.container, .container-fluid{
+    height: fit-content !important;
+}
+
+.page-container{
+    height: fit-content;
+    min-height: 100vh;
+}
+
 .card{
     height: fit-content !important;
 }

@@ -1,54 +1,57 @@
 import { Injectable } from '@angular/core';
+import { SupabaseService } from '../../supabase.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  constructor(private supabaseService: SupabaseService) {}
+
   private _isLoggedIn = false;
   private _isAdmin = false;
+  data: any[] = [];
 
+  private _currentID = "";
   private _currentUsername = "";
   private _currentPassword = "";
 
-  private AdminsLoginInfo: {[username:string]:string} = {
-    admin: "1234"
-  }
+  // createUser(username: string, password: string): boolean{
+  //   if(username in this.UsersLoginInfo)
+  //     return false;
 
-  private UsersLoginInfo: { [username: string]: string } = {
-    usuario1: "1234"
-  };
+  //   if(username == "" || password == "")
+  //     return false
 
-  createUser(username: string, password: string): boolean{
-    if(username in this.UsersLoginInfo)
-      return false;
+  //   this.UsersLoginInfo[username] = password
 
-    if(username == "" || password == "")
-      return false
+  //   return this.login(username, password);
+  // }
 
-    this.UsersLoginInfo[username] = password
+  async login(username: string, password: string): Promise<boolean> {
+    this.data = await this.supabaseService.getAllUsers();
 
-    return this.login(username, password);
-  }
+    //Recorre toda la lista de usuarios
+    for (let i = 0; i < this.data.length; i++) {
+      let fila = this.data[i];
+      //Imprime por consola los valores
+      console.log(`${fila["id"]} / ${fila["user"]} / ${fila["password"]} / ${fila["isadmin"]}`)
 
-  login(username: string, password: string): boolean {
-    // Administrador
-    if (username in this.AdminsLoginInfo && this.AdminsLoginInfo[username] == password) {
-      this._isAdmin = true
-      this._isLoggedIn = true
+      //Asigna los valores que necesitamos a variables
+      let id = fila["id"].toString()
+      let usern = fila["user"].toString()
+      let pswd = fila["password"].toString()
+      let admin = fila["isadmin"]
 
-      this._currentUsername = username
-      this._currentPassword = password
+      //Si todo encaja, se valida el login
+      if(usern == username && pswd == password){
+        this._currentID = id
+        this._currentUsername = usern
+        this._currentPassword = pswd
+        this._isAdmin = admin
+        this._isLoggedIn = true
 
-      return true
-    }
-    // Usuario normal
-    else if(username in this.UsersLoginInfo && this.UsersLoginInfo[username] == password){
-      this._isLoggedIn = true
-      
-      this._currentUsername = username
-      this._currentPassword = password
-
-      return true
+        return true
+      }
     }
     
     return false
