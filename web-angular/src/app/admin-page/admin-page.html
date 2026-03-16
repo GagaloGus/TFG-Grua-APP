@@ -1,6 +1,20 @@
-<div class="d-flex">
+<div class="d-flex container-fluid p-0 min-vh-100 text-center" style="background-color: aqua;">
     <!-- Aqui va la sidebar -->
-    <section>
-        <router-outlet></router-outlet>
+    <section class="sidebar d-flex justify-content-between flex-column p-4 rounded-end-5" style="background-color: blanchedalmond;">
+        <div>
+            <p class="fs-3">Panel de Administrador</p>
+            <button class="btn w-75 text-wrap btn-outline-primary mt-3" routerLink="/admin/dashboard">Dashboard</button>
+            <button class="btn w-75 text-wrap btn-outline-primary mt-3" routerLink="/admin/servicios">Servicios</button>
+            <button class="btn w-75 text-wrap btn-outline-primary my-3" routerLink="/admin/users">Usuarios</button>
+        </div>
+
+        <div>
+            <p>Usuario conectado</p>
+            <p>chikiticklin</p>
+        </div>
+    </section>
+
+    <section class="flex-grow-1 p-4">
+        <router-outlet ></router-outlet>
     </section>
 </div>

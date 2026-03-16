@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from "../../../node_modules/@angular/router/types/_router_module-chunk";
+import { RouterOutlet, RouterLinkWithHref } from '@angular/router';
 
 @Component({
   selector: 'app-admin-page',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, RouterLinkWithHref],
   templateUrl: './admin-page.html',
   styleUrl: './admin-page.css',
 })
