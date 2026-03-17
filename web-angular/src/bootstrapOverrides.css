@@ -1,5 +1,10 @@
 .container, .container-fluid{
     height: fit-content !important;
+    width: 100% !important;
+}
+
+.card-holder{
+    width: clamp(250px, 25%, 500px);
 }
 
 .page-container{

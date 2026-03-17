@@ -5,63 +5,58 @@ import { SupabaseService } from '../../supabase.service';
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(private supabaseService: SupabaseService) { }
 
   private _isLoggedIn = false;
   private _isAdmin = false;
-  data: any[] = [];
 
-  private _currentID = "";
   private _currentUsername = "";
   private _currentPassword = "";
+  private _currentRole = "";
 
-  // createUser(username: string, password: string): boolean{
-  //   if(username in this.UsersLoginInfo)
-  //     return false;
-
-  //   if(username == "" || password == "")
-  //     return false
-
-  //   this.UsersLoginInfo[username] = password
-
-  //   return this.login(username, password);
-  // }
 
   async login(username: string, password: string): Promise<boolean> {
-    this.data = await this.supabaseService.getAllUsers();
+    try {
+      let match = await this.supabaseService.findUser(username);
 
-    //Recorre toda la lista de usuarios
-    for (let i = 0; i < this.data.length; i++) {
-      let fila = this.data[i];
+      //No existe el usuario
+      if (match.length == 0) {
+        return false;
+      }
+
+      //Recorre toda la lista de usuarios
+      let fila = match[0];
       //Imprime por consola los valores
-      console.log(`${fila["id"]} / ${fila["user"]} / ${fila["password"]} / ${fila["isadmin"]}`)
+      console.log(`${fila["id"]} / ${fila["user"]} / ${fila["password"]} / ${fila["role"]}`)
 
       //Asigna los valores que necesitamos a variables
       let id = fila["id"].toString()
       let usern = fila["user"].toString()
       let pswd = fila["password"].toString()
-      let admin = fila["isadmin"]
+      let role = fila["role"]
 
       //Si todo encaja, se valida el login
-      if(usern == username && pswd == password){
-        this._currentID = id
+      if (usern == username && pswd == password) {
         this._currentUsername = usern
         this._currentPassword = pswd
-        this._isAdmin = admin
+        this._currentRole = role
+        this._isAdmin = role == 'A';
         this._isLoggedIn = true
 
         return true
       }
+    } catch (error) {
+
     }
-    
+
     return false
   }
-  
-  isLoggedIn(): boolean{
+
+  isLoggedIn(): boolean {
     return this._isLoggedIn
   }
-  
-  isAdmin():boolean{
+
+  isAdmin(): boolean {
     return this._isAdmin
   }
 
@@ -70,11 +65,11 @@ export class AuthService {
     this._isAdmin = false
   }
 
-  getUsername():string{
+  getUsername(): string {
     return this._currentUsername
   }
 
-  getPassword():string{
+  getPassword(): string {
     return this._currentPassword
   }
 }

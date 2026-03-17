@@ -28,22 +28,16 @@ export class Login {
 
   async login() {
     this.validatingLogin = true
-    try {
-      let sucess = await this.authService.login(this.username, this.password)
-      this.validatingLogin = false
-      
-      if (sucess) {
-        console.log("Valido")
-        this.router.navigate(['/home'])
-      }
-      else {
-        console.log("Error!")
-        this.error = true
-      }
-    } catch (error) {
-      console.error(error)
+    let sucess = await this.authService.login(this.username, this.password)
+    this.validatingLogin = false
+
+    if (sucess) {
+      console.log("Valido")
+      this.router.navigate(['/home'])
+    }
+    else {
+      console.log("Error!")
       this.error = true
-    } finally {
     }
   }
 }

@@ -1,6 +1,6 @@
 <div class="d-flex container-fluid p-0 min-vh-100 text-center" style="background-color: aqua;">
     <!-- Aqui va la sidebar -->
-    <section class="sidebar d-flex justify-content-between flex-column p-4 rounded-end-5" style="background-color: blanchedalmond;">
+    <section class="d-none d-md-block sidebar d-flex bg-dark text-white justify-content-between flex-column p-4 rounded-end-4">
         <div>
             <p class="fs-3">Panel de Administrador</p>
             <button class="btn w-75 text-wrap btn-outline-primary mt-3" routerLink="/admin/dashboard">Dashboard</button>
@@ -14,7 +14,7 @@
         </div>
     </section>
 
-    <section class="flex-grow-1 p-4">
+    <section class="ms-md-5 flex-grow-1 p-4">
         <router-outlet ></router-outlet>
     </section>
 </div>

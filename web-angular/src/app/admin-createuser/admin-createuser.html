@@ -1,40 +1,44 @@
-<section class="h-auto  p-5 d-flex flex-column justify-content-center align-items-center background">
-
-    <div class="row row-center">
-
-        <div class="card col-xs-10 col-sm-10 col-md-7 col-lg-4  p-3">
-            <img src="https://media.tenor.com/Y10r2fAk3rUAAAAM/stray-ps5.gif" class="card-img-top" alt="imagen">
-            <div class="card-body">
-                <form>
-                    <h4 class="card-title">Iniciar Sesión</h4>
-                    <div class="form-group">
-                        <label for="loginInputUsername">Nombre de usuario</label>
-                        <input [(ngModel)]="username" name="usuario" class="form-control" type="text" id="loginInputUsername" placeholder="Usuario">
-                    </div>
-                    <div class="form-group">
-                        <label for="loginInputEmail">Contraseña</label>
-                        <input [(ngModel)]="password" name="password" class="form-control" type="password" id="loginInputPassword" placeholder="Contraseña">
-                    </div>
-                </form>
-                <div class="d-flex flex-column justify-content-end mt-3">
-                    <button type="button" class="btn btn-primary" (click)="createNewUser()">Iniciar Sesión</button>
+<section class="h-auto p-5 d-flex flex-column justify-content-center align-items-center text-start">
+    <div class="card card-holder p-3">
+        <img src="https://media.tenor.com/Y10r2fAk3rUAAAAM/stray-ps5.gif" class="card-img-top" alt="imagen">
+        <div class="card-body">
+            <form>
+                <h4 class="card-title text-center">Crear nuevo usuario</h4>
+                <div class="form-group">
+                    <label>Nombre de usuario</label>
+                    <input [(ngModel)]="username" name="usuario" class="form-control text-lowercase" type="text" placeholder="usuario">
                 </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input [(ngModel)]="password" name="password" class="form-control" type="password" placeholder="contraseña">
+                </div>
+                <div class="form-group">
+                    <label>Confirmar contraseña</label>
+                    <input [(ngModel)]="password2" name="password" class="form-control" type="password" placeholder="contraseña">
+                </div>
+                <div class="form-group">
+                    <label>Rol del usuario</label>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button"
+                            data-bs-toggle="dropdown">{{chosenRolDisplay}}</button>
+                        <div class="dropdown-menu">
+                            <button class="dropdown-item" (click)="setRol('N', '- Sin Rol-')">- Sin Rol -</button>
+                            <button class="dropdown-item" (click)="setRol('A', 'Admin')">Admin</button>
+                            <button class="dropdown-item" (click)="setRol('U', 'Usuario')">Usuario</button>
+                            <button class="dropdown-item" (click)="setRol('T', 'Trabajador')">Trabajador</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            @if(error){
+                <p class="text-danger font-weight-bold">{{error}}</p>
+            }
+            @if(success){
+                <p class="text-success font-weight-bold">{{success}}</p>
+            }
+            <div class="d-flex flex-column justify-content-end mt-3">
+                <button type="button" class="btn btn-primary" (click)="createNewUser()">Crear usuario</button>
             </div>
         </div>
-    </div>
-
-    <div class="row">
-        <div class="col-1 border">col1</div>
-        <div class="col-1 border">col1</div>
-        <div class="col-1 border">col1</div>
-        <div class="col-1 border">col1</div>
-        <div class="col-1 border">col1</div>
-        <div class="col-1 border">col1</div>
-        <div class="col-1 border">col1</div>
-        <div class="col-1 border">col1</div>
-        <div class="col-1 border">col1</div>
-        <div class="col-1 border">col1</div>
-        <div class="col-1 border">col1</div>
-        <div class="col-1 border">col1</div>
     </div>
 </section>

@@ -23,7 +23,35 @@ export class SupabaseService {
       throw error;
     }
 
-    console.log("GET ALL USERS: "+data.length)
+    console.log("GET ALL USERS: " + data.length)
     return data;
+  }
+
+  async findUser(user: string) {
+    const { data, error } = await this.supabase
+      .from('USERS')
+      .select('*')
+      .eq('user', user);
+
+    if (error) {
+      throw error;
+    }
+
+    console.log("USER FOUND: " + data.length)
+
+    //Encontrado -> data.length == 1
+    return data
+  }
+
+  async createUser(_usern: string, _passwd: string, _rol: string){
+    const { error } = await this.supabase
+      .from('USERS')
+      .insert([
+        {
+          user: _usern,
+          password: _passwd,
+          role:_rol
+        }
+      ])
   }
 }
