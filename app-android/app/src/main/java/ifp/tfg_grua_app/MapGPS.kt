@@ -1,7 +1,11 @@
 package ifp.tfg_grua_app
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -18,6 +22,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
 import ifp.tfg_grua_app.databinding.ActivityMapGpsBinding
 import ifp.tfg_grua_app.databinding.ActivityMapsBinding
 
@@ -45,11 +51,31 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityMapGpsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Obtener el fragmento del mapa
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
 
         mapFragment.getMapAsync(this)
+
+        binding.btnBackMain.setOnClickListener {
+            val destino = LatLng(40.4168, -3.7038)// o el que quieras
+
+            // 1. Iniciar servicio en segundo plano
+            val serviceIntent = Intent(this, LocationService::class.java)
+            serviceIntent.putExtra("lat", destino.latitude)
+            serviceIntent.putExtra("lng", destino.longitude)
+
+            startForegroundService(serviceIntent)
+
+            // 2. Abrir Google Maps en modo navegación
+            val uri = Uri.parse(
+                "google.navigation:q=${destino.latitude},${destino.longitude}&mode=d"
+            )
+
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+            intent.setPackage("com.google.android.apps.maps")
+
+            startActivity(intent)
+        }
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -84,7 +110,7 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
-        // Marcador del usuario
+        // Marcador que se mueve
         marker = mMap.addMarker(
             MarkerOptions()
                 .position(currentPosition)
