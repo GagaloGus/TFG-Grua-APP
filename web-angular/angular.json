@@ -25,9 +25,9 @@
               }
             ],
             "styles": [
-              "src/styles.css",
-              "src/bootstrapOverrides.css",
-              "./node_modules/bootstrap/dist/css/bootstrap.min.css"
+              "./node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "src/styles.scss",
+              "src/bootstrapOverrides.scss"
             ],
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"

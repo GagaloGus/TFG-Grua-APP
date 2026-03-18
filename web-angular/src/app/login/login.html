@@ -1,25 +1,33 @@
 <section
-    class="container-fluid p-4 min-vh-100 d-flex flex-column flex-md-row justify-content-center justify-content-md-around align-items-center background">
-    <h1 class="mb-5">Bienvenido!</h1>
-    <div class="card card-holder p-3">
-        <img src="https://media.tenor.com/Y10r2fAk3rUAAAAM/stray-ps5.gif" class="card-img-top" alt="imagen">
-        <div class="card-body">
-            <form>
-                <h4 class="card-title">Iniciar Sesión</h4>
-                <div class="form-group">
-                    <label for="loginInputUsername">Nombre de usuario</label>
-                    <input [(ngModel)]="username" name="usuario" class="form-control" type="text"
-                        id="loginInputUsername" placeholder="Usuario">
+    class="bg-cool container-fluid p-4 min-vh-100 d-flex flex-column flex-md-row justify-content-center justify-content-md-around align-items-center">
+    <div class="w-50">
+        <h1 class="mb-5 w-100 text-center font-weight-bold">Bienvenido!</h1>
+        <figure class="w-100">
+            <img src="/img/towapp.png" alt="" class="img-logo-welcome mx-auto d-block">
+        </figure>
+    </div>
+    <div class="w-50">
+        <div class="card card-holder p-3 mx-auto">
+            <img src="https://media.tenor.com/Y10r2fAk3rUAAAAM/stray-ps5.gif" class="card-img-top" alt="imagen">
+            <div class="card-body">
+                <form>
+                    <h4 class="card-title">Iniciar Sesión</h4>
+                    <div class="form-group">
+                        <label for="loginInputUsername">Nombre de usuario</label>
+                        <input [(ngModel)]="username" name="usuario" class="form-control" type="text"
+                            id="loginInputUsername" placeholder="Usuario">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginInputEmail">Contraseña</label>
+                        <input [(ngModel)]="password" name="password" class="form-control" type="password"
+                            id="loginInputPassword" placeholder="Contraseña">
+                    </div>
+                </form>
+                <div class="d-flex flex-column justify-content-end mt-3">
+                    <button type="button" class="btn btn-primary" (click)="login()">Iniciar Sesión</button>
                 </div>
-                <div class="form-group">
-                    <label for="loginInputEmail">Contraseña</label>
-                    <input [(ngModel)]="password" name="password" class="form-control" type="password"
-                        id="loginInputPassword" placeholder="Contraseña">
-                </div>
-            </form>
-            <div class="d-flex flex-column justify-content-end mt-3">
-                <button type="button" class="btn btn-primary" (click)="login()">Iniciar Sesión</button>
             </div>
         </div>
     </div>
+
 </section>

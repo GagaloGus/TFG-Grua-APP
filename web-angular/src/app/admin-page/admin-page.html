@@ -1,20 +1,24 @@
-<div class="d-flex container-fluid p-0 min-vh-100 text-center" style="background-color: aqua;">
+<div class="bg-light d-flex container-fluid p-0 min-vh-100">
     <!-- Aqui va la sidebar -->
-    <section class="d-none d-md-block sidebar d-flex bg-dark text-white justify-content-between flex-column p-4 rounded-end-4">
+    <section class="d-none d-md-flex sidebar flex-column bg-dark text-white p-4 rounded-end-4 text-center">
         <div>
-            <p class="fs-3">Panel de Administrador</p>
+            <h3 class="fw-bold">Panel de Administrador</h3>
             <button class="btn w-75 text-wrap btn-outline-primary mt-3" routerLink="/admin/dashboard">Dashboard</button>
             <button class="btn w-75 text-wrap btn-outline-primary mt-3" routerLink="/admin/servicios">Servicios</button>
             <button class="btn w-75 text-wrap btn-outline-primary my-3" routerLink="/admin/users">Usuarios</button>
         </div>
-
-        <div>
-            <p>Usuario conectado</p>
-            <p>chikiticklin</p>
+        <div class="text-start">
+            <hr>
+            <p class="m-0">Sesion iniciada:</p>
+            <p class="fw-bold fs-5">chikiticklin</p>
+            <button class="w-100 d-flex gap-3 btn text-white fs-6 mt-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg>
+                <p>Cerrar Sesion</p>
+            </button>
         </div>
     </section>
 
-    <section class="ms-md-5 flex-grow-1 p-4">
-        <router-outlet ></router-outlet>
+    <section class="content flex-grow-1 p-4">
+        <router-outlet></router-outlet>
     </section>
 </div>

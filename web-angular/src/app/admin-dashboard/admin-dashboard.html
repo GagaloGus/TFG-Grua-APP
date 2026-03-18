@@ -1,1 +1,91 @@
-<p>admin-dashboard works!</p>
+<section>
+    <h2 class="fw-bold">Dashboard</h2>
+    <h5 class="text-secondary">Resumen general del sistema</h5>
+
+    <!-- Resumen diario -->
+    <div class="d-flex p-3 gap-4">
+        <!-- Servicios activos -->
+        <div class="dashboard-mini-info card">
+            <div class="card-body d-flex" style="gap: 20px;">
+                <div>
+                    <p class="card-title text-secondary">Servicios activos</p>
+                    <h2 class="fw-bold">{{activeServices}}</h2>
+                </div>
+                <div class="mini-icon-orange">
+                    <figure>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            data-fg-38d19="1.20:1.7316:/src/app/pages/Dashboard.tsx:85:19:2826:49:e:stat.icon"
+                            data-fgid-38d19=":re8:">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </figure>
+                </div>
+            </div>
+        </div>
+
+        <!-- Servicios completados -->
+        <div class="dashboard-mini-info card">
+            <div class="card-body d-flex" style="gap: 20px;">
+                <div>
+                    <p class="card-title text-secondary">Servicios completados</p>
+                    <h2 class="fw-bold">{{completedServices}}</h2>
+                </div>
+                <div class="mini-icon-green">
+                    <figure>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21.801 10A10 10 0 1 1 17 3.335"></path>
+                            <path d="m9 11 3 3L22 4"></path>
+                        </svg>
+                    </figure>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gruas disponibles -->
+        <div class="dashboard-mini-info card">
+            <div class="card-body d-flex" style="gap: 20px;">
+                <div>
+                    <p class="card-title text-secondary">Gruas disponibles</p>
+                    <h2 class="fw-bold">{{availableVehicles}}</h2>
+                </div>
+                <div class="mini-icon-purple">
+                    <figure>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
+                            <path d="M15 18H9"></path>
+                            <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14">
+                            </path>
+                            <circle cx="17" cy="18" r="2"></circle>
+                            <circle cx="7" cy="18" r="2"></circle>
+                        </svg>
+                    </figure>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conductores disponibles -->
+        <div class="dashboard-mini-info card">
+            <div class="card-body d-flex" style="gap: 20px;">
+                <div>
+                    <p class="card-title text-secondary">Conductores disponibles</p>
+                    <h2 class="fw-bold">{{availableDrivers}}</h2>
+                </div>
+                <div class="mini-icon-blue">
+                    <figure>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </figure>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

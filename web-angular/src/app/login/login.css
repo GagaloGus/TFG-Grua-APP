@@ -1,0 +1,8 @@
+.img-logo-welcome{
+    width: clamp(260px,70%,550px);
+}
+
+.card-holder {
+    width: clamp(250px, 50%, 500px);
+}
+
