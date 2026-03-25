@@ -1,0 +1,57 @@
+<section>
+    <h1>Crear nuevo usuario</h1>
+    <h5 class="text-secondary">Interfaz para crear un usuario en la base de datos</h5>
+    <div class="w-100 p-3">
+        <form class="formulario-crear d-flex">
+            <div class="flex-grow-1">
+                <h5 class="text-secondary">Parametros de usuario</h5>
+                <div class="form-group">
+                    <label>Nombre de usuario</label>
+                    <input [(ngModel)]="username" name="usuario" class="form-control text-lowercase" type="text"
+                        placeholder="usuario">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input [(ngModel)]="password" name="password" class="form-control" type="password"
+                        placeholder="contraseña">
+                </div>
+                <div class="form-group">
+                    <label>Confirmar contraseña</label>
+                    <input [(ngModel)]="password2" name="password" class="form-control" type="password"
+                        placeholder="contraseña">
+                </div>
+                <div class="form-group">
+                    <label>Telefono</label>
+                    <input [(ngModel)]="tel" name="tel" class="form-control" type="tel"
+                        placeholder="000000000...">
+                </div>
+
+            </div>
+            <section class="vr mx-5"></section>
+            <div class="flex-grow-1">
+                <h5 class="text-secondary">Informacion de trabajo</h5>
+                <div class="form-group">
+                    <label>Rol del usuario</label>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button"
+                            data-bs-toggle="dropdown">{{chosenRolDisplay}}</button>
+                        <div class="dropdown-menu">
+                            <button class="dropdown-item" (click)="setRol('N', '- Sin Rol-')">- Sin Rol -</button>
+                            <button class="dropdown-item" (click)="setRol('A', 'Admin')">Admin</button>
+                            <button class="dropdown-item" (click)="setRol('U', 'Usuario')">Usuario</button>
+                            <button class="dropdown-item" (click)="setRol('T', 'Trabajador')">Trabajador</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        @if(error){
+        <p class="text-danger font-weight-bold">{{error}}</p>
+        }
+        @if(success){
+        <p class="text-success font-weight-bold">{{success}}</p>
+        }
+        <button type="button" class="btn btn-primary mt-2" (click)="createNewUser()">Crear usuario</button>
+    </div>
+
+</section>

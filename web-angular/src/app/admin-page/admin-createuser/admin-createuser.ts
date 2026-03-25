@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SupabaseService } from '../supabase.service';
+import { SupabaseService } from '../../services/supabase.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   imports: [FormsModule, CommonModule],
   standalone: true,
   templateUrl: './admin-createuser.html',
-  styleUrl: './admin-createuser.css',
+  styleUrl: './admin-createuser.scss',
 })
 export class AdminCreateuser {
   username: string = "";
@@ -19,6 +19,7 @@ export class AdminCreateuser {
 
   error: string = "";
   success: string = "";
+tel: any;
 
   constructor(private supabaseService: SupabaseService) { }
 

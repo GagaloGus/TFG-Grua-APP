@@ -7,9 +7,17 @@
     justify-content: space-between;
 }
 
+.background{
+    background-color: var(--background-light);
+}
+
 /* medida md de bootstrap */
 @media (min-width: 768px) {
     .content {
         margin-left: 250px;
     }
+}
+
+.card-holder{
+    width: 100%;
 }

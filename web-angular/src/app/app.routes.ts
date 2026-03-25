@@ -2,10 +2,10 @@ import { Routes } from '@angular/router';
 import { Login } from './login/login';
 import { Home } from './home/home';
 import { AdminPage } from './admin-page/admin-page';
-import { AdminDashboard } from './admin-dashboard/admin-dashboard';
-import { AdminServicios } from './admin-servicios/admin-servicios';
-import { AdminCreateuser } from './admin-createuser/admin-createuser';
-import { AdminUsers } from './admin-users/admin-users';
+import { AdminDashboard } from './admin-page/admin-dashboard/admin-dashboard';
+import { AdminServicios } from './admin-page/admin-servicios/admin-servicios';
+import { AdminCreateuser } from './admin-page/admin-createuser/admin-createuser';
+import { AdminUsers } from './admin-page/admin-users/admin-users';
 
 export const routes: Routes = [
     

@@ -1,11 +1,11 @@
-<div class="bg-light d-flex container-fluid p-0 min-vh-100">
+<div class="background d-flex container-fluid p-0 min-vh-100">
     <!-- Aqui va la sidebar -->
     <section class="d-none d-md-flex sidebar flex-column bg-dark text-white p-4 rounded-end-4 text-center">
         <div>
             <h3 class="fw-bold">Panel de Administrador</h3>
-            <button class="btn w-75 text-wrap btn-outline-primary mt-3" routerLink="/admin/dashboard">Dashboard</button>
-            <button class="btn w-75 text-wrap btn-outline-primary mt-3" routerLink="/admin/servicios">Servicios</button>
-            <button class="btn w-75 text-wrap btn-outline-primary my-3" routerLink="/admin/users">Usuarios</button>
+            <button class="btn w-75 btn-outline-primary mt-3" routerLink="/admin/dashboard">Dashboard</button>
+            <button class="btn w-75 btn-outline-primary mt-3" routerLink="/admin/servicios">Servicios</button>
+            <button class="btn w-75 btn-outline-primary my-3" routerLink="/admin/users">Usuarios</button>
         </div>
         <div class="text-start">
             <hr>
@@ -19,6 +19,8 @@
     </section>
 
     <section class="content flex-grow-1 p-4">
-        <router-outlet></router-outlet>
+        <div class="bg-light h-100 p-4 rounded-3">
+            <router-outlet></router-outlet>
+        </div>
     </section>
 </div>

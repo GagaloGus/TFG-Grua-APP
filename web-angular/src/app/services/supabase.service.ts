@@ -54,4 +54,13 @@ export class SupabaseService {
         }
       ])
   }
+
+  async deleteUser(id: number) {
+  const { error } = await this.supabase
+    .from('USERS')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+}
 }

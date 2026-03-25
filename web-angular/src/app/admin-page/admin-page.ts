@@ -5,6 +5,6 @@ import { RouterOutlet, RouterLinkWithHref } from '@angular/router';
   selector: 'app-admin-page',
   imports: [RouterOutlet, RouterLinkWithHref],
   templateUrl: './admin-page.html',
-  styleUrl: './admin-page.css',
+  styleUrl: './admin-page.scss',
 })
 export class AdminPage {}

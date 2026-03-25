@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { SupabaseService } from '../supabase.service';
+import { SupabaseService } from '../services/supabase.service';
 import { AuthService } from '../services/auth-service/auth-service';
 import { debug } from 'console';
 
