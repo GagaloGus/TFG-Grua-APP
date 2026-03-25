@@ -11,65 +11,66 @@ import { CommonModule } from '@angular/common';
   styleUrl: './admin-createuser.scss',
 })
 export class AdminCreateuser {
+  constructor(private supabaseService: SupabaseService) { }
+
   username: string = "";
   password: string = "";
   password2: string = "";
-  chosenRol: string = 'N';
-  chosenRolDisplay: string = "- Sin Rol -"
+  tel: string = "";
+
+  // Rol
+  chosenRol = { key: "N", display: "- Sin Rol -" };
+  readonly roles = Object.entries({ N: '- Sin Rol -', A: 'Admin', U: 'Usuario', T: 'Trabajador' });
+
+  // Carnet
+  chosenCarnet: Record<string, boolean> = { B: false, C: false, E: false }
+  readonly carnetLetras = Object.keys(this.chosenCarnet)
 
   error: string = "";
   success: string = "";
-tel: any;
 
-  constructor(private supabaseService: SupabaseService) { }
+  setRol(key: string, display: string) {
+    this.chosenRol = { key, display }
+  }
 
-  setRol(rol: string, str: string) {
-    this.chosenRol = rol;
-    this.chosenRolDisplay = str;
-    console.log("cambiao")
+  setCarnet(letra: string) {
+    this.chosenCarnet[letra] = !this.chosenCarnet[letra];
+  }
+
+  private validar(): string {
+    if (!this.username) return 'El usuario no puede estar en blanco!';
+    if (!this.password) return 'La contraseña no puede estar en blanco!';
+    if (this.chosenRol.key == 'N') return 'Elige un rol para el usuario!';
+    if (this.password != this.password2) return 'Las contraseñas no coinciden!';
+    return '';
   }
 
   async createNewUser() {
     this.error = ""
     this.success = ""
-    // Usuario en blanco
-    if (this.username == "") {
-      this.error = "El usuario no puede estar en blanco!";
-      return;
-    }
 
-    // Contraseña en blanco
-    if (this.password == "") {
-      this.error = "La contraseña no puede estar en blanco!";
-      return;
-    }
-
-    // Sin rol
-    if (this.chosenRol == 'N') {
-      this.error = "Elige un rol para el usuario!";
-      return;
-    }
-
-    // Contraseñas no coinciden
-    if (this.password != this.password2) {
-      this.error = "La contraseñas no coinciden!";
+    const validationError = this.validar()
+    if (validationError != '') {
+      this.error = validationError;
       return;
     }
 
     try {
-      let match = await this.supabaseService.findUser(this.username.toLowerCase())
+      const match = await this.supabaseService.findUser(this.username.toLowerCase())
       if (match.length > 0) {
-        this.error = `Ya existe el usuario ${this.username}!`
-        return
+        this.error = `Ya existe el usuario ${this.username}!`;
+        return;
       }
-    } catch (e) {
-      this.error = "Hubo un error de base de datos.."
-      console.error(e)
-      return;
-    }
 
-    await this.supabaseService.createUser(this.username.toLowerCase(), this.password, this.chosenRol)
-    this.success = "Usuario creado!"
-    console.log(`Usuario creado: ${this.username}`)
+      //Creado correctamente
+      const carnets = Object.keys(this.chosenCarnet).filter(key=> this.chosenCarnet[key])
+      await this.supabaseService.createUser(this.username.toLowerCase(), this.password, this.chosenRol.key, this.tel, carnets)
+      this.success = "Usuario creado!";
+      console.log(`Usuario creado: ${this.username}`);
+
+    } catch (e) {
+      this.error = "Hubo un error de base de datos..";
+      console.error(e);
+    }
   }
 }

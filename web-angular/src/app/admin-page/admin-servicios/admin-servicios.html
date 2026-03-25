@@ -1,9 +1,70 @@
-<section>
-    <div class="d-flex align-items-center">
-        <div class="flex-grow-1">
-            <h1>Servicios</h1>
-            <h5 class="text-secondary">Página para la gestión de servicios</h5>
+<div class="d-flex align-items-center">
+    <div class="flex-grow-1">
+        <h1>Servicios</h1>
+        <h5 class="text-secondary">Página para la gestión de servicios</h5>
+    </div>
+    <button class="h-fit btn btn-success ms-3 d-flex align-items-center">
+        <svg class="me-2" viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+            <path
+                d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z" />
+        </svg>
+        Crear nuevo servicio
+    </button>
+</div>
+
+<!-- Buscador -->
+<input class="form-control my-3" type="text" placeholder="Buscar por ID..." [(ngModel)]="searchQuery"
+    (input)="filtrar()" />
+
+@if (errorMsg) {
+<p class="text-danger">{{ errorMsg }}</p>
+}
+
+<!-- Tabla de usuarios -->
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Teléfono</th>
+            <th>Rol</th>
+            <th>Disponibilidad</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (u of usersFiltered; track u.id) {
+        <tr>
+            <td>{{ u.id }}</td>
+            <td>{{ u.user }}</td>
+            <td>{{ u.telefono }}</td>
+            <td>{{ u.role }}</td>
+            <td>{{ u.disponibilidad ? 'Sí' : 'No' }}</td>
+            <td>
+                <button class="btn btn-sm btn-warning me-2" routerLink="/admin/edituser/{{u.id}}">Editar</button>
+                <button class="btn btn-sm btn-danger" (click)="abrirEliminar(u)">Eliminar</button>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Confirmacion eliminar -->
+@if (showConfirmation) {
+<div class="modal d-block" style="background: rgba(0,0,0,0.5);">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">¿Eliminar usuario?</h5>
+            </div>
+            <div class="modal-body">
+                ¿Seguro que quieres eliminar a <strong>{{ selected?.user }}</strong>?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" (click)="cerrarEliminar()">Cancelar</button>
+                <button class="btn btn-danger" (click)="confirmarEliminar()">Eliminar</button>
+            </div>
         </div>
     </div>
-
-</section>
+</div>
+}

@@ -4,7 +4,7 @@
     <div class="w-100 p-3">
         <form class="formulario-crear d-flex">
             <div class="flex-grow-1">
-                <h5 class="text-secondary">Parametros de usuario</h5>
+                <h5 class="text-secondary">Datos de la persona</h5>
                 <div class="form-group">
                     <label>Nombre de usuario</label>
                     <input [(ngModel)]="username" name="usuario" class="form-control text-lowercase" type="text"
@@ -22,8 +22,7 @@
                 </div>
                 <div class="form-group">
                     <label>Telefono</label>
-                    <input [(ngModel)]="tel" name="tel" class="form-control" type="tel"
-                        placeholder="000000000...">
+                    <input [(ngModel)]="tel" name="tel" class="form-control" type="tel" placeholder="+34 600 000 000">
                 </div>
 
             </div>
@@ -33,13 +32,25 @@
                 <div class="form-group">
                     <label>Rol del usuario</label>
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button"
-                            data-bs-toggle="dropdown">{{chosenRolDisplay}}</button>
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">{{chosenRol.display}}</button>
                         <div class="dropdown-menu">
-                            <button class="dropdown-item" (click)="setRol('N', '- Sin Rol-')">- Sin Rol -</button>
-                            <button class="dropdown-item" (click)="setRol('A', 'Admin')">Admin</button>
-                            <button class="dropdown-item" (click)="setRol('U', 'Usuario')">Usuario</button>
-                            <button class="dropdown-item" (click)="setRol('T', 'Trabajador')">Trabajador</button>
+                            @for (rol of roles; track rol){
+                                <button class="dropdown-item" (click)="setRol(rol[0], rol[1])">{{rol[1]}}</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Carnet de conducir</label>
+                    <div class="card w-fit">
+                        <div class="card-body">
+                            @for (letra of carnetLetras; track letra) {
+                            <div class="mb-1 form-check form-switch">
+                                <input class="form-check-input" type="checkbox" [checked]="chosenCarnet[letra]"(change)="setCarnet(letra)" />
+                                <label class="ms-3">{{ letra }}</label>
+                            </div>
+                            }
                         </div>
                     </div>
                 </div>

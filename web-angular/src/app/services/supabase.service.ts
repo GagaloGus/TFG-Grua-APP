@@ -43,14 +43,15 @@ export class SupabaseService {
     return data
   }
 
-  async createUser(_usern: string, _passwd: string, _rol: string){
+  async createUser(_usern: string, _passwd: string, _rol: string, _tel: string, _carnet: string[]){
     const { error } = await this.supabase
       .from('USERS')
       .insert([
         {
           user: _usern,
           password: _passwd,
-          role:_rol
+          role:_rol,
+          tel:_tel
         }
       ])
   }

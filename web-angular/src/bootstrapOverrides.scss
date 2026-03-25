@@ -1,8 +1,8 @@
-.btn, .dropdown-toggle {
+.btn, .dropdown-toggle, .form-check-input {
   transition: transform 0.2s ease;
 
   &:hover {
-    transform: scale(1.025);
+    transform: scale(1.05);
   }
 }
 
