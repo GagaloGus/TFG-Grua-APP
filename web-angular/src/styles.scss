@@ -36,7 +36,56 @@ p{
     background-color: var(--gray-blue);
 }
 
+.user-pfp{
+    min-width: 40px;
+    width: 70px;
+    margin: 0;
+    height: max-content;
+    display: flex;
+    align-items: center;
 
+    > img{
+        width: 100%;
+        margin: 0;
+    }
+}
+
+@mixin chip-text($bg, $color){
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    font-weight: bold;
+    border-radius: 50px;
+    padding: 2px 8px;
+    background-color: $bg;
+    > p{
+        color: $color;
+    }
+}
+
+.chip-text-orange{
+    @include chip-text(#fcead7, #c76e01);
+}
+
+.chip-text-green{
+    @include chip-text(#d7fce8, #01c753);
+}
+.chip-text-blue{
+    @include chip-text(#d7d8fc, #0104c7);
+}
+.chip-text-red{
+    @include chip-text(#fcded7, #c71801);
+}
+.chip-text-purple{
+    @include chip-text(#f3d7fc, #9f01c7);
+}
+
+.chip-text-grey{
+    @include chip-text(#e2e2e2, #474747);
+}
+
+.chip-text{
+    @include chip-text(#e2e2e2, #474747)
+}
 
 @mixin mini-icon($bg, $color) {
     height: auto;

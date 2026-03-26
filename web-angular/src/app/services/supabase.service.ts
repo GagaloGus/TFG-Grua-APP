@@ -43,17 +43,24 @@ export class SupabaseService {
     return data
   }
 
-  async createUser(_usern: string, _passwd: string, _rol: string, _tel: string, _carnet: string[]){
+  async createUser(_nombre:string,_apellido1:string,_apellido2:string,_usern: string, _passwd: string, _rol: string, _tel: string, _mail: string, _carnet: string[]){
     const { error } = await this.supabase
       .from('USERS')
       .insert([
         {
+          nombre:_nombre,
+          apellido1:_apellido1,
+          apellido2:_apellido2,
           user: _usern,
           password: _passwd,
           role:_rol,
-          tel:_tel
+          tel:_tel,
+          mail:_mail,
+          licencia_conducir:_carnet
         }
       ])
+
+      if (error) throw error;
   }
 
   async deleteUser(id: number) {

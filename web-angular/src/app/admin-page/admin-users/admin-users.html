@@ -21,34 +21,67 @@
     <p class="text-danger">{{ errorMsg }}</p>
     }
 
-    <!-- Tabla de usuarios -->
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Usuario</th>
-                <th>Teléfono</th>
-                <th>Rol</th>
-                <th>Disponibilidad</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (u of usersFiltered; track u.id) {
-            <tr>
-                <td>{{ u.id }}</td>
-                <td>{{ u.user }}</td>
-                <td>{{ u.telefono }}</td>
-                <td>{{ u.role }}</td>
-                <td>{{ u.disponibilidad ? 'Sí' : 'No' }}</td>
-                <td>
-                    <button class="btn btn-sm btn-warning me-2" routerLink="/admin/edituser/{{u.id}}">Editar</button>
-                    <button class="btn btn-sm btn-danger" (click)="abrirEliminar(u)">Eliminar</button>
-                </td>
-            </tr>
-            }
-        </tbody>
-    </table>
+    <!-- Usuarios -->
+    <section class="row row-cols-sm-1 row-cols-lg-2 row-cols-xl-3 g-3">
+        @for (u of usersFiltered; track u.id){
+        <div class="col">
+            <div class="card h-100 p-4">
+                <div class="card-title d-flex">
+                    <figure class="user-pfp me-4">
+                        <img class="rounded-circle" src="/img/house.png" alt="">
+                    </figure>
+                    <div class="me-3">
+                        <h4 class="m-0 mb-1 text-wrap">{{u.nombreCompleto}}</h4>
+                        <p class="text-secondary">{{u.user}}</p>
+                        <p class="text-secondary">#{{u.id}}</p>
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap">
+                    <div class="{{u.disponibilidadCSSClass}} align-self-start">
+                        <p>{{u.disponible}}</p>
+                    </div>
+                    <div class="{{u.rolCSSClass}} align-self-start ms-3">
+                        <p>{{u.rolNombre}}</p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <svg class="text-secondary me-2" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                        </svg>
+                        <p>{{u.mail}}</p>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <svg class="text-secondary me-2" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                            </path>
+                        </svg>
+                        <p>{{u.tel}}</p>
+                    </div>
+                    <hr>
+                    <div class="d-flex text-center">
+                        <div class="w-50">
+                            <h2 class="fw-bold text-primary">{{u.serv_completados_total}}</h2>
+                            <p>Completados</p>
+                        </div>
+                        <div class="vr"></div>
+                        <div class="w-50">
+                            <h2 class="fw-bold text-dark">{{u.serv_completados_hoy}}</h2>
+                            <p>Hoy</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <p>Licencias:<kbd class="ms-2">{{u.licenciasFormateadas}}</kbd></p>
+                </div>
+            </div>
+        </div>
+        }
+
+    </section>
 
     <!-- Confirmacion eliminar -->
     @if (showConfirmation) {

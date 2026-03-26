@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase.service';
+import { Usuario } from '../../services/user';
 
 @Component({
   selector: 'app-admin-users',
@@ -12,23 +13,30 @@ import { SupabaseService } from '../../services/supabase.service';
 })
 export class AdminUsers implements OnInit {
 
-  users: any[] = [];         // lista completa
-  usersFiltered: any[] = []; // lista que se muestra
+  users: Usuario[] = [];         // lista completa
+  usersFiltered: Usuario[] = []; // lista que se muestra
   searchQuery: string = '';
   errorMsg: string = '';
 
   showConfirmation = false;
   selected: any = null;
+  refreshInterval: any;
 
   constructor(private supabaseService: SupabaseService) {}
 
   async ngOnInit() {
     await this.loadUsers();
+    //this.refreshInterval = setInterval(() => this.loadUsers(), 1000);
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.refreshInterval);
   }
 
   async loadUsers() {
     try {
-      this.users = await this.supabaseService.getAllUsers();
+      const data = await this.supabaseService.getAllUsers();
+      this.users = data.map(u => new Usuario(u));
       this.filtrar(); // sincroniza la lista visible
     } catch (e) {
       this.errorMsg = 'No se pudieron cargar los usuarios.';
@@ -36,16 +44,12 @@ export class AdminUsers implements OnInit {
     }
   }
 
-  filtrar() {
-    const t = this.searchQuery.trim().toLowerCase();
-    if (!t) {
-      this.usersFiltered = this.users;
-      return;
-    }
-    this.usersFiltered = this.users.filter(u =>
-      (u.id?.toString() ?? '').includes(t)
-    );
-  }
+filtrar() {
+  const t = this.searchQuery.trim().toLowerCase();
+  this.usersFiltered = this.users.filter(u =>
+    (u.id?.toString() ?? '').includes(t)
+  );
+}
 
   abrirEliminar(u: any) {
     this.selected = u;

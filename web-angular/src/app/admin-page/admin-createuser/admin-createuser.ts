@@ -13,10 +13,14 @@ import { CommonModule } from '@angular/common';
 export class AdminCreateuser {
   constructor(private supabaseService: SupabaseService) { }
 
+  nombre: string = "";
+  apellido1: string = "";
+  apellido2: string = "";
   username: string = "";
   password: string = "";
   password2: string = "";
   tel: string = "";
+  mail: string = "";
 
   // Rol
   chosenRol = { key: "N", display: "- Sin Rol -" };
@@ -38,8 +42,12 @@ export class AdminCreateuser {
   }
 
   private validar(): string {
+    if (!this.nombre) return 'El nombre no puede estar en blanco!';
+    if (!this.apellido1) return 'El primer apellido no puede estar en blanco!';
     if (!this.username) return 'El usuario no puede estar en blanco!';
     if (!this.password) return 'La contraseña no puede estar en blanco!';
+    if (!this.tel) return 'El telefono no puede estar en blanco!';
+    if (!this.mail) return 'El correo no puede estar en blanco!';
     if (this.chosenRol.key == 'N') return 'Elige un rol para el usuario!';
     if (this.password != this.password2) return 'Las contraseñas no coinciden!';
     return '';
@@ -64,7 +72,7 @@ export class AdminCreateuser {
 
       //Creado correctamente
       const carnets = Object.keys(this.chosenCarnet).filter(key=> this.chosenCarnet[key])
-      await this.supabaseService.createUser(this.username.toLowerCase(), this.password, this.chosenRol.key, this.tel, carnets)
+      await this.supabaseService.createUser(this.nombre, this.apellido1, this.apellido2,this.username.toLowerCase(), this.password, this.chosenRol.key, this.tel, this.mail, carnets)
       this.success = "Usuario creado!";
       console.log(`Usuario creado: ${this.username}`);
 
