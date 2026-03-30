@@ -29,6 +29,10 @@ class MainActivity : AppCompatActivity() {
         binding.btnToMaps.setOnClickListener {
             ChangeActivity(this, MapGPS::class.java)
         }
+
+        binding.btnExit.setOnClickListener {
+            finish()
+        }
     }
 
     private fun <T> ChangeActivity(context: Context, cls: Class<T>){

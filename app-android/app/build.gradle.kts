@@ -42,6 +42,18 @@ android {
 }
 
 dependencies {
+
+    // Maps
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.android.gms:play-services-location:21.2.0")
+// Para llamar a la Directions API (HTTP)
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+// Parsear JSON de la respuesta
+    implementation("com.google.code.gson:gson:2.10.1")
+// Coroutines (para llamadas en background)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
