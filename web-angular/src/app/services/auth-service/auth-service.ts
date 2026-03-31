@@ -10,14 +10,14 @@ export class AuthService {
   private _isLoggedIn = false;
   private _isAdmin = false;
 
-  private _currentUsername = "";
+  private _currentEmail = "";
   private _currentPassword = "";
   private _currentRole = "";
 
 
-  async login(username: string, password: string): Promise<boolean> {
+  async login(email: string, password: string): Promise<boolean> {
     try {
-      let match = await this.supabaseService.findUser(username);
+      let match = await this.supabaseService.findUser(email);
 
       //No existe el usuario
       if (match.length == 0) {
@@ -27,27 +27,25 @@ export class AuthService {
       //Recorre toda la lista de usuarios
       let fila = match[0];
       //Imprime por consola los valores
-      console.log(`${fila["id"]} / ${fila["user"]} / ${fila["password"]} / ${fila["role"]}`)
+      console.log(`${fila["id"]} / ${fila["email"]} / ${fila["password"]} / ${fila["role"]}`)
 
       //Asigna los valores que necesitamos a variables
-      let id = fila["id"].toString()
-      let usern = fila["user"].toString()
-      let pswd = fila["password"].toString()
-      let role = fila["role"]
+      let _id = fila["id"].toString()
+      let _email = fila["email"].toString()
+      let _pswd = fila["password"].toString()
+      let _role = fila["role"]
 
       //Si todo encaja, se valida el login
-      if (usern == username && pswd == password) {
-        this._currentUsername = usern
-        this._currentPassword = pswd
-        this._currentRole = role
-        this._isAdmin = role == 'A';
+      if (_email == email && _pswd == password) {
+        this._currentEmail = _email
+        this._currentPassword = _pswd
+        this._currentRole = _role
+        this._isAdmin = _role == 'A';
         this._isLoggedIn = true
 
         return true
       }
-    } catch (error) {
-
-    }
+    } catch (error) { }
 
     return false
   }
@@ -65,8 +63,8 @@ export class AuthService {
     this._isAdmin = false
   }
 
-  getUsername(): string {
-    return this._currentUsername
+  getEmail(): string {
+    return this._currentEmail
   }
 
   getPassword(): string {

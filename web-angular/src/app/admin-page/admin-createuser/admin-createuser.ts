@@ -16,7 +16,6 @@ export class AdminCreateuser {
   nombre: string = "";
   apellido1: string = "";
   apellido2: string = "";
-  username: string = "";
   password: string = "";
   password2: string = "";
   tel: string = "";
@@ -44,7 +43,6 @@ export class AdminCreateuser {
   private validar(): string {
     if (!this.nombre) return 'El nombre no puede estar en blanco!';
     if (!this.apellido1) return 'El primer apellido no puede estar en blanco!';
-    if (!this.username) return 'El usuario no puede estar en blanco!';
     if (!this.password) return 'La contraseña no puede estar en blanco!';
     if (!this.tel) return 'El telefono no puede estar en blanco!';
     if (!this.mail) return 'El correo no puede estar en blanco!';
@@ -64,17 +62,16 @@ export class AdminCreateuser {
     }
 
     try {
-      const match = await this.supabaseService.findUser(this.username.toLowerCase())
+      const match = await this.supabaseService.findUser(this.mail)
       if (match.length > 0) {
-        this.error = `Ya existe el usuario ${this.username}!`;
+        this.error = `Ya existe un usuario con el correo '${this.mail}'!`;
         return;
       }
 
       //Creado correctamente
       const carnets = Object.keys(this.chosenCarnet).filter(key=> this.chosenCarnet[key])
-      await this.supabaseService.createUser(this.nombre, this.apellido1, this.apellido2,this.username.toLowerCase(), this.password, this.chosenRol.key, this.tel, this.mail, carnets)
+      await this.supabaseService.createUser(this.nombre, this.apellido1, this.apellido2, this.password, this.chosenRol.key, this.tel, this.mail, carnets)
       this.success = "Usuario creado!";
-      console.log(`Usuario creado: ${this.username}`);
 
     } catch (e) {
       this.error = "Hubo un error de base de datos..";

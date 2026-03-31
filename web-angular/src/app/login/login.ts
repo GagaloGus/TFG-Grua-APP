@@ -16,7 +16,7 @@ import { debug } from 'console';
 
 
 export class Login {
-  username = "";
+  email = "";
   password = ""
   error = false
   validatingLogin = false
@@ -28,7 +28,7 @@ export class Login {
 
   async login() {
     this.validatingLogin = true
-    let sucess = await this.authService.login(this.username, this.password)
+    let sucess = await this.authService.login(this.email, this.password)
     this.validatingLogin = false
 
     if (sucess) {

@@ -6,17 +6,23 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 })
 export class SupabaseService {
   private supabase: SupabaseClient;
+  private supabaseAdmin: SupabaseClient;
 
   constructor() {
     this.supabase = createClient(
+      'https://sgyidsdrwqkqtqimozvm.supabase.co',
+      'sb_publishable_SOBQAb6mNQod2cCeG8QS-w_6XT1D-YJ' //publishable key
+    );
+
+    this.supabaseAdmin = createClient(
       'https://chdjeqqvuhqqxywiolmh.supabase.co',
-      'sb_publishable_fUIe-BG42kTWDI6KneEnMw_E2PEBAkR'
+      'sb_secret_6_U-B0yASzMKhFPOwz209w_INEwdpbx' //secret key
     );
   }
 
   async getAllUsers() {
     const { data, error } = await this.supabase
-      .from('USERS')
+      .from('usuarios')
       .select('*');
 
     if (error) {
@@ -27,11 +33,11 @@ export class SupabaseService {
     return data;
   }
 
-  async findUser(user: string) {
+  async findUser(email: string) {
     const { data, error } = await this.supabase
-      .from('USERS')
+      .from('usuarios')
       .select('*')
-      .eq('user', user);
+      .eq('email', email);
 
     if (error) {
       throw error;
@@ -43,32 +49,46 @@ export class SupabaseService {
     return data
   }
 
-  async createUser(_nombre:string,_apellido1:string,_apellido2:string,_usern: string, _passwd: string, _rol: string, _tel: string, _mail: string, _carnet: string[]){
+  async createUser(_nombre: string, _apellido1: string, _apellido2: string, _passwd: string, _rol: string, _tel: string, _mail: string, _carnet: string[]) {
+
+    const { data, error: authError } = await this.supabaseAdmin.auth.admin.createUser({
+      email: _mail,
+      password: _passwd,
+      email_confirm: true
+    });
+
+    if (authError) throw authError;
+
+    const uid = data.user?.id;
+    if (!uid) throw new Error('No se genero el UID');
+    console.log(`UID: ${uid}`)
+    
     const { error } = await this.supabase
-      .from('USERS')
-      .insert([
-        {
-          nombre:_nombre,
-          apellido1:_apellido1,
-          apellido2:_apellido2,
-          user: _usern,
-          password: _passwd,
-          role:_rol,
-          tel:_tel,
-          mail:_mail,
-          licencia_conducir:_carnet
-        }
-      ])
-
-      if (error) throw error;
+    .from('usuarios')
+    .insert([
+      {
+        id: uid,
+        nombre: _nombre,
+        apellido1: _apellido1,
+        apellido2: _apellido2,
+        password: _passwd,
+        rol: _rol,
+        telefono: _tel,
+        email: _mail,
+        licencia_conducir: _carnet
+      }
+    ])
+    
+    if (error) throw error;
+    console.log(`USUARIO CREADO: ${uid} / ${_mail}`)
   }
-
+  
   async deleteUser(id: number) {
-  const { error } = await this.supabase
-    .from('USERS')
-    .delete()
-    .eq('id', id);
+    const { error } = await this.supabase
+      .from('usuarios')
+      .delete()
+      .eq('id', id);
 
-  if (error) throw error;
-}
+    if (error) throw error;
+  }
 }

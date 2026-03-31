@@ -3,7 +3,7 @@
     <h5 class="text-secondary">Interfaz para crear un usuario en la base de datos</h5>
     <div class="w-100 p-3">
         <form class="d-flex">
-            <div class="w-fit">
+            <div class="w-50">
                 <h5 class="text-secondary w-fit">Datos de la persona</h5>
                 <div class="form-group">
                     <label>Nombre y apellidos</label>
@@ -12,11 +12,6 @@
                         <input [(ngModel)]="apellido1" name="usuario" class="form-control flex-grow-1 mx-2" type="text" placeholder="Apellido 1">
                         <input [(ngModel)]="apellido2" name="usuario" class="form-control flex-grow-1" type="text" placeholder="Apellido 2">
                     </div>
-                </div>
-                <div class="form-group">
-                    <label>Nombre de usuario</label>
-                    <input [(ngModel)]="username" name="usuario" class="form-control text-lowercase" type="text"
-                        placeholder="usuario">
                 </div>
                 <div class="form-group">
                     <label>Contraseña</label>
@@ -29,12 +24,12 @@
                         placeholder="contraseña">
                 </div>
                 <div class="form-group d-flex">
-                    <div>
+                    <div class=" w-50">
                         <label>Teléfono</label>
                         <input [(ngModel)]="tel" name="tel" class="form-control" type="tel" placeholder="+34 600 000 000">
                     </div>
                     <div class="mx-1"></div>
-                    <div>
+                    <div class="w-50">
                         <label>Correo</label>
                         <input [(ngModel)]="mail" name="mail" class="form-control" type="email" placeholder="ejemplo@compañia.com">
                     </div>

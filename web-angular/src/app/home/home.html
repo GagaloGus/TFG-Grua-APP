@@ -1,8 +1,11 @@
 <section>
-    <h1><kbd>Hola</kbd></h1>
+    <h1><kbd>Soy el home</kbd></h1>
+    <h5>Usuario conectado: {{getEmail()}}</h5>
     <ul>
         <li><a href="" routerLink="/login">Login</a></li>
-        <li><a href="" routerLink="/admin">Admin</a></li>
-        <li><a href=""></a></li>
+
+        @if (isLoggedIn()){
+            <li><a href="" routerLink="/admin">Admin</a></li>
+        }
     </ul>
 </section>

@@ -22,8 +22,8 @@ export const routes: Routes = [
     {path: "home", component:Home},
 
     // Ruta vacia
-    {path: '', redirectTo: '/login', pathMatch: 'full'},
+    {path: '', redirectTo: '/home', pathMatch: 'full'},
 
     // Ruta incorrecta
-    // {path: '**', redirectTo: '/login', pathMatch: 'full'}, 
+    {path: '**', redirectTo: '/home', pathMatch: 'full'}, 
 ];
