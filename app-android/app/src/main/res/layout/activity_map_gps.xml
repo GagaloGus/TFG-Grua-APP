@@ -6,66 +6,128 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Mapa -->
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <!-- Instrucción -->
+    <!-- Panel superior: instrucción -->
     <TextView
         android:id="@+id/tvInstruccion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#CC1565C0"
+        android:padding="16dp"
         android:text="Calculando ruta..."
         android:textColor="#FFFFFF"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:padding="16dp"
+        android:maxLines="3"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <!-- Info abajo -->
+    <!-- Panel inferior: info del viaje + datos ruta -->
     <LinearLayout
         android:id="@+id/panelInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#CC1565C0"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:padding="12dp"
-        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
-            android:id="@+id/tvDistancia"
-            android:layout_width="0dp"
+        <!-- Datos del viaje -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="-- km"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:orientation="horizontal"
+            android:paddingBottom="8dp">
 
-        <TextView
-            android:id="@+id/tvTiempo"
-            android:layout_width="0dp"
+            <TextView
+                android:id="@+id/tvCliente"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:text="Cliente: --"/>
+
+            <TextView
+                android:id="@+id/tvMatricula"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:text="Matrícula: --"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="-- min"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:orientation="horizontal"
+            android:paddingBottom="8dp">
 
-        <Button
-            android:id="@+id/btnCancelar"
-            android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/tvMotivo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#FFCC80"
+                android:textSize="13sp"
+                android:text="Motivo: --"/>
+
+            <TextView
+                android:id="@+id/tvTelefono"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:text="Tel: --"/>
+
+        </LinearLayout>
+
+        <!-- Distancia, tiempo y botón salir -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="✕"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#E53935"/>
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
+            <TextView
+                android:id="@+id/tvDistancia"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="--"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvTiempo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="--"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <Button
+                android:id="@+id/btnSalir"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#E53935"
+                android:text="✕ Salir"
+                android:textColor="#FFFFFF"/>
+
+        </LinearLayout>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

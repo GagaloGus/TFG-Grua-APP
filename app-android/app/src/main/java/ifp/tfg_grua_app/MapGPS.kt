@@ -1,8 +1,10 @@
 package ifp.tfg_grua_app
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -13,9 +15,16 @@ import android.os.Handler
 import android.os.Looper
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -41,298 +50,151 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapGpsBinding
-
-    // Coordenadas
-    private val origen  = LatLng(40.34225, -3.52372)   // Taller 1
-    private val destino = LatLng(40.43394, -3.63135)   // Taller 2
-
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var destino: LatLng
+    private var posicionActual: LatLng? = null
     private var marcadorUsuario: Marker? = null
-    private var posicionActual = origen
-
-    private var marcadorOrigen:  Marker? = null
     private var marcadorDestino: Marker? = null
-
-    private var rutaPolyline:    Polyline? = null
+    private var rutaPolyline: Polyline? = null
 
     companion object {
         const val API_KEY = "AIzaSyAxLBlpI6vtCy658BaQDMH8Mpmepl6CafM"
+        const val EXTRA_LAT = "destino_lat"
+        const val EXTRA_LNG = "destino_lng"
+        const val EXTRA_ID = "viaje_id"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-
         binding = ActivityMapGpsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+        // Recoge datos del Intent
+        val lat = intent.getDoubleExtra(EXTRA_LAT, 0.0)
+        val lng = intent.getDoubleExtra(EXTRA_LNG, 0.0)
+        val recogidaID = intent.getIntExtra(EXTRA_ID, -1)
+        destino     = LatLng(lat, lng)
 
-        binding.btnCancelar.setOnClickListener {
-            ChangeActivity(this, MainActivity::class.java)
+        // Mostrar datos del viaje en el panel
+        val viaje = RecogidasRepo.Recogidas.find { it.id == recogidaID }
+        viaje?.let {
+            binding.tvCliente.text = "Cliente: ${it.cliente}"
+            binding.tvMatricula.text = "Matrícula: ${it.matricula}"
+            binding.tvMotivo.text = "Motivo: ${it.motivo}"
+            binding.tvTelefono.text = "Tel: ${it.telefono}"
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        // GPS
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        // Mapa
+        val mapFragment = supportFragmentManager
+            .findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+
+        binding.btnSalir.setOnClickListener {
+            ChangeActivity(this, MainActivity::class.java)
         }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Marcador origen
-        marcadorOrigen = mMap.addMarker(
-            MarkerOptions()
-                .position(origen)
-                .title("Taller 1")
-                .icon(getScaledMarker(R.drawable.prueba))
-        )
-
         // Marcador destino
         marcadorDestino = mMap.addMarker(
-            MarkerOptions()
-                .position(destino)
-                .title("Taller 2")
-                .icon(getScaledMarker(R.drawable.prueba))
+            MarkerOptions().position(destino).title("Destino")
         )
-        // Click en el mapa
+
         mMap.setOnMapClickListener { puntoClickado ->
-            moverUsuarioYRecalcular(puntoClickado)
+            posicionActual = puntoClickado
+            marcadorUsuario?.position = puntoClickado
+            calcularRuta()
         }
 
-        val bounds = LatLngBounds.Builder()
-            .include(origen)
-            .include(destino)
-            .build()
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150))
+        // Permisos y arranca GPS
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            iniciarGPS()
+        } else {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1001)
+        }
+    }
 
-        // Calcular y dibujar la ruta real por calles
-        calcularRuta()
+    private fun iniciarGPS() {
+        val request = LocationRequest.Builder(
+            Priority.PRIORITY_HIGH_ACCURACY, 4000L
+        ).setMinUpdateDistanceMeters(5f).build()
+
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) return
+
+        fusedLocationClient.requestLocationUpdates(request, object : LocationCallback() {
+            override fun onLocationResult(result: LocationResult) {
+                val loc = result.lastLocation ?: return
+                posicionActual = LatLng(loc.latitude, loc.longitude)
+
+                if (marcadorUsuario == null) {
+                    marcadorUsuario = mMap.addMarker(
+                        MarkerOptions()
+                            .position(posicionActual!!)
+                            .title("Tú")
+                            .icon(BitmapDescriptorFactory
+                                .defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                    )
+                    // Calcular ruta y centrar cámara
+                    calcularRuta()
+                } else {
+                    marcadorUsuario!!.position = posicionActual!!
+                }
+
+                // Cámara sigue al usuario
+                mMap.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(posicionActual!!, 15f)
+                )
+            }
+        }, Looper.getMainLooper())
     }
 
     private fun calcularRuta() {
+        val origen = posicionActual ?: return
         binding.tvInstruccion.text = "Calculando ruta..."
 
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val url = "https://maps.googleapis.com/maps/api/directions/json?" +
-                        "origin=${origen.latitude},${origen.longitude}" +
-                        "&destination=${destino.latitude},${destino.longitude}" +
-                        "&mode=driving" +
-                        "&language=es" +
-                        "&key=$API_KEY"
-
-                val client = OkHttpClient()
-                val request = Request.Builder().url(url).build()
-                val json = client.newCall(request).execute().body?.string() ?: return@launch
-
-                val obj = JSONObject(json)
-
-                if (obj.getString("status") != "OK") {
-                    withContext(Dispatchers.Main) {
-
-                        val status = obj.getString("status")
-                        val mensaje = if (obj.has("error_message"))
-                            obj.getString("error_message")
-                        else "Sin mensaje"
-                        binding.tvInstruccion.text = "$status: $mensaje"
-                    }
-                    return@launch
-                }
-
-                val route = obj.getJSONArray("routes").getJSONObject(0)
-                val leg = route.getJSONArray("legs").getJSONObject(0)
-
-                // Distancia y tiempo totales
-                val distancia = leg.getJSONObject("distance").getString("text")
-                val tiempo = leg.getJSONObject("duration").getString("text")
-
-                val primeraInstruccion = leg.getJSONArray("steps")
-                    .getJSONObject(0)
-                    .getString("html_instructions")
-                    .replace(Regex("<[^>]*>"), " ")
-                    .trim()
-
-                // Navegación real por calles
-                val polylineEncoded = route
-                    .getJSONObject("overview_polyline")
-                    .getString("points")
-                val puntos = decodificarPolyline(polylineEncoded)
-
-                withContext(Dispatchers.Main) {
-                    // Dibujar ruta azul en el mapa
-                    rutaPolyline?.remove()
-                    rutaPolyline = mMap.addPolyline(
-                        PolylineOptions()
-                            .addAll(puntos)
-                            .width(12f)
-                            .color(Color.parseColor("#4285F4"))
-                            .geodesic(true)
-                            .startCap(RoundCap())
-                            .endCap(RoundCap())
-                    )
-
-                    // Actualizar UI
-                    binding.tvInstruccion.text = primeraInstruccion
-                    binding.tvDistancia.text = distancia
-                    binding.tvTiempo.text = tiempo
-
-                    if (marcadorUsuario == null) {
-                        marcadorUsuario = mMap.addMarker(
-                            MarkerOptions()
-                                .position(posicionActual)
-                                .title("Tú")
-                                .icon(crearIconoUsuario())
-                                .zIndex(10f)
-                        )
-                    }
-                }
-
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    binding.tvInstruccion.text = "Error: ${e.message}"
-                }
-            }
-        }
-    }
-
-    private fun decodificarPolyline(encoded: String): List<LatLng> {
-        val poly = mutableListOf<LatLng>()
-        var index = 0
-        val len = encoded.length
-        var lat = 0
-        var lng = 0
-
-        while (index < len) {
-            var b: Int; var shift = 0; var result = 0
-            do {
-                b = encoded[index++].code - 63
-                result = result or (b and 0x1f shl shift)
-                shift += 5
-            } while (b >= 0x20)
-            lat += if (result and 1 != 0) (result shr 1).inv() else result shr 1
-
-            shift = 0; result = 0
-            do {
-                b = encoded[index++].code - 63
-                result = result or (b and 0x1f shl shift)
-                shift += 5
-            } while (b >= 0x20)
-            lng += if (result and 1 != 0) (result shr 1).inv() else result shr 1
-
-            poly.add(LatLng(lat / 1E5, lng / 1E5))
-        }
-        return poly
-    }
-
-    // Mueve el marcador al punto clickado y recalcula la ruta desde ahí
-    private fun moverUsuarioYRecalcular(nuevaPosicion: LatLng) {
-        posicionActual = nuevaPosicion
-
-        // Mover o crear el marcador de usuario
-        if (marcadorUsuario == null) {
-            marcadorUsuario = mMap.addMarker(
-                MarkerOptions()
-                    .position(nuevaPosicion)
-                    .title("Tú")
-                    .icon(crearIconoUsuario())
-                    .zIndex(10f)
-            )
-        } else {
-            val handler = Handler(Looper.getMainLooper())
-            val inicio = marcadorUsuario!!.position
-            val pasos = 20
-            var paso = 0
-
-            val runnable = object : Runnable {
-                override fun run() {
-                    paso++
-                    val t = paso.toFloat() / pasos
-                    val tEase = t * t * (3 - 2 * t)  // Ease in-out suave
-
-                    val lat = inicio.latitude  + (nuevaPosicion.latitude  - inicio.latitude)  * tEase
-                    val lng = inicio.longitude + (nuevaPosicion.longitude - inicio.longitude) * tEase
-
-                    marcadorUsuario?.position = LatLng(lat, lng)
-
-                    if (paso < pasos) handler.postDelayed(this, 16)
-                }
-            }
-            handler.post(runnable)
-        }
-
-        // Mover la cámara al nuevo punto
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nuevaPosicion, 18f))
-
-        // Recalcular la ruta desde la nueva posición al destino
-        calcularRutaDesde(nuevaPosicion)
-    }
-
-    // Igual que calcularRuta()
-    private fun calcularRutaDesde(nuevoOrigen: LatLng) {
-        binding.tvInstruccion.text = "Recalculando..."
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val url = "https://maps.googleapis.com/maps/api/directions/json?" +
-                        "origin=${nuevoOrigen.latitude},${nuevoOrigen.longitude}" +
+                val url = "https://maps.googleapis.com/maps/api/directions/json" +
+                        "?origin=${origen.latitude},${origen.longitude}" +
                         "&destination=${destino.latitude},${destino.longitude}" +
                         "&mode=driving&language=es&key=$API_KEY"
 
-                val client = OkHttpClient()
-                val request = Request.Builder().url(url).build()
-                val json = client.newCall(request).execute().body?.string() ?: return@launch
+                val json = OkHttpClient()
+                    .newCall(Request.Builder().url(url).build())
+                    .execute().body?.string() ?: return@launch
 
                 val obj = JSONObject(json)
 
                 if (obj.getString("status") != "OK") {
-                    val status  = obj.getString("status")
-                    val mensaje = if (obj.has("error_message"))
-                        obj.getString("error_message") else "Sin mensaje"
                     withContext(Dispatchers.Main) {
-                        binding.tvInstruccion.text = "$status: $mensaje"
+                        binding.tvInstruccion.text = "Error: ${obj.getString("status")}"
                     }
                     return@launch
                 }
 
-                val route = obj.getJSONArray("routes").getJSONObject(0)
-                val leg = route.getJSONArray("legs").getJSONObject(0)
-                val distancia = leg.getJSONObject("distance").getString("text")
-                val tiempo = leg.getJSONObject("duration").getString("text")
-
-
-
-                val primeraInstruccion = leg.getJSONArray("steps")
-                    .getJSONObject(0)
-                    .getString("html_instructions")
-                    .replace(Regex("<[^>]*>"), " ")
-                    .trim()
-
+                // Parsear datos
+                val ruta = obj.getJSONArray("routes").getJSONObject(0)
+                val tramo = ruta.getJSONArray("legs").getJSONObject(0)
+                val distancia = tramo.getJSONObject("distance").getString("text")
+                val tiempo = tramo.getJSONObject("duration").getString("text")
+                val instruccion = parsearInstruccion(tramo.getJSONArray("steps").getJSONObject(0))
                 val puntos = decodificarPolyline(
-                    route.getJSONObject("overview_polyline").getString("points")
+                    ruta.getJSONObject("overview_polyline").getString("points")
                 )
 
                 withContext(Dispatchers.Main) {
-                    // Redibujar ruta desde la nueva posición
-                    rutaPolyline?.remove()
-                    rutaPolyline = mMap.addPolyline(
-                        PolylineOptions()
-                            .addAll(puntos)
-                            .width(12f)
-                            .color(Color.parseColor("#4285F4"))
-                            .geodesic(true)
-                            .startCap(RoundCap())
-                            .endCap(RoundCap())
-                    )
-
-                    binding.tvInstruccion.text = primeraInstruccion
+                    dibujarRuta(puntos)
+                    binding.tvInstruccion.text = instruccion
                     binding.tvDistancia.text = distancia
                     binding.tvTiempo.text = tiempo
-                    if (distancia < "10m") {
-                        binding.tvInstruccion.text = "Has llegado"
-                    }
                 }
 
             } catch (e: Exception) {
@@ -343,39 +205,68 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    // Círculo azul
-    private fun crearIconoUsuario(): BitmapDescriptor {
-        val size = 48
-        val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
+    private fun parsearInstruccion(step: JSONObject): String {
+        val maniobra = if (step.has("maneuver")) step.getString("maneuver") else ""
+        val html = step.getString("html_instructions")
+        val distancia = step.getJSONObject("distance").getString("text")
+        val calle = Regex("<b>(.*?)</b>").find(html)?.groupValues?.get(1) ?: ""
 
-        // Halo exterior semitransparente
-        Paint(Paint.ANTI_ALIAS_FLAG).also {
-            it.color = Color.parseColor("#4D4285F4")
-            canvas.drawCircle(24f, 24f, 22f, it)
+        val texto = when {
+            maniobra.contains("turn-right") -> "Gira a la derecha${if (calle.isNotEmpty()) " en $calle" else ""}"
+            maniobra.contains("turn-left") -> "Gira a la izquierda${if (calle.isNotEmpty()) " en $calle" else ""}"
+            maniobra.contains("roundabout") -> {
+                val salida = Regex("(\\d+)").find(html)?.value ?: ""
+                "En la rotonda, toma la ${salida}ª salida${if (calle.isNotEmpty()) " hacia $calle" else ""}"
+            }
+            maniobra.contains("keep-right") -> "Manténgase en el carril derecho${if (calle.isNotEmpty()) " hacia $calle" else ""}"
+            maniobra.contains("keep-left") -> "Manténgase en el carril izquierdo${if (calle.isNotEmpty()) " hacia $calle" else ""}"
+            maniobra.contains("ramp") ||
+                    maniobra.contains("fork") -> "Coja la salida${if (calle.isNotEmpty()) " hacia $calle" else ""}"
+            maniobra.contains("uturn") -> "Dé la vuelta"
+            maniobra.contains("arrive") -> "Ha llegado al destino"
+            else  -> "Continúe recto${if (calle.isNotEmpty()) " por $calle" else ""}"
         }
 
-        // Círculo azul sólido
-        Paint(Paint.ANTI_ALIAS_FLAG).also {
-            it.color = Color.parseColor("#4285F4")
-            canvas.drawCircle(24f, 24f, 14f, it)
-        }
-
-        // Borde blanco
-        Paint(Paint.ANTI_ALIAS_FLAG).also {
-            it.color = Color.WHITE
-            it.style  = Paint.Style.STROKE
-            it.strokeWidth = 3f
-            canvas.drawCircle(24f, 24f, 14f, it)
-        }
-
-        return BitmapDescriptorFactory.fromBitmap(bitmap)
+        return "$texto · $distancia"
     }
 
-    fun getScaledMarker(drawable: Int): BitmapDescriptor {
-        val bitmap = BitmapFactory.decodeResource(resources, drawable)
-        val scaled = Bitmap.createScaledBitmap(bitmap, 80, 80, false)
-        return BitmapDescriptorFactory.fromBitmap(scaled)
+    private fun dibujarRuta(puntos: List<LatLng>) {
+        rutaPolyline?.remove()
+        rutaPolyline = mMap.addPolyline(
+            PolylineOptions()
+                .addAll(puntos)
+                .width(12f)
+                .color(Color.parseColor("#4285F4"))
+                .geodesic(true)
+                .startCap(RoundCap())
+                .endCap(RoundCap())
+        )
+    }
+
+    private fun decodificarPolyline(encoded: String): List<LatLng> {
+        val puntos = mutableListOf<LatLng>()
+        var index = 0; var lat = 0; var lng = 0
+        while (index < encoded.length) {
+            var b: Int; var shift = 0; var result = 0
+            do { b = encoded[index++].code - 63
+                result = result or (b and 0x1f shl shift); shift += 5 } while (b >= 0x20)
+            lat += if (result and 1 != 0) (result shr 1).inv() else result shr 1
+            shift = 0; result = 0
+            do { b = encoded[index++].code - 63
+                result = result or (b and 0x1f shl shift); shift += 5 } while (b >= 0x20)
+            lng += if (result and 1 != 0) (result shr 1).inv() else result shr 1
+            puntos.add(LatLng(lat / 1E5, lng / 1E5))
+        }
+        return puntos
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1001 &&
+            grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
+            iniciarGPS()
+        }
     }
 
     private fun <T> ChangeActivity(context: Context, cls: Class<T>){
