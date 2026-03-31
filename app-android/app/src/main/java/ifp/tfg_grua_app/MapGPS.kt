@@ -73,7 +73,7 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         val lat = intent.getDoubleExtra(EXTRA_LAT, 0.0)
         val lng = intent.getDoubleExtra(EXTRA_LNG, 0.0)
         val recogidaID = intent.getIntExtra(EXTRA_ID, -1)
-        destino     = LatLng(lat, lng)
+        destino = LatLng(lat, lng)
 
         // Mostrar datos del viaje en el panel
         val viaje = RecogidasRepo.Recogidas.find { it.id == recogidaID }

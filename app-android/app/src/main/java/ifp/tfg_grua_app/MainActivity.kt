@@ -37,16 +37,8 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        binding.btnToMaps.setOnClickListener {
-            val viaje = RecogidasRepo.Recogidas[0]
-
-            val intent = Intent(this, MapGPS::class.java).apply {
-                putExtra(MapGPS.EXTRA_LAT, viaje.lat)
-                putExtra(MapGPS.EXTRA_LNG, viaje.lng)
-                putExtra(MapGPS.EXTRA_ID,  viaje.id)
-            }
-            startActivity(intent)
-            finish()
+        binding.btnLogin.setOnClickListener {
+            ChangeActivity(this, Login::class.java)
         }
 
         binding.btnExit.setOnClickListener {
