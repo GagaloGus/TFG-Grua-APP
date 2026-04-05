@@ -1,42 +1,27 @@
+@use 'variables' as *;
 
-/* VARIABLES */
-:root {
-    --bright-blue: oklch(51.01% 0.274 263.83);
-    --electric-violet: oklch(53.18% 0.28 296.97);
-    --french-violet: oklch(47.66% 0.246 305.88);
-    --vivid-pink: oklch(69.02% 0.277 332.77);
-    --hot-red: oklch(61.42% 0.238 15.34);
-    --orange-red: oklch(63.32% 0.24 31.68);
-
-    --gray-900: oklch(19.37% 0.006 300.98);
-    --gray-700: oklch(36.98% 0.014 302.71);
-    --gray-400: oklch(70.9% 0.015 304.04);
-    --gray-blue: #c8ced4;
-
-    --gradient-main: linear-gradient(128deg, rgba(8, 184, 196, 1) 0%, rgba(47, 204, 112, 1) 60%, rgba(255, 234, 0, 1) 100%);
-
-    --primary-color: var(--bright-blue);
-    --secondary-color: var(--vivid-pink);
-    --background-light: #cfcfcf;
-}
-
-p{
+p {
     margin: 0;
 }
 
+.page-container {
+    height: fit-content;
+    min-height: 100vh;
+}
+
 .bg-light {
-    background: var(--background-light);
+    background: $surface;
 }
 
 .bg-cool {
-    background: var(--gradient-main);
+    background: $gradient-main;
 }
 
 .bg-gray {
-    background-color: var(--gray-blue);
+    background-color: $gray-blue;
 }
 
-.user-pfp{
+.user-pfp {
     min-width: 40px;
     width: 70px;
     margin: 0;
@@ -44,57 +29,60 @@ p{
     display: flex;
     align-items: center;
 
-    > img{
+    >img {
         width: 100%;
         margin: 0;
     }
 }
 
-@mixin chip-text($bg, $color){
+@mixin chip-text($bg, $color) {
+    border: 1.5px solid $border;
     font-size: 0.9rem;
     letter-spacing: 1px;
     font-weight: bold;
     border-radius: 50px;
     padding: 2px 8px;
     background-color: $bg;
-    > p{
+
+    >p {
         color: $color;
     }
 }
 
-.chip-text-orange{
+.chip-text-orange {
     @include chip-text(#fcead7, #c76e01);
 }
 
-.chip-text-green{
+.chip-text-green {
     @include chip-text(#d7fce8, #01c753);
 }
-.chip-text-blue{
+
+.chip-text-blue {
     @include chip-text(#d7d8fc, #0104c7);
 }
-.chip-text-red{
+
+.chip-text-red {
     @include chip-text(#fcded7, #c71801);
 }
-.chip-text-purple{
+
+.chip-text-purple {
     @include chip-text(#f3d7fc, #9f01c7);
 }
 
-.chip-text-grey{
+.chip-text-grey {
     @include chip-text(#e2e2e2, #474747);
 }
 
-.chip-text{
+.chip-text {
     @include chip-text(#e2e2e2, #474747)
 }
 
 @mixin mini-icon($bg, $color) {
     height: auto;
     padding: 10px;
-    display: flex;
     margin-left: auto;
-    align-items: center;
 
-    > figure {
+    >figure {
         width: 50px;
         height: 50px;
         margin: 0;
@@ -104,12 +92,10 @@ p{
         justify-content: center;
         background-color: $bg;
 
-        > svg {
+        >svg {
             color: $color;
         }
     }
-
-
 }
 
 .mini-icon-purple {
@@ -124,6 +110,51 @@ p{
     @include mini-icon(#FFF3E6, #FF8C00);
 }
 
-.mini-icon-blue{
+.mini-icon-blue {
     @include mini-icon(#e6f2ff, #0066ff)
+}
+
+@mixin stat-card($border-col) {
+    background: $surface;
+    border: 1.5px solid $border;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    border-left: 4px solid #d1d5db;
+    border-left-color: $border-col;
+
+    .stat-number {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: $text;
+        line-height: 1;
+    }
+
+    .stat-label {
+        font-size: 0.78rem;
+        color: $text-muted;
+        font-weight: 500;
+    }
+}
+
+.stat-card{
+    @include stat-card(#8d8d8d)
+}
+
+.stat-card-orange {
+    @include stat-card(#f59e0b)
+}
+
+.stat-card-blue {
+    @include stat-card(#3b82f6)
+}
+
+.stat-card-green {
+    @include stat-card(#10b981)
+}
+
+.stat-card-purple {
+    @include stat-card(#7b10b9)
 }

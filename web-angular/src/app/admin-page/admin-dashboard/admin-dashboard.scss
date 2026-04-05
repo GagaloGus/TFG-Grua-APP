@@ -1,0 +1,26 @@
+@use '../../../styles/variables' as *;
+
+@mixin dashboard-mini-info($border-col){
+    flex-grow: 1;
+    border-radius: 10px;
+    border-color: $border;
+    border-left: 5px solid #d1d5db;
+    border-left-color: $border-col;
+
+    > .card-body{
+        gap: 20px;
+    }
+}
+
+.dashboard-mini-info-orange{
+    @include dashboard-mini-info(#FF8C00)
+}
+.dashboard-mini-info-blue{
+    @include dashboard-mini-info(#0066ff)
+}
+.dashboard-mini-info-purple{
+    @include dashboard-mini-info(#9810FA)
+}
+.dashboard-mini-info-green{
+    @include dashboard-mini-info(#0ABF53)
+}

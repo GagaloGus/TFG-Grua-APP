@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-admin-dashboard',
   imports: [FormsModule],
   templateUrl: './admin-dashboard.html',
-  styleUrl: './admin-dashboard.css',
+  styleUrl: './admin-dashboard.scss',
 })
 export class AdminDashboard {
   activeServices: number = 0;

@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { Tablas } from './tablas.supabase';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SupabaseService {
+
+  tablas!: Tablas;
   private supabase: SupabaseClient;
   private supabaseAdmin: SupabaseClient;
 
@@ -20,75 +23,63 @@ export class SupabaseService {
     );
   }
 
-  async getAllUsers() {
+  async getAll(table: Tablas) {
     const { data, error } = await this.supabase
-      .from('usuarios')
+      .from(table)
       .select('*');
 
     if (error) {
       throw error;
     }
 
-    console.log("GET ALL USERS: " + data.length)
+    console.log(`GET ALL from '${table}': ${data.length}`)
     return data;
   }
 
-  async findUser(email: string) {
+  async find(table: Tablas, key: string, value: any) {
     const { data, error } = await this.supabase
-      .from('usuarios')
+      .from(table)
       .select('*')
-      .eq('email', email);
+      .eq(key, value);
 
     if (error) {
       throw error;
     }
 
-    console.log("USER FOUND: " + data.length)
+    console.log(`FIND from '${table}': ${data.length}`)
 
     //Encontrado -> data.length == 1
     return data
   }
 
-  async createUser(_nombre: string, _apellido1: string, _apellido2: string, _passwd: string, _rol: string, _tel: string, _mail: string, _carnet: string[]) {
-
-    const { data, error: authError } = await this.supabaseAdmin.auth.admin.createUser({
-      email: _mail,
-      password: _passwd,
-      email_confirm: true
-    });
-
-    if (authError) throw authError;
-
-    const uid = data.user?.id;
-    if (!uid) throw new Error('No se genero el UID');
-    console.log(`UID: ${uid}`)
-    
+  async deleteRow(table: Tablas, key: string, value: any) {
     const { error } = await this.supabase
-    .from('usuarios')
-    .insert([
-      {
-        id: uid,
-        nombre: _nombre,
-        apellido1: _apellido1,
-        apellido2: _apellido2,
-        password: _passwd,
-        rol: _rol,
-        telefono: _tel,
-        email: _mail,
-        licencia_conducir: _carnet
-      }
-    ])
-    
+      .from(table)
+      .delete()
+      .eq(key, value);
+
     if (error) throw error;
-    console.log(`USUARIO CREADO: ${uid} / ${_mail}`)
+    console.log(`DELETE from '${table}'`)
   }
-  
-  async deleteUser(id: number) {
+
+  async createUsuario(_nombre: string, _apellido1: string, _apellido2: string, _passwd: string, _rol: string, _tel: string, _mail: string, _carnet: string[]) {
+
     const { error } = await this.supabase
       .from('usuarios')
-      .delete()
-      .eq('id', id);
+      .insert([
+        {
+          nombre: _nombre,
+          apellido1: _apellido1,
+          apellido2: _apellido2,
+          password: _passwd,
+          rol: _rol,
+          telefono: _tel,
+          email: _mail,
+          licencia_conducir: _carnet
+        }
+      ])
 
     if (error) throw error;
+    console.log(`USUARIO CREADO: ${_mail}`)
   }
 }

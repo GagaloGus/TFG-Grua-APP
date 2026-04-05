@@ -1,7 +1,29 @@
-import { error } from "console";
+export enum Tablas {
+  USUARIOS = 'usuarios',
+  VEHICULOS = 'vehiculos',
+  SERVICIOS = 'servicios'
+}
+
+export class Servicio {
+  id!: number;
+  ubicacion_recogida!: number[];
+  ubicacion_destino!: number[];
+  fecha!: string;
+  operador_id!: string | null;
+  vehiculo_id!: number | null;
+  observaciones!: string | null;
+  estado!: string;
+  tel_cliente!: string | null;
+  nombre_cliente!: string | null;
+
+    constructor(data: Partial<Servicio>) {
+    Object.assign(this, data);
+  }
+}
 
 export class Usuario {
   id!: number;
+  num_empleado!: number;
   created_at?: string;
   nombre!: string;
   apellido1!: string;

@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase.service';
-import { Usuario } from '../../services/user';
+import { Tablas, Usuario } from '../../services/tablas.supabase';
 
 @Component({
   selector: 'app-admin-users',
@@ -35,7 +35,7 @@ export class AdminUsers implements OnInit {
 
   async loadUsers() {
     try {
-      const data = await this.supabaseService.getAllUsers();
+      const data = await this.supabaseService.getAll(Tablas.USUARIOS);
       this.users = data.map(u => new Usuario(u));
       this.filtrar(); // sincroniza la lista visible
     } catch (e) {
@@ -62,9 +62,11 @@ filtrar() {
   }
 
   async confirmarEliminar() {
-    if (!this.selected) return;
+    if (!this.selected) 
+      return;
+    
     try {
-      await this.supabaseService.deleteUser(this.selected.id);
+      await this.supabaseService.deleteRow(Tablas.USUARIOS, "id", this.selected.id);
       this.cerrarEliminar();
       await this.loadUsers();
     } catch (e) {

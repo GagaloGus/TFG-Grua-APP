@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SupabaseService } from '../supabase.service';
+import { Tablas } from '../tablas.supabase';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,7 @@ export class AuthService {
 
   async login(email: string, password: string): Promise<boolean> {
     try {
-      let match = await this.supabaseService.findUser(email);
+      let match = await this.supabaseService.find(Tablas.USUARIOS, "email", email);
 
       //No existe el usuario
       if (match.length == 0) {

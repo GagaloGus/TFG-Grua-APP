@@ -1,20 +1,21 @@
-.btn, .dropdown-toggle, .form-check-input {
-  transition: transform 0.2s ease;
+@use 'sass:color';
+@use 'variables' as *;
 
-  &:hover {
-    transform: scale(1.05);
+.btn, .dropdown-toggle, .form-check-input {
+  transition: all 0.2s ease;
+
+    &:hover {
+    box-shadow: 0 4px 14px rgba($primary, 0.35);
+    transform: translateY(-1px);
   }
+
+  &:active { transform: translateY(0); }
 }
 
 .container,
 .container-fluid {
     height: fit-content !important;
     width: 100% !important;
-}
-
-.page-container {
-    height: fit-content;
-    min-height: 100vh;
 }
 
 .card {

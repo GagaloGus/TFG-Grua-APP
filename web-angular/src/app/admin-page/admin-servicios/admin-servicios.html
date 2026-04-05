@@ -1,66 +1,254 @@
-<div class="d-flex align-items-center">
-    <div class="flex-grow-1">
-        <h1>Servicios</h1>
-        <h5 class="text-secondary">Página para la gestión de servicios</h5>
+<div>
+
+    <!-- Header -->
+    <div class="d-flex align-items-center mb-4">
+        <div class="flex-grow-1">
+            <h1 >Servicios</h1>
+            <h5 class="text-secondary">Página para la gestión de servicios</h5>
+        </div>
+        <button class="h-fit btn btn-success ms-3 d-flex align-items-center gap-2" (click)="abrirCrear()">
+            <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+                <path
+                    d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z" />
+            </svg>
+            Crear nuevo servicio
+        </button>
     </div>
-    <button class="h-fit btn btn-success ms-3 d-flex align-items-center">
-        <svg class="me-2" viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+
+    <!-- Filtros -->
+    <div class="filtros-bar d-flex align-items-center gap-3 mb-4 flex-wrap">
+        <div class="search-wrapper flex-grow-1">
+            <svg class="search-icon" viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+                <path
+                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.099zm-5.242 1.156a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11" />
+            </svg>
+            <input class="form-control search-input" type="text" placeholder="Buscar por ID, cliente u observaciones..."
+                [(ngModel)]="searchQuery" (input)="filtrar()" />
+        </div>
+        <select class="form-select estado-select" [(ngModel)]="filtroEstado" (change)="filtrar()">
+            <option value="">Todos los estados</option>
+            <option value="Sin empezar">Sin empezar</option>
+            <option value="En curso">En curso</option>
+            <option value="Finalizado">Finalizado</option>
+            <option value="Cancelado">Cancelado</option>
+        </select>
+    </div>
+
+    <!-- Error -->
+    @if (errorMsg) {
+    <div class="alert alert-danger d-flex align-items-center gap-2" role="alert">
+        <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
             <path
-                d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z" />
+                d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
         </svg>
-        Crear nuevo servicio
-    </button>
+        {{ errorMsg }}
+    </div>
+    }
+
+    <!-- Stats rapidas -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <span class="stat-number">{{ servicios.length }}</span>
+                <span class="stat-label">Total</span>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card-orange">
+                <span class="stat-number">{{ contarEstado('Sin empezar') }}</span>
+                <span class="stat-label">Sin empezar</span>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card-blue">
+                <span class="stat-number">{{ contarEstado('En curso') }}</span>
+                <span class="stat-label">En curso</span>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card-green">
+                <span class="stat-number">{{ contarEstado('Finalizado') }}</span>
+                <span class="stat-label">Finalizados</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla principal -->
+    <div class="table-wrapper">
+        <div class="table-responsive">
+            <table class="table tabla-servicios mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Teléfono</th>
+                        <th>Recogida</th>
+                        <th>Destino</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th>Operador</th>
+                        <th>Vehículo</th>
+                        <th>Observaciones</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (serviciosFiltrados.length === 0) {
+                    <tr>
+                        <td colspan="11" class="text-center py-5 text-secondary">
+                            <svg viewBox="0 0 16 16" width="32" height="32" fill="currentColor"
+                                class="mb-2 d-block mx-auto opacity-50">
+                                <path
+                                    d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5M.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5" />
+                            </svg>
+                            No se encontraron servicios
+                        </td>
+                    </tr>
+                    }
+                    @else {
+                    @for (s of serviciosFiltrados; track s.id) {
+                    <tr class="fila-servicio">
+                        <td><span class="id-badge">#{{ s.id }}</span></td>
+                        <td class="fw-medium">{{ s.nombre_cliente ?? '—' }}</td>
+                        <td>{{ s.tel_cliente ?? '—' }}</td>
+                        <td class="coordenadas">{{ formatCoords(s.ubicacion_recogida) }}</td>
+                        <td class="coordenadas">{{ formatCoords(s.ubicacion_destino) }}</td>
+                        <td class="text-nowrap">{{ s.fecha | date:'dd/MM/yy HH:mm' }}</td>
+                        <td><span class="badge-estado" [ngClass]="getBadgeClass(s.estado)">{{ s.estado }}</span></td>
+                        <td>{{ s.operador_id ? s.operador_id.slice(0, 8) + '…' : '—' }}</td>
+                        <td>{{ s.vehiculo_id ?? '—' }}</td>
+                        <td class="obs-cell">{{ s.observaciones ?? '—' }}</td>
+                        <td class="text-center text-nowrap">
+                            <button class="btn btn-sm btn-accion btn-accion--edit me-1" (click)="abrirEditar(s)"
+                                title="Editar">
+                                <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
+                                    <path
+                                        d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" />
+                                </svg>
+                            </button>
+                            <button class="btn btn-sm btn-accion btn-accion--delete" (click)="abrirEliminar(s)"
+                                title="Eliminar">
+                                <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
+                                    <path
+                                        d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                    <path
+                                        d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                    }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Total resultados -->
+    <p class="text-secondary small mt-2 mb-0">
+        Mostrando {{ serviciosFiltrados.length }} de {{ servicios.length }} servicios
+    </p>
+
 </div>
 
-<!-- Buscador -->
-<input class="form-control my-3" type="text" placeholder="Buscar por ID..." [(ngModel)]="searchQuery"
-    (input)="filtrar()" />
-
-@if (errorMsg) {
-<p class="text-danger">{{ errorMsg }}</p>
+<!-- ===== MODAL ELIMINAR ===== -->
+@if (showConfirmacion) {
+<div class="modal d-block modal-overlay" (click)="cerrarEliminar()">
+    <div class="modal-dialog modal-dialog-centered" (click)="$event.stopPropagation()">
+        <div class="modal-content modal-custom">
+            <div class="modal-header border-0 pb-0">
+                <div class="modal-icon modal-icon--danger">
+                    <svg viewBox="0 0 16 16" width="24" height="24" fill="currentColor">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                        <path
+                            d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="modal-body text-center pt-2">
+                <h5 class="fw-bold mb-1">¿Eliminar servicio?</h5>
+                <p class="text-secondary mb-0">
+                    Vas a eliminar el servicio <strong>#{{ selected?.id }}</strong>
+                    @if (selected?.nombre_cliente) { de <strong>{{ selected?.nombre_cliente }}</strong> }
+                    . Esta acción no se puede deshacer.
+                </p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center gap-2">
+                <button class="btn btn-outline-secondary px-4" (click)="cerrarEliminar()">Cancelar</button>
+                <button class="btn btn-danger px-4" (click)="confirmarEliminar()">Sí, eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
 }
 
-<!-- Tabla de usuarios -->
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Descripcion</th>
-            <th>Conductor</th>
-            <th>Telefono Contacto</th>
-        </tr>
-    </thead>
-    <tbody>
-        @for (u of usersFiltered; track u.id) {
-        <tr>
-            <td>{{ u.id }}</td>
-            <td>{{ u.user }}</td>
-            <td>{{ u.telefono }}</td>
-            <td>{{ u.role }}</td>
-            <td>{{ u.disponibilidad ? 'Sí' : 'No' }}</td>
-            <td>
-                <button class="btn btn-sm btn-warning me-2" routerLink="/admin/edituser/{{u.id}}">Editar</button>
-                <button class="btn btn-sm btn-danger" (click)="abrirEliminar(u)">Eliminar</button>
-            </td>
-        </tr>
-        }
-    </tbody>
-</table>
-
-<!-- Confirmacion eliminar -->
-@if (showConfirmation) {
-<div class="modal d-block" style="background: rgba(0,0,0,0.5);">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">¿Eliminar usuario?</h5>
+<!-- ===== MODAL CREAR / EDITAR ===== -->
+@if (showFormModal) {
+<div class="modal d-block modal-overlay" (click)="cerrarForm()">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" (click)="$event.stopPropagation()">
+        <div class="modal-content modal-custom">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">{{ modoEdicion ? 'Editar servicio #' + formData.id : 'Nuevo servicio' }}
+                </h5>
+                <button type="button" class="btn-close" (click)="cerrarForm()"></button>
             </div>
             <div class="modal-body">
-                ¿Seguro que quieres eliminar a <strong>{{ selected?.user }}</strong>?
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-medium">Nombre cliente</label>
+                        <input class="form-control" type="text" [(ngModel)]="formData.nombre_cliente"
+                            placeholder="Ej: Juan García">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-medium">Teléfono cliente</label>
+                        <input class="form-control" type="tel" [(ngModel)]="formData.tel_cliente"
+                            placeholder="Ej: +34 600 000 000">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-medium">Ubicación recogida <span class="text-secondary small">(lat,
+                                lng)</span></label>
+                        <input class="form-control" type="text" [(ngModel)]="formData.ubicacion_recogida_str"
+                            placeholder="Ej: 40.4168, -3.7038">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-medium">Ubicación destino <span class="text-secondary small">(lat,
+                                lng)</span></label>
+                        <input class="form-control" type="text" [(ngModel)]="formData.ubicacion_destino_str"
+                            placeholder="Ej: 41.3851, 2.1734">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-medium">Estado</label>
+                        <select class="form-select" [(ngModel)]="formData.estado">
+                            <option value="Sin empezar">Sin empezar</option>
+                            <option value="En curso">En curso</option>
+                            <option value="Finalizado">Finalizado</option>
+                            <option value="Cancelado">Cancelado</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-medium">ID Vehículo</label>
+                        <input class="form-control" type="number" [(ngModel)]="formData.vehiculo_id"
+                            placeholder="Ej: 3">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-medium">Observaciones</label>
+                        <textarea class="form-control" rows="3" [(ngModel)]="formData.observaciones"
+                            placeholder="Notas adicionales..."></textarea>
+                    </div>
+
+                </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" (click)="cerrarEliminar()">Cancelar</button>
-                <button class="btn btn-danger" (click)="confirmarEliminar()">Eliminar</button>
+            <div class="modal-footer border-0 gap-2">
+                <button class="btn btn-outline-secondary px-4" (click)="cerrarForm()">Cancelar</button>
+                <button class="btn btn-primary px-4" (click)="guardarServicio()">
+                    {{ modoEdicion ? 'Guardar cambios' : 'Crear servicio' }}
+                </button>
             </div>
         </div>
     </div>

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase.service';
 import { CommonModule } from '@angular/common';
+import { Tablas } from '../../services/tablas.supabase';
 
 @Component({
   selector: 'app-admin-createuser',
@@ -62,7 +63,7 @@ export class AdminCreateuser {
     }
 
     try {
-      const match = await this.supabaseService.findUser(this.mail)
+      const match = await this.supabaseService.find(Tablas.USUARIOS, "email", this.mail)
       if (match.length > 0) {
         this.error = `Ya existe un usuario con el correo '${this.mail}'!`;
         return;
@@ -70,7 +71,7 @@ export class AdminCreateuser {
 
       //Creado correctamente
       const carnets = Object.keys(this.chosenCarnet).filter(key=> this.chosenCarnet[key])
-      await this.supabaseService.createUser(this.nombre, this.apellido1, this.apellido2, this.password, this.chosenRol.key, this.tel, this.mail, carnets)
+      await this.supabaseService.createUsuario(this.nombre, this.apellido1, this.apellido2, this.password, this.chosenRol.key, this.tel, this.mail, carnets)
       this.success = "Usuario creado!";
 
     } catch (e) {

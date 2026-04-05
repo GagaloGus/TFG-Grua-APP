@@ -26,8 +26,9 @@
             ],
             "styles": [
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "src/styles.scss",
-              "src/bootstrapOverrides.scss"
+              "./src/styles/variables.scss",
+              "./src/styles/styles.scss",
+              "./src/styles/bootstrapOverrides.scss"
             ],
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
