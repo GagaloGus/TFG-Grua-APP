@@ -63,7 +63,6 @@ export class SupabaseService {
   }
 
   async createUsuario(_nombre: string, _apellido1: string, _apellido2: string, _passwd: string, _rol: string, _tel: string, _mail: string, _carnet: string[]) {
-
     const { error } = await this.supabase
       .from('usuarios')
       .insert([
@@ -82,4 +81,14 @@ export class SupabaseService {
     if (error) throw error;
     console.log(`USUARIO CREADO: ${_mail}`)
   }
+
+  async insert(table: Tablas, value: any){
+    const { error } = await this.supabase
+      .from(table)
+      .insert([value])
+
+    if (error) throw error;
+    console.log(`INSERTADO en '${table}'`)
+  }
+
 }

@@ -1,7 +1,7 @@
 <div>
 
     <!-- Header -->
-    <div class="d-flex align-items-center mb-4">
+    <div class="d-flex align-items-center">
         <div class="flex-grow-1">
             <h1>Servicios</h1>
             <h5 class="text-secondary">Página para la gestión de servicios</h5>
@@ -16,7 +16,7 @@
     </div>
 
     <!-- Filtros -->
-    <div class="filtros-bar d-flex align-items-center gap-3 mb-4 flex-wrap">
+    <div class="filtros-bar d-flex align-items-center gap-3 my-4 flex-wrap">
         <div class="search-wrapper flex-grow-1">
             <svg class="search-icon" viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
                 <path
@@ -35,22 +35,22 @@
     </div>
 
     <!-- Error -->
-    @if (errorMsg) {
+    @if (errorMsg()) {
     <div class="alert alert-danger d-flex align-items-center gap-2" role="alert">
         <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor">
             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
             <path
                 d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
         </svg>
-        {{ errorMsg }}
+        {{ errorMsg() }}
     </div>
     }
 
-    <!-- Stats rapidas -->
+    <!-- Stats rápidas -->
     <div class="row g-3 mb-4">
         <div class="col-6 col-md-3">
             <div class="stat-card">
-                <span class="stat-number">{{ servicios.length }}</span>
+                <span class="stat-number">{{ servicios().length }}</span>
                 <span class="stat-label">Total</span>
             </div>
         </div>
@@ -94,21 +94,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (!finishedLoading) {
+                    @if (!finishedLoading()) {
                     <tr>
                         <td colspan="11" class="text-center py-5 text-secondary">
                             <svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
                                 <style>
                                     @keyframes spin {
-                                        from {
-                                            transform: rotate(0deg);
-                                        }
-
-                                        to {
-                                            transform: rotate(360deg);
-                                        }
+                                        from { transform: rotate(0deg); }
+                                        to   { transform: rotate(360deg); }
                                     }
-
                                     .spinner-ring {
                                         transform-origin: 30px 30px;
                                         animation: spin 1.1s linear infinite;
@@ -124,8 +118,7 @@
                             <p>Obteniendo datos...</p>
                         </td>
                     </tr>
-                    }
-                    @else if (serviciosFiltrados.length == 0) {
+                    } @else if (serviciosFiltrados().length === 0) {
                     <tr>
                         <td colspan="11" class="text-center py-5 text-secondary">
                             <svg viewBox="0 0 16 16" width="32" height="32" fill="currentColor"
@@ -136,11 +129,10 @@
                             No se encontraron servicios
                         </td>
                     </tr>
-                    }
-                    @else {
-                    @for (s of serviciosFiltrados; track s.id) {
+                    } @else {
+                    @for (s of serviciosFiltrados(); track s.id) {
                     <tr class="fila-servicio">
-                        <td><span class="id-badge">#{{ s.id }}</span></td>
+                        <td><span class="id-badge ">{{ s.id }}</span></td>
                         <td class="fw-medium">{{ s.nombre_cliente ?? '—' }}</td>
                         <td>{{ s.tel_cliente ?? '—' }}</td>
                         <td class="coordenadas">{{ formatCoords(s.ubicacion_recogida) }}</td>
@@ -171,16 +163,14 @@
                     </tr>
                     }
                     }
-
-
                 </tbody>
             </table>
         </div>
     </div>
 
     <!-- Total resultados -->
-    <p class="text-secondary small mt-2 mb-0">
-        Mostrando {{ serviciosFiltrados.length }} de {{ servicios.length }} servicios
+    <p class="text-secondary small mt-2">
+        Mostrando {{ serviciosFiltrados().length }} de {{ servicios().length }} servicios
     </p>
 
 </div>
@@ -219,16 +209,16 @@
 <!-- ===== MODAL CREAR / EDITAR ===== -->
 @if (showFormModal) {
 <div class="modal d-block modal-overlay" (click)="cerrarForm()">
-    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" (click)="$event.stopPropagation()">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable"
+        (click)="$event.stopPropagation()">
         <div class="modal-content modal-custom">
             <div class="modal-header border-0">
-                <h5 class="modal-title fw-bold">{{ modoEdicion ? 'Editar servicio #' + formData.id : 'Nuevo servicio' }}
-                </h5>
+                <h5 class="modal-title fw-bold">{{ modoEdicion ? 'Editar servicio #' + formData.id : 'Nuevo servicio'
+                    }}</h5>
                 <button type="button" class="btn-close" (click)="cerrarForm()"></button>
             </div>
             <div class="modal-body">
                 <div class="row g-3">
-
                     <div class="col-md-6">
                         <label class="form-label fw-medium">Nombre cliente</label>
                         <input class="form-control" type="text" [(ngModel)]="formData.nombre_cliente"
@@ -239,7 +229,6 @@
                         <input class="form-control" type="tel" [(ngModel)]="formData.tel_cliente"
                             placeholder="Ej: +34 600 000 000">
                     </div>
-
                     <div class="col-md-6">
                         <label class="form-label fw-medium">Ubicación recogida <span class="text-secondary small">(lat,
                                 lng)</span></label>
@@ -252,7 +241,6 @@
                         <input class="form-control" type="text" [(ngModel)]="formData.ubicacion_destino_str"
                             placeholder="Ej: 41.3851, 2.1734">
                     </div>
-
                     <div class="col-md-6">
                         <label class="form-label fw-medium">Estado</label>
                         <select class="form-select" [(ngModel)]="formData.estado">
@@ -267,13 +255,11 @@
                         <input class="form-control" type="number" [(ngModel)]="formData.vehiculo_id"
                             placeholder="Ej: 3">
                     </div>
-
                     <div class="col-12">
                         <label class="form-label fw-medium">Observaciones</label>
                         <textarea class="form-control" rows="3" [(ngModel)]="formData.observaciones"
                             placeholder="Notas adicionales..."></textarea>
                     </div>
-
                 </div>
             </div>
             <div class="modal-footer border-0 gap-2">

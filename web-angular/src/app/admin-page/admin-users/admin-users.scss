@@ -1,0 +1,196 @@
+// ── Filtro dropdown con checkboxes ───────────────────────────────────────────
+.filtro-dropdown {
+  position: relative;
+
+  &.open .filtro-menu {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+  }
+
+  &.open .chevron {
+    transform: rotate(180deg);
+  }
+}
+
+.filtro-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.45rem 0.85rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 0.855rem;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:hover {
+    border-color: #6b7280;
+  }
+
+  .chevron {
+    transition: transform 0.2s;
+    color: #9ca3af;
+  }
+}
+
+.filtro-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #1a56db;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.filtro-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 999;
+  background: #fff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+  min-width: 180px;
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.filtro-opcion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.5rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.855rem;
+  color: #111827;
+  margin: 0;
+  user-select: none;
+  transition: background 0.1s;
+
+  &:hover {
+    background: #f3f4f6;
+  }
+
+  input[type="checkbox"] {
+    display: none; // ocultamos el nativo, usamos el custom
+  }
+
+  // Checkbox visual custom
+  .filtro-check {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 4px;
+    background: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, border-color 0.15s;
+
+    &::after {
+      content: '';
+      display: block;
+      width: 9px;
+      height: 5px;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(-45deg) translateY(-1px);
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+  }
+
+  input[type="checkbox"]:checked + .filtro-check {
+    background: #1a56db;
+    border-color: #1a56db;
+
+    &::after {
+      opacity: 1;
+    }
+  }
+}
+
+.filtro-limpiar {
+  width: 100%;
+  margin-top: 0.35rem;
+  padding: 0.35rem;
+  border: none;
+  border-top: 1px solid #f3f4f6;
+  background: transparent;
+  color: #6b7280;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border-radius: 0 0 6px 6px;
+  transition: color 0.15s;
+
+  &:hover {
+    color: #e02424;
+  }
+}
+
+// ── Botón limpiar todo ────────────────────────────────────────────────────────
+.btn-limpiar-todo {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.45rem 0.85rem;
+  border: 1.5px solid #fca5a5;
+  border-radius: 8px;
+  background: #fff1f2;
+  color: #e02424;
+  font-size: 0.835rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover {
+    background: #fee2e2;
+    border-color: #f87171;
+  }
+}
+
+// ── Buscador (igual que antes) ────────────────────────────────────────────────
+.filtros-bar {
+  .search-wrapper {
+    position: relative;
+    min-width: 220px;
+
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6b7280;
+      pointer-events: none;
+    }
+
+    .search-input {
+      padding-left: 2.4rem;
+      border-radius: 8px;
+      border: 1.5px solid #e5e7eb;
+      font-size: 0.875rem;
+
+      &:focus {
+        border-color: #1a56db;
+        box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.12);
+      }
+    }
+  }
+}

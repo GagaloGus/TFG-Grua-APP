@@ -1,45 +1,6 @@
 @use 'sass:color';
 @use '../../../styles/variables' as *;
 
-// ─── Filtros ─────────────────────────────────────────────────────────────────
-.filtros-bar {
-  .search-wrapper {
-    position: relative;
-    min-width: 220px;
-
-    .search-icon {
-      position: absolute;
-      left: 0.75rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: $text-muted;
-      pointer-events: none;
-    }
-
-    .search-input {
-      padding-left: 2.4rem;
-      border: 1.5px solid $border;
-      font-size: 0.875rem;
-
-      &:focus {
-        border-color: $primary;
-        box-shadow: 0 0 0 3px rgba($primary, 0.12);
-      }
-    }
-  }
-
-  .estado-select {
-    max-width: 200px;
-    border-radius: 10px;
-    border: 1.5px solid $border;
-    font-size: 0.875rem;
-
-    &:focus {
-      border-color: $primary;
-      box-shadow: 0 0 0 3px rgba($primary, 0.12);
-    }
-  }
-}
 
 // ─── Tabla ───────────────────────────────────────────────────────────────────
 .table-wrapper {

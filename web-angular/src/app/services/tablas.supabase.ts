@@ -16,7 +16,7 @@ export class Servicio {
   tel_cliente!: string | null;
   nombre_cliente!: string | null;
 
-    constructor(data: Partial<Servicio>) {
+  constructor(data: Partial<Servicio>) {
     Object.assign(this, data);
   }
 }
@@ -29,13 +29,13 @@ export class Usuario {
   apellido1!: string;
   apellido2!: string;
   password!: string;
-  role!: string;
-  disponible!: string;
+  rol!: string;
+  disponibilidad!: string;
   serv_completados_total!: number;
   serv_completados_hoy!: number;
   licencia_conducir!: string[] | null;
-  tel!: string | null;
-  mail!: string | null;
+  telefono!: string | null;
+  email!: string | null;
 
   constructor(data: Partial<Usuario>) {
     Object.assign(this, data);
@@ -51,25 +51,25 @@ export class Usuario {
   }
 
   get disponibilidadCSSClass():string{
-    if(this.disponible == "En servicio") return "chip-text-orange"
-    else if(this.disponible == "Disponible") return "chip-text-green"
-    else if(this.disponible == "Inactivo") return "chip-text-grey"
+    if(this.disponibilidad == "En servicio") return "chip-text-orange"
+    else if(this.disponibilidad == "Disponible") return "chip-text-green"
+    else if(this.disponibilidad == "Inactivo") return "chip-text-grey"
     return "chip-text"
   }
 
   get rolNombre():string{
-    if(this.role == "N") return "Sin rol"
-    else if(this.role == "A") return "ADMIN"
-    else if(this.role == "U") return "Usuario"
-    else if(this.role == "T") return "Trabajador"
+    if(this.rol == "N") return "Sin rol"
+    else if(this.rol == "A") return "ADMIN"
+    else if(this.rol == "U") return "Usuario"
+    else if(this.rol == "T") return "Trabajador"
     return "Rol indefinido"
   }
 
     get rolCSSClass():string{
-    if(this.role == "N") return "chip-text-grey"
-    else if(this.role == "A") return "chip-text-purple"
-    else if(this.role == "U") return "chip-text-blue"
-    else if(this.role == "T") return "chip-text-red"
+    if(this.rol == "N") return "chip-text-grey"
+    else if(this.rol == "A") return "chip-text-purple"
+    else if(this.rol == "U") return "chip-text-blue"
+    else if(this.rol == "T") return "chip-text-red"
     return "chip-text"
   }
 }

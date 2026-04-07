@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase.service';
 import { CommonModule } from '@angular/common';
@@ -30,8 +30,8 @@ export class AdminCreateuser {
   chosenCarnet: Record<string, boolean> = { B: false, C: false, E: false }
   readonly carnetLetras = Object.keys(this.chosenCarnet)
 
-  error: string = "";
-  success: string = "";
+  error = signal('');
+  success = signal('');
 
   setRol(key: string, display: string) {
     this.chosenRol = { key, display }
@@ -53,29 +53,29 @@ export class AdminCreateuser {
   }
 
   async createNewUser() {
-    this.error = ""
-    this.success = ""
+    this.error.set('')
+    this.success.set('')
 
     const validationError = this.validar()
     if (validationError != '') {
-      this.error = validationError;
+      this.error.set(validationError);
       return;
     }
 
     try {
       const match = await this.supabaseService.find(Tablas.USUARIOS, "email", this.mail)
       if (match.length > 0) {
-        this.error = `Ya existe un usuario con el correo '${this.mail}'!`;
+        this.error.set(`Ya existe un usuario con el correo '${this.mail}'!`);
         return;
       }
 
       //Creado correctamente
-      const carnets = Object.keys(this.chosenCarnet).filter(key=> this.chosenCarnet[key])
+      const carnets = Object.keys(this.chosenCarnet).filter(key => this.chosenCarnet[key])
       await this.supabaseService.createUsuario(this.nombre, this.apellido1, this.apellido2, this.password, this.chosenRol.key, this.tel, this.mail, carnets)
-      this.success = "Usuario creado!";
+      this.success.set("Usuario creado!");
 
     } catch (e) {
-      this.error = "Hubo un error de base de datos..";
+      this.error.set("Hubo un error de base de datos..");
       console.error(e);
     }
   }

@@ -64,11 +64,11 @@ export class AuthService {
     this._isAdmin = false
   }
 
-  getEmail(): string {
-    return this._currentEmail
+  getEmail() {
+    return this._currentEmail == "" ? null : this._currentEmail
   }
 
-  getPassword(): string {
-    return this._currentPassword
+  getPassword() {
+    return this._currentPassword == "" ? null : this._currentPassword
   }
 }

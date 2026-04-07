@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet, RouterLinkWithHref } from '@angular/router';
+import { RouterOutlet, RouterLinkWithHref, Router } from '@angular/router';
 import { AuthService } from '../services/auth-service/auth-service';
 
 @Component({
@@ -10,22 +10,23 @@ import { AuthService } from '../services/auth-service/auth-service';
 })
 export class AdminPage {
 
+    constructor(private authService:AuthService, private router: Router,){}
 
-    constructor(private authService:AuthService){}
-  
     isLoggedIn(): boolean {
       return this.authService.isLoggedIn()
     }
-  
+
     isAdmin(): boolean {
       return this.authService.isAdmin()
     }
-  
+
     logout() {
+      console.log("bai")
       this.authService.logout()
+      this.router.navigate(['/home'])
     }
-  
-    getEmail(): string {
+
+    getEmail() {
       return this.authService.getEmail()
     }
 }

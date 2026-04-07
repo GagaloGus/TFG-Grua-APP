@@ -66,11 +66,11 @@
                 </div>
             </div>
         </form>
-        @if(error){
-        <p class="text-danger font-weight-bold">{{error}}</p>
+        @if(error()){
+        <p class="text-danger font-weight-bold">{{error()}}</p>
         }
-        @if(success){
-        <p class="text-success font-weight-bold">{{success}}</p>
+        @if(success()){
+        <p class="text-success font-weight-bold">{{success()}}</p>
         }
         <button type="button" class="btn btn-primary mt-2" (click)="createNewUser()">Crear usuario</button>
     </div>
