@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -22,7 +22,7 @@ export class AdminUsers implements OnInit {
   selected: any = null;
   refreshInterval: any;
 
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(private supabaseService: SupabaseService, private cdr: ChangeDetectorRef) {}
 
   async ngOnInit() {
     await this.loadUsers();
@@ -62,9 +62,9 @@ filtrar() {
   }
 
   async confirmarEliminar() {
-    if (!this.selected) 
+    if (!this.selected)
       return;
-    
+
     try {
       await this.supabaseService.deleteRow(Tablas.USUARIOS, "id", this.selected.id);
       this.cerrarEliminar();

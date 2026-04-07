@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -21,12 +21,12 @@ interface FormData {
 @Component({
   selector: 'app-servicios',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, DatePipe],  
+  imports: [CommonModule, FormsModule, RouterModule, DatePipe],
   templateUrl: './admin-servicios.html',
   styleUrl: './admin-servicios.scss',
 })
 export class AdminServicios implements OnInit {
-
+  finishedLoading: boolean = false;
   servicios: Servicio[] = [];
   serviciosFiltrados: Servicio[] = [];
 
@@ -43,17 +43,28 @@ export class AdminServicios implements OnInit {
   modoEdicion   = false;
   formData: FormData = this.emptyForm();
 
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(private supabaseService: SupabaseService, private cdr: ChangeDetectorRef) {}
   // ─────────────────────────────────────────────────────────────────────────
 
-  ngOnInit(): void {
+  ngOnInit(){
     this.cargarServicios();
   }
 
   async cargarServicios(){
-    const data = await this.supabaseService.getAll(Tablas.SERVICIOS)
-    this.servicios = data.map(u => new Servicio(u));
-    this.filtrar();
+    this.finishedLoading = false;
+
+    try {
+      const data = await this.supabaseService.getAll(Tablas.SERVICIOS)
+      this.servicios = data.map(u => new Servicio(u));
+      this.filtrar();
+    } catch (err:any) {
+      this.errorMsg = err.message ?? "Error al cargar servicios"
+    }
+    finally{
+      this.finishedLoading = true;
+      this.cdr.detectChanges();
+    }
+
   }
 
   filtrar(): void {
@@ -103,7 +114,7 @@ export class AdminServicios implements OnInit {
   }
 
   async confirmarEliminar(): Promise<void> {
-    if (!this.selected) 
+    if (!this.selected)
       return;
 
     try {
@@ -169,7 +180,7 @@ export class AdminServicios implements OnInit {
         // if (error) throw error;
 
         const idx = this.servicios.findIndex(s => s.id === this.formData.id);
-        
+
         if (idx !== -1) this.servicios[idx] = { ...this.servicios[idx], ...payload };
       } else {
         // const { data, error } = await this.supabase.client

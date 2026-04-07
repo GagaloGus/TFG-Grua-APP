@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="d-flex align-items-center mb-4">
         <div class="flex-grow-1">
-            <h1 >Servicios</h1>
+            <h1>Servicios</h1>
             <h5 class="text-secondary">Página para la gestión de servicios</h5>
         </div>
         <button class="h-fit btn btn-success ms-3 d-flex align-items-center gap-2" (click)="abrirCrear()">
@@ -94,7 +94,38 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (serviciosFiltrados.length === 0) {
+                    @if (!finishedLoading) {
+                    <tr>
+                        <td colspan="11" class="text-center py-5 text-secondary">
+                            <svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                                <style>
+                                    @keyframes spin {
+                                        from {
+                                            transform: rotate(0deg);
+                                        }
+
+                                        to {
+                                            transform: rotate(360deg);
+                                        }
+                                    }
+
+                                    .spinner-ring {
+                                        transform-origin: 30px 30px;
+                                        animation: spin 1.1s linear infinite;
+                                    }
+                                </style>
+                                <circle cx="30" cy="30" r="22" fill="none" stroke="#dee2e6" stroke-width="4"
+                                    stroke-linecap="round" />
+                                <g class="spinner-ring">
+                                    <circle cx="30" cy="30" r="22" fill="none" stroke="#0d6efd" stroke-width="4"
+                                        stroke-linecap="round" stroke-dasharray="35 105" />
+                                </g>
+                            </svg>
+                            <p>Obteniendo datos...</p>
+                        </td>
+                    </tr>
+                    }
+                    @else if (serviciosFiltrados.length == 0) {
                     <tr>
                         <td colspan="11" class="text-center py-5 text-secondary">
                             <svg viewBox="0 0 16 16" width="32" height="32" fill="currentColor"
@@ -140,6 +171,7 @@
                     </tr>
                     }
                     }
+
 
                 </tbody>
             </table>
