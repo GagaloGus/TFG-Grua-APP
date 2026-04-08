@@ -2,30 +2,7 @@
 @use '../../../styles/variables' as *;
 
 
-// ─── Tabla ───────────────────────────────────────────────────────────────────
-.table-wrapper {
-  overflow: hidden;        // que el wrapper no desborde
-  width: 100%;             // ocupa solo su contenedor
-  min-width: 0;            // evita que flex/grid lo estire
-}
 
-.table-responsive {
-  overflow-x: auto;        // el scroll solo aquí dentro
-  width: 100%;
-
-  // Scrollbar visible y estilizada
-  &::-webkit-scrollbar {
-    height: 6px;
-  }
-  &::-webkit-scrollbar-track {
-    background: #f3f4f6;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: #d1d5db;
-    border-radius: 3px;
-    &:hover { background: #9ca3af; }
-  }
-}
 
 .tabla-servicios {
   min-width: 960px;   // fuerza el scroll cuando la pantalla es más pequeña

@@ -1,5 +1,4 @@
 <div>
-
     <!-- Header -->
     <div class="d-flex align-items-center">
         <div class="flex-grow-1">
@@ -48,25 +47,25 @@
 
     <!-- Stats rápidas -->
     <div class="row g-3 mb-4">
-        <div class="col-6 col-md-3">
+        <div class="col-12 col-md-6 col-lg-3">
             <div class="stat-card">
                 <span class="stat-number">{{ servicios().length }}</span>
                 <span class="stat-label">Total</span>
             </div>
         </div>
-        <div class="col-6 col-md-3">
+        <div class="col-12 col-md-6 col-lg-3">
             <div class="stat-card-orange">
                 <span class="stat-number">{{ contarEstado('Sin empezar') }}</span>
                 <span class="stat-label">Sin empezar</span>
             </div>
         </div>
-        <div class="col-6 col-md-3">
+        <div class="col-12 col-md-6 col-lg-3">
             <div class="stat-card-blue">
                 <span class="stat-number">{{ contarEstado('En curso') }}</span>
                 <span class="stat-label">En curso</span>
             </div>
         </div>
-        <div class="col-6 col-md-3">
+        <div class="col-12 col-md-6 col-lg-3">
             <div class="stat-card-green">
                 <span class="stat-number">{{ contarEstado('Finalizado') }}</span>
                 <span class="stat-label">Finalizados</span>
@@ -96,21 +95,11 @@
                 <tbody>
                     @if (!finishedLoading()) {
                     <tr>
-                        <td colspan="11" class="text-center py-5 text-secondary">
+                        <td colspan="11" class="loading-icono">
                             <svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
-                                <style>
-                                    @keyframes spin {
-                                        from { transform: rotate(0deg); }
-                                        to   { transform: rotate(360deg); }
-                                    }
-                                    .spinner-ring {
-                                        transform-origin: 30px 30px;
-                                        animation: spin 1.1s linear infinite;
-                                    }
-                                </style>
                                 <circle cx="30" cy="30" r="22" fill="none" stroke="#dee2e6" stroke-width="4"
                                     stroke-linecap="round" />
-                                <g class="spinner-ring">
+                                <g>
                                     <circle cx="30" cy="30" r="22" fill="none" stroke="#0d6efd" stroke-width="4"
                                         stroke-linecap="round" stroke-dasharray="35 105" />
                                 </g>
@@ -118,7 +107,7 @@
                             <p>Obteniendo datos...</p>
                         </td>
                     </tr>
-                    } @else if (serviciosFiltrados().length === 0) {
+                    } @else if (serviciosFiltrados().length == 0) {
                     <tr>
                         <td colspan="11" class="text-center py-5 text-secondary">
                             <svg viewBox="0 0 16 16" width="32" height="32" fill="currentColor"
@@ -135,12 +124,12 @@
                         <td><span class="id-badge ">{{ s.id }}</span></td>
                         <td class="fw-medium">{{ s.nombre_cliente ?? '—' }}</td>
                         <td>{{ s.tel_cliente ?? '—' }}</td>
-                        <td class="coordenadas">{{ formatCoords(s.ubicacion_recogida) }}</td>
-                        <td class="coordenadas">{{ formatCoords(s.ubicacion_destino) }}</td>
+                        <td class="coordenadas">{{ s.formatCoordRecogida }}</td>
+                        <td class="coordenadas">{{ s.formatCoordDestino }}</td>
                         <td class="text-nowrap">{{ s.fecha | date:'dd/MM/yy HH:mm' }}</td>
-                        <td><span class="badge-estado" [ngClass]="getBadgeClass(s.estado)">{{ s.estado }}</span></td>
-                        <td>{{ s.operador_id ? s.operador_id.slice(0, 8) + '…' : '—' }}</td>
-                        <td>{{ s.vehiculo_id ?? '—' }}</td>
+                        <td><span class="badge-estado" [ngClass]="s.badgeClass">{{ s.estado }}</span></td>
+                        <td>{{ s.num_empleado ?? '—' }}</td>
+                        <td>{{ s.vehiculo_matricula ?? '—' }}</td>
                         <td class="obs-cell">{{ s.observaciones ?? '—' }}</td>
                         <td class="text-center text-nowrap">
                             <button class="btn btn-sm btn-accion btn-accion--edit me-1" (click)="abrirEditar(s)"
@@ -209,8 +198,7 @@
 <!-- ===== MODAL CREAR / EDITAR ===== -->
 @if (showFormModal) {
 <div class="modal d-block modal-overlay" (click)="cerrarForm()">
-    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable"
-        (click)="$event.stopPropagation()">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" (click)="$event.stopPropagation()">
         <div class="modal-content modal-custom">
             <div class="modal-header border-0">
                 <h5 class="modal-title fw-bold">{{ modoEdicion ? 'Editar servicio #' + formData.id : 'Nuevo servicio'
@@ -230,16 +218,23 @@
                             placeholder="Ej: +34 600 000 000">
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label fw-medium">Ubicación recogida <span class="text-secondary small">(lat,
-                                lng)</span></label>
-                        <input class="form-control" type="text" [(ngModel)]="formData.ubicacion_recogida_str"
-                            placeholder="Ej: 40.4168, -3.7038">
+                        <label class="form-label fw-medium">Ubicación recogida <span class="text-secondary small">(lat,lng)</span></label>
+                        <div class="d-flex gap-3">
+                            <input class="form-control" type="text" [(ngModel)]="formData.ubicacion_recogida_lat"
+                            placeholder="Ej: 40.4168">
+                            <input class="form-control" type="text" [(ngModel)]="formData.ubicacion_recogida_lng"
+                            placeholder="Ej: -3.7038">
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-medium">Ubicación destino <span class="text-secondary small">(lat,
                                 lng)</span></label>
-                        <input class="form-control" type="text" [(ngModel)]="formData.ubicacion_destino_str"
-                            placeholder="Ej: 41.3851, 2.1734">
+                        <div class="d-flex gap-3">
+                            <input class="form-control" type="text" [(ngModel)]="formData.ubicacion_destino_lat"
+                            placeholder="Ej: 40.4168">
+                            <input class="form-control" type="text" [(ngModel)]="formData.ubicacion_destino_lng"
+                            placeholder="Ej: -3.7038">
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-medium">Estado</label>
@@ -251,9 +246,13 @@
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label fw-medium">ID Vehículo</label>
-                        <input class="form-control" type="number" [(ngModel)]="formData.vehiculo_id"
-                            placeholder="Ej: 3">
+                        <label class="form-label fw-medium">Vehículo</label>
+                        <select class="form-select" [(ngModel)]="formData.vehiculo_matricula">
+                            <option [value]="null" disabled>Selecciona un vehículo</option>
+                            @for (v of vehiculos(); track v.id) {
+                            <option [value]="v.matricula">{{ v.matricula }} — {{ v.marca }}</option>
+                            }
+                        </select>
                     </div>
                     <div class="col-12">
                         <label class="form-label fw-medium">Observaciones</label>
@@ -261,6 +260,9 @@
                             placeholder="Notas adicionales..."></textarea>
                     </div>
                 </div>
+                @if (createErrorMsg() != ''){
+                <p class="text-danger mt-2">{{createErrorMsg()}}</p>
+                }
             </div>
             <div class="modal-footer border-0 gap-2">
                 <button class="btn btn-outline-secondary px-4" (click)="cerrarForm()">Cancelar</button>

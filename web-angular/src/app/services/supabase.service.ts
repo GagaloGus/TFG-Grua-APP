@@ -62,33 +62,28 @@ export class SupabaseService {
     console.log(`DELETE from '${table}'`)
   }
 
-  async createUsuario(_nombre: string, _apellido1: string, _apellido2: string, _passwd: string, _rol: string, _tel: string, _mail: string, _carnet: string[]) {
-    const { error } = await this.supabase
-      .from('usuarios')
-      .insert([
-        {
-          nombre: _nombre,
-          apellido1: _apellido1,
-          apellido2: _apellido2,
-          password: _passwd,
-          rol: _rol,
-          telefono: _tel,
-          email: _mail,
-          licencia_conducir: _carnet
-        }
-      ])
-
-    if (error) throw error;
-    console.log(`USUARIO CREADO: ${_mail}`)
-  }
-
   async insert(table: Tablas, value: any){
+    const { id, fecha, ...payload } = value;
     const { error } = await this.supabase
       .from(table)
-      .insert([value])
+      .insert([payload])
 
     if (error) throw error;
     console.log(`INSERTADO en '${table}'`)
+  }
+
+  async update(table: Tablas, keyID: string, valueID: string, value: any){
+    const { id, ...payload } = value;
+    const { error } = await this.supabase
+      .from(table)
+      .update(payload)
+      .eq(keyID, valueID);
+
+    if (error) {
+      throw error;
+    }
+
+    console.log(`UPDATED '${table}' (${keyID} = ${valueID})`)
   }
 
 }

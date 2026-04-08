@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase.service';
 import { CommonModule } from '@angular/common';
-import { Tablas } from '../../services/tablas.supabase';
+import { Tablas, Usuario } from '../../services/tablas.supabase';
 
 @Component({
   selector: 'app-admin-createuser',
@@ -70,8 +70,18 @@ export class AdminCreateuser {
       }
 
       //Creado correctamente
-      const carnets = Object.keys(this.chosenCarnet).filter(key => this.chosenCarnet[key])
-      await this.supabaseService.createUsuario(this.nombre, this.apellido1, this.apellido2, this.password, this.chosenRol.key, this.tel, this.mail, carnets)
+      const nuevo_usuario = new Usuario({
+        nombre: this.nombre,
+        apellido1: this.apellido1,
+        apellido2: this.apellido2,
+        password: this.password,
+        rol: this.chosenRol.key,
+        telefono: this.tel,
+        email: this.mail,
+        licencia_conducir: Object.keys(this.chosenCarnet).filter(key => this.chosenCarnet[key])
+      })
+
+      await this.supabaseService.insert(Tablas.USUARIOS, nuevo_usuario);
       this.success.set("Usuario creado!");
 
     } catch (e) {

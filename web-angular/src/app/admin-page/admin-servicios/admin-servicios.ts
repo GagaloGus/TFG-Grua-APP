@@ -2,19 +2,8 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { Servicio, Tablas } from '../../services/tablas.supabase';
+import { Servicio, Tablas, Vehiculo } from '../../services/tablas.supabase';
 import { SupabaseService } from '../../services/supabase.service';
-
-interface FormData {
-  id?: number;
-  nombre_cliente: string;
-  tel_cliente: string;
-  ubicacion_recogida_str: string;
-  ubicacion_destino_str: string;
-  estado: string;
-  vehiculo_id: number | null;
-  observaciones: string;
-}
 
 @Component({
   selector: 'app-servicios',
@@ -26,27 +15,28 @@ interface FormData {
 export class AdminServicios implements OnInit {
 
   // ── Signals — se actualizan solos sin Zone.js
-  finishedLoading    = signal(false);
-  servicios          = signal<Servicio[]>([]);
+  finishedLoading = signal(false);
+  servicios = signal<Servicio[]>([]);
   serviciosFiltrados = signal<Servicio[]>([]);
-  errorMsg           = signal('');
+  vehiculos = signal<Vehiculo[]>([]);
+  errorMsg = signal('');
+  createErrorMsg = signal('')
 
   // ── Local
-  searchQuery      = '';
-  filtroEstado     = '';
+  searchQuery = '';
+  filtroEstado = '';
   showConfirmacion = false;
   selected: Servicio | null = null;
-  showFormModal    = false;
-  modoEdicion      = false;
-  formData: FormData = this.emptyForm();
-
-  constructor(private supabaseService: SupabaseService) {}
+  showFormModal = false;
+  modoEdicion = false;
+  formData = Servicio.empty();
+  constructor(private supabaseService: SupabaseService) { }
 
   ngOnInit() {
     this.cargarServicios();
   }
 
-  async cargarServicios(){
+  async cargarServicios() {
     this.finishedLoading.set(false);
     this.errorMsg.set('');
     try {
@@ -60,8 +50,18 @@ export class AdminServicios implements OnInit {
     }
   }
 
+  async cargarVehiculos() {
+  try {
+    const data = await this.supabaseService.getAll(Tablas.VEHICULOS);
+    this.vehiculos.set(data.map((v: any) => new Vehiculo(v)));
+  } catch (err: any) {
+    this.errorMsg.set(err.message ?? 'Error al cargar vehiculos');
+    console.error('Error al cargar vehiculos:', err.message);
+  }
+}
+
   // ── Filtrado
-  filtrar(){
+  filtrar() {
     const q = this.searchQuery.toLowerCase().trim();
     this.serviciosFiltrados.set(
       this.servicios().filter(s => {
@@ -82,34 +82,18 @@ export class AdminServicios implements OnInit {
     return this.servicios().filter(s => s.estado === estado).length;
   }
 
-  // ── Coordenadas
-  formatCoords(coords: number[]): string {
-    if (!coords || coords.length < 2) return '—';
-    return `${coords[0].toFixed(4)}, ${coords[1].toFixed(4)}`;
-  }
-
-  getBadgeClass(estado: string): string {
-    const map: Record<string, string> = {
-      'Sin empezar': 'estado-sin-empezar',
-      'En curso':    'estado-en-curso',
-      'Finalizado':  'estado-finalizado',
-      'Cancelado':   'estado-cancelado',
-    };
-    return map[estado] ?? '';
-  }
-
   // ── Eliminar
-  abrirEliminar(s: Servicio){
+  abrirEliminar(s: Servicio) {
     this.selected = s;
     this.showConfirmacion = true;
   }
 
-  cerrarEliminar(){
+  cerrarEliminar() {
     this.showConfirmacion = false;
     this.selected = null;
   }
 
-  async confirmarEliminar(){
+  async confirmarEliminar() {
     if (!this.selected) return;
     try {
       await this.supabaseService.deleteRow(Tablas.SERVICIOS, 'id', this.selected.id);
@@ -122,85 +106,56 @@ export class AdminServicios implements OnInit {
   }
 
   // ── Crear / Editar
-  abrirCrear(){
+  async abrirCrear() {
     this.modoEdicion = false;
-    this.formData = this.emptyForm();
+    this.formData = Servicio.empty();
     this.showFormModal = true;
+    await this.cargarVehiculos()
   }
 
-  abrirEditar(s: Servicio){
+  async abrirEditar(s: Servicio) {
     this.modoEdicion = true;
-    this.formData = {
-      id:                     s.id,
-      nombre_cliente:         s.nombre_cliente ?? '',
-      tel_cliente:            s.tel_cliente ?? '',
-      ubicacion_recogida_str: s.ubicacion_recogida.join(', '),
-      ubicacion_destino_str:  s.ubicacion_destino.join(', '),
-      estado:                 s.estado,
-      vehiculo_id:            s.vehiculo_id,
-      observaciones:          s.observaciones ?? '',
-    };
+    this.formData = s;
     this.showFormModal = true;
+    await this.cargarVehiculos()
   }
 
-  cerrarForm(){
+  cerrarForm() {
     this.showFormModal = false;
   }
 
   async guardarServicio(): Promise<void> {
-    const recogida = this.parseCoordenadas(this.formData.ubicacion_recogida_str);
-    const destino  = this.parseCoordenadas(this.formData.ubicacion_destino_str);
-
-    if (!recogida || !destino) {
-      this.errorMsg.set('Coordenadas inválidas. Usa el formato: lat, lng');
+    const validacion = this.validarServicio();
+    if (validacion != ""){
+      this.createErrorMsg.set(validacion);
       return;
     }
 
-    const datos_carga = {
-      nombre_cliente:     this.formData.nombre_cliente || null,
-      tel_cliente:        this.formData.tel_cliente || null,
-      ubicacion_recogida: recogida,
-      ubicacion_destino:  destino,
-      estado:             this.formData.estado,
-      vehiculo_id:        this.formData.vehiculo_id || null,
-      observaciones:      this.formData.observaciones || null,
-    }
-
     try {
+      //Editando un servicio
       if (this.modoEdicion && this.formData.id != null) {
-        // await this.supabaseService.update(Tablas.SERVICIOS, 'id', this.formData.id, payload);
-        this.servicios.set(
-          this.servicios().map(s =>
-            s.id === this.formData.id ? { ...s, ...datos_carga } as Servicio : s
-          )
-        );
-      } else {
-        const nueva = await this.supabaseService.insert(Tablas.SERVICIOS, datos_carga);
+        await this.supabaseService.update(Tablas.SERVICIOS, 'id', this.formData.id.toString(), this.formData);
+      }
+      //Añadiendo un servicio
+      else {
+        await this.supabaseService.insert(Tablas.SERVICIOS, this.formData);
       }
 
       this.cerrarForm();
-      this.errorMsg.set('');
+      this.createErrorMsg.set('');
       this.cargarServicios();
     } catch (err: any) {
-      this.errorMsg.set(err.message ?? 'Error al guardar');
+      this.createErrorMsg.set(err.message ?? 'Error al guardar');
     }
   }
 
-  private parseCoordenadas(str: string): number[] | null {
-    const parts = str.split(',').map(p => parseFloat(p.trim()));
-    if (parts.length !== 2 || parts.some(isNaN)) return null;
-    return parts;
-  }
+  validarServicio(): string {
+    if (!this.formData.nombre_cliente) return "El nombre del cliente es obligatorio";
+    if (!this.formData.tel_cliente) return "El teléfono del cliente es obligatorio";
+    if (!this.formData.ubicacion_recogida_lat || !this.formData.ubicacion_recogida_lng) return "La ubicación de recogida es obligatoria";
+    if (!this.formData.ubicacion_destino_lat || !this.formData.ubicacion_destino_lng) return "La ubicación de destino es obligatoria";
+    if (!this.formData.vehiculo_matricula) return "La matrícula del vehículo es obligatoria";
 
-  private emptyForm(): FormData {
-    return {
-      nombre_cliente:         '',
-      tel_cliente:            '',
-      ubicacion_recogida_str: '',
-      ubicacion_destino_str:  '',
-      estado:                 'Sin empezar',
-      vehiculo_id:            null,
-      observaciones:          '',
-    };
+    return '';
   }
 }

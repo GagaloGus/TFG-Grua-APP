@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SupabaseService } from '../supabase.service';
-import { Tablas } from '../tablas.supabase';
+import { Tablas, Usuario } from '../tablas.supabase';
 
 @Injectable({
   providedIn: 'root',
@@ -11,44 +11,37 @@ export class AuthService {
   private _isLoggedIn = false;
   private _isAdmin = false;
 
-  private _currentEmail = "";
-  private _currentPassword = "";
-  private _currentRole = "";
+  private _currentUsuario! : Usuario | null;
 
+  async login(email: string, password: string): Promise<string> {
+    if(email == "")
+      return "El campo 'Correo' esta vacio!"
+    if(password == "")
+      return "El campo 'Contraseña' esta vacio!"
 
-  async login(email: string, password: string): Promise<boolean> {
     try {
       let match = await this.supabaseService.find(Tablas.USUARIOS, "email", email);
 
       //No existe el usuario
       if (match.length == 0) {
-        return false;
+        throw Error(`No existe el usuario '${email}'`);
       }
-
-      //Recorre toda la lista de usuarios
-      let fila = match[0];
-      //Imprime por consola los valores
-      console.log(`${fila["id"]} / ${fila["email"]} / ${fila["password"]} / ${fila["role"]}`)
-
-      //Asigna los valores que necesitamos a variables
-      let _id = fila["id"].toString()
-      let _email = fila["email"].toString()
-      let _pswd = fila["password"].toString()
-      let _role = fila["role"]
 
       //Si todo encaja, se valida el login
-      if (_email == email && _pswd == password) {
-        this._currentEmail = _email
-        this._currentPassword = _pswd
-        this._currentRole = _role
-        this._isAdmin = _role == 'A';
+      if (match[0]["email"] == email && match[0]["password"] == password) {
+
+        //Asigna los valores que necesitamos a variables
+        this._currentUsuario = new Usuario(match[0]);
         this._isLoggedIn = true
-
-        return true
       }
-    } catch (error) { }
+      else{
+        throw Error('La contraseña no coincide!')
+      }
+    } catch (error : any) {
+      return error.message
+    }
 
-    return false
+    return ''
   }
 
   isLoggedIn(): boolean {
@@ -60,15 +53,20 @@ export class AuthService {
   }
 
   logout() {
+    this._currentUsuario = null;
     this._isLoggedIn = false
     this._isAdmin = false
   }
 
   getEmail() {
-    return this._currentEmail == "" ? null : this._currentEmail
+    if(this._currentUsuario == null)
+      return null
+    return this._currentUsuario.email == "" ? null : this._currentUsuario.email
   }
 
-  getPassword() {
-    return this._currentPassword == "" ? null : this._currentPassword
+  getRol(){
+    if(this._currentUsuario == null)
+      return null
+    return this._currentUsuario.rol;
   }
 }

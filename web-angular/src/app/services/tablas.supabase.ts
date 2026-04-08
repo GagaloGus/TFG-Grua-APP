@@ -4,20 +4,79 @@ export enum Tablas {
   SERVICIOS = 'servicios'
 }
 
+export class Vehiculo {
+  id!: number;
+  matricula!: string;
+  disponible!: boolean;
+  active!: boolean;
+  marca!: string | null;
+  zona_trabajo!: string | null;
+  num_empleado!: number | null;
+
+  constructor(data: Partial<Vehiculo> = {}) {
+    Object.assign(this, data);
+  }
+
+  static empty(): Vehiculo {
+    return new Vehiculo({
+    disponible: false,
+    active: false,
+    marca: null,
+    zona_trabajo: null,
+    num_empleado: null,
+  });
+  }
+}
+
 export class Servicio {
   id!: number;
-  ubicacion_recogida!: number[];
-  ubicacion_destino!: number[];
+  ubicacion_recogida_lat!: number;
+  ubicacion_recogida_lng!: number;
+  ubicacion_destino_lat!: number;
+  ubicacion_destino_lng!: number;
   fecha!: string;
-  operador_id!: string | null;
-  vehiculo_id!: number | null;
+  num_empleado!: number | null;
+  vehiculo_matricula!: string | null;
   observaciones!: string | null;
   estado!: string;
   tel_cliente!: string | null;
   nombre_cliente!: string | null;
 
-  constructor(data: Partial<Servicio>) {
+  constructor(data: Partial<Servicio> = {}) {
     Object.assign(this, data);
+  }
+
+  static empty(): Servicio {
+    return new Servicio({
+    ubicacion_recogida_lat: 0,
+    ubicacion_recogida_lng: 0,
+    ubicacion_destino_lat: 0,
+    ubicacion_destino_lng: 0,
+    estado: 'Sin empezar',
+    num_empleado: null,
+    vehiculo_matricula: null,
+    observaciones: null,
+    tel_cliente: null,
+    nombre_cliente: null,
+  });
+  }
+
+  get badgeClass(): string {
+    const map: Record<string, string> = {
+      'Sin empezar': 'estado-sin-empezar',
+      'En curso': 'estado-en-curso',
+      'Finalizado': 'estado-finalizado',
+      'Cancelado': 'estado-cancelado',
+    };
+    return map[this.estado] ?? '';
+  }
+
+  get formatCoordRecogida(): string {
+    return `${this.ubicacion_recogida_lat.toFixed(4)}, ${this.ubicacion_recogida_lng.toFixed(4)}`
+  }
+
+  get formatCoordDestino(): string {
+    return `${this.ubicacion_destino_lat.toFixed(4)}, ${this.ubicacion_destino_lng.toFixed(4)}`
   }
 }
 
@@ -37,8 +96,12 @@ export class Usuario {
   telefono!: string | null;
   email!: string | null;
 
-  constructor(data: Partial<Usuario>) {
+  constructor(data: Partial<Usuario> = {}) {
     Object.assign(this, data);
+  }
+
+  static empty(): Usuario {
+    return new Usuario({});
   }
 
   get nombreCompleto(): string {
@@ -46,30 +109,30 @@ export class Usuario {
   }
 
   get licenciasFormateadas(): string {
+    // "B + C" o "Sin licencia"
     return this.licencia_conducir?.join(' + ') ?? 'Sin licencia';
-    // → "B + C" o "Sin licencia"
   }
 
-  get disponibilidadCSSClass():string{
-    if(this.disponibilidad == "En servicio") return "chip-text-orange"
-    else if(this.disponibilidad == "Disponible") return "chip-text-green"
-    else if(this.disponibilidad == "Inactivo") return "chip-text-grey"
+  get disponibilidadCSSClass(): string {
+    if (this.disponibilidad == "En servicio") return "chip-text-orange"
+    else if (this.disponibilidad == "Disponible") return "chip-text-green"
+    else if (this.disponibilidad == "Inactivo") return "chip-text-grey"
     return "chip-text"
   }
 
-  get rolNombre():string{
-    if(this.rol == "N") return "Sin rol"
-    else if(this.rol == "A") return "ADMIN"
-    else if(this.rol == "U") return "Usuario"
-    else if(this.rol == "T") return "Trabajador"
+  get rolNombre(): string {
+    if (this.rol == "N") return "Sin rol"
+    else if (this.rol == "A") return "ADMIN"
+    else if (this.rol == "U") return "Usuario"
+    else if (this.rol == "T") return "Trabajador"
     return "Rol indefinido"
   }
 
-    get rolCSSClass():string{
-    if(this.rol == "N") return "chip-text-grey"
-    else if(this.rol == "A") return "chip-text-purple"
-    else if(this.rol == "U") return "chip-text-blue"
-    else if(this.rol == "T") return "chip-text-red"
+  get rolCSSClass(): string {
+    if (this.rol == "N") return "chip-text-grey"
+    else if (this.rol == "A") return "chip-text-purple"
+    else if (this.rol == "U") return "chip-text-blue"
+    else if (this.rol == "T") return "chip-text-red"
     return "chip-text"
   }
 }

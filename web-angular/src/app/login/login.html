@@ -23,8 +23,13 @@
                             id="loginInputPassword" placeholder="Contraseña">
                     </div>
                 </form>
+
+                @if (error() != ''){
+                    <p class="text-danger">{{error()}}</p>
+                }
+
                 <div class="d-flex flex-column justify-content-end mt-3">
-                    <button type="button" class="btn btn-primary" (click)="login()">Iniciar Sesión</button>
+                    <button type="button" class="btn btn-primary" [disabled]="validatingLogin()" (click)="login()">Iniciar Sesión</button>
                 </div>
             </div>
         </div>

@@ -2,12 +2,13 @@
     <!-- Header -->
     <div class="d-flex align-items-center">
         <div class="flex-grow-1">
-            <h1>Users</h1>
+            <h1>Usuarios</h1>
             <h5 class="text-secondary">Página para la gestión de usuarios</h5>
         </div>
         <button routerLink="/admin/createuser" class="h-fit btn btn-success ms-3 d-flex align-items-center gap-2">
             <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
-                <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z" />
+                <path
+                    d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z" />
             </svg>
             Crear nuevo usuario
         </button>
@@ -19,7 +20,8 @@
         <!-- Buscador -->
         <div class="search-wrapper flex-grow-1">
             <svg class="search-icon" viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
-                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.099zm-5.242 1.156a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11" />
+                <path
+                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.099zm-5.242 1.156a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11" />
             </svg>
             <input class="form-control search-input" type="text" placeholder="Buscar por ID, Nº empleado o nombre..."
                 [(ngModel)]="searchQuery" (input)="filtrar()" />
@@ -29,29 +31,30 @@
         <div class="filtro-dropdown" [class.open]="dropdownRolAbierto">
             <button class="filtro-btn" (click)="toggleDropdownRol()">
                 <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
-                    <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+                    <path
+                        d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
                 </svg>
                 Rol
                 @if (filtrosRol.size > 0) {
-                    <span class="filtro-badge">{{ filtrosRol.size }}</span>
+                <p class="filtro-badge">{{ filtrosRol.size }}</p>
                 } @else {
-                    <svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor" class="chevron">
-                        <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
-                    </svg>
+                <svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor" class="chevron">
+                    <path
+                        d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                </svg>
                 }
             </button>
             <div class="filtro-menu">
                 @for (opcion of opcionesRol; track opcion.value) {
-                    <label class="filtro-opcion">
-                        <input type="checkbox"
-                            [checked]="filtrosRol.has(opcion.value)"
-                            (change)="toggleFiltroRol(opcion.value)" />
-                        <span class="filtro-check"></span>
-                        {{ opcion.label }}
-                    </label>
+                <label class="filtro-opcion">
+                    <input type="checkbox" [checked]="filtrosRol.has(opcion.value)"
+                        (change)="toggleFiltroRol(opcion.value)" />
+                    <p class="filtro-check"></p>
+                    {{ opcion.label }}
+                </label>
                 }
                 @if (filtrosRol.size > 0) {
-                    <button class="filtro-limpiar" (click)="limpiarRol()">Limpiar</button>
+                <button class="filtro-limpiar" (click)="limpiarRol()">Limpiar</button>
                 }
             </div>
         </div>
@@ -60,47 +63,48 @@
         <div class="filtro-dropdown" [class.open]="dropdownDispAbierto">
             <button class="filtro-btn" (click)="toggleDropdownDisp()">
                 <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
-                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
-                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
+                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" />
+                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0" />
                 </svg>
                 Disponibilidad
                 @if (filtrosDisp.size > 0) {
-                    <span class="filtro-badge">{{ filtrosDisp.size }}</span>
+                <span class="filtro-badge">{{ filtrosDisp.size }}</span>
                 } @else {
-                    <svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor" class="chevron">
-                        <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
-                    </svg>
+                <svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor" class="chevron">
+                    <path
+                        d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                </svg>
                 }
             </button>
             <div class="filtro-menu">
                 @for (opcion of opcionesDisp; track opcion.value) {
-                    <label class="filtro-opcion">
-                        <input type="checkbox"
-                            [checked]="filtrosDisp.has(opcion.value)"
-                            (change)="toggleFiltroDisp(opcion.value)" />
-                        <span class="filtro-check"></span>
-                        {{ opcion.label }}
-                    </label>
+                <label class="filtro-opcion">
+                    <input type="checkbox" [checked]="filtrosDisp.has(opcion.value)"
+                        (change)="toggleFiltroDisp(opcion.value)" />
+                    <span class="filtro-check"></span>
+                    {{ opcion.label }}
+                </label>
                 }
                 @if (filtrosDisp.size > 0) {
-                    <button class="filtro-limpiar" (click)="limpiarDisp()">Limpiar</button>
+                <button class="filtro-limpiar" (click)="limpiarDisp()">Limpiar</button>
                 }
             </div>
         </div>
 
         <!-- Botón limpiar todo -->
         @if (hayFiltrosActivos()) {
-            <button class="btn-limpiar-todo" (click)="limpiarTodo()">
-                <svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor">
-                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
-                </svg>
-            </button>
+        <button class="btn-limpiar-todo" (click)="limpiarTodo()">
+            <svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor">
+                <path
+                    d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+            </svg>
+        </button>
         }
 
     </div>
 
     @if (errorMsg()) {
-        <p class="text-danger">{{ errorMsg() }}</p>
+    <p class="text-danger">{{ errorMsg() }}</p>
     }
 
     <!-- Total resultados -->
@@ -110,104 +114,105 @@
 
     <!-- Usuarios -->
     @if (!finishedLoading()) {
-        <div class="text-center py-5 text-secondary">
-            <svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
-                <style>
-                    @keyframes spin {
-                        from { transform: rotate(0deg); }
-                        to   { transform: rotate(360deg); }
-                    }
-                    .spinner-ring {
-                        transform-origin: 30px 30px;
-                        animation: spin 1.1s linear infinite;
-                    }
-                </style>
-                <circle cx="30" cy="30" r="22" fill="none" stroke="#dee2e6" stroke-width="4" stroke-linecap="round" />
-                <g class="spinner-ring">
-                    <circle cx="30" cy="30" r="22" fill="none" stroke="#0d6efd" stroke-width="4"
-                        stroke-linecap="round" stroke-dasharray="35 105" />
-                </g>
-            </svg>
-            <p>Obteniendo datos...</p>
-        </div>
+    <div class="loading-icono">
+        <svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="30" cy="30" r="22" fill="none" stroke="#dee2e6" stroke-width="4" stroke-linecap="round" />
+            <g>
+                <circle cx="30" cy="30" r="22" fill="none" stroke="#0d6efd" stroke-width="4" stroke-linecap="round"
+                    stroke-dasharray="35 105" />
+            </g>
+        </svg>
+        <p>Obteniendo datos...</p>
+    </div>
+
+    }
+    @else if (usersFiltered().length == 0){
+    <div class="text-center py-5 text-secondary">
+        <svg viewBox="0 0 16 16" width="32" height="32" fill="currentColor" class="mb-2 d-block mx-auto opacity-50">
+            <path
+                d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5M.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5" />
+        </svg>
+        No se encontraron usuarios
+    </div>
     } @else {
-        <section class="row row-cols-sm-1 row-cols-lg-2 row-cols-xl-3 g-3">
-            @for (u of usersFiltered(); track u.id) {
-                <div class="col">
-                    <div class="card h-100 p-4">
-                        <div class="card-title d-flex">
-                            <figure class="user-pfp me-4">
-                                <img class="rounded-circle" src="/img/house.png" alt="">
-                            </figure>
-                            <div class="me-3">
-                                <h4 class="m-0 mb-1 text-wrap">{{ u.nombreCompleto }}</h4>
-                                <p class="text-secondary">EMP-{{ u.num_empleado }}</p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-wrap">
-                            <div class="{{ u.disponibilidadCSSClass }} align-self-start">
-                                <p>{{ u.disponibilidad }}</p>
-                            </div>
-                            <div class="{{ u.rolCSSClass }} align-self-start ms-3">
-                                <p>{{ u.rolNombre }}</p>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="d-flex align-items-center mb-2">
-                                <svg class="text-secondary me-2" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-                                </svg>
-                                <p>{{ u.email }}</p>
-                            </div>
-                            <div class="d-flex align-items-center mb-2">
-                                <svg class="text-secondary me-2" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
-                                    </path>
-                                </svg>
-                                <p>{{ u.telefono }}</p>
-                            </div>
-                            <hr>
-                            <div class="d-flex text-center">
-                                <div class="w-50">
-                                    <h2 class="fw-bold text-primary">{{ u.serv_completados_total }}</h2>
-                                    <p>Completados</p>
-                                </div>
-                                <div class="vr"></div>
-                                <div class="w-50">
-                                    <h2 class="fw-bold text-dark">{{ u.serv_completados_hoy }}</h2>
-                                    <p>Hoy</p>
-                                </div>
-                            </div>
-                            <hr>
-                            <p>Licencias: <kbd class="ms-2">{{ u.licenciasFormateadas }}</kbd></p>
-                        </div>
+    <section class="row row-cols-sm-1 row-cols-lg-2 row-cols-xl-3 g-3">
+        @for (u of usersFiltered(); track u.id) {
+        <div class="col">
+            <div class="card h-100 p-4">
+                <div class="card-title d-flex">
+                    <figure class="user-pfp me-4">
+                        <img class="rounded-circle" src="/img/house.png" alt="">
+                    </figure>
+                    <div class="me-3">
+                        <h4 class="m-0 mb-1 text-wrap">{{ u.nombreCompleto }}</h4>
+                        <p class="text-secondary">EMP-{{ u.num_empleado }}</p>
                     </div>
                 </div>
-            }
-        </section>
+                <div class="d-flex flex-wrap">
+                    <div class="align-self-start" [ngClass]="u.disponibilidadCSSClass">
+                        <p>{{ u.disponibilidad }}</p>
+                    </div>
+                    <div class="align-self-start ms-3" [ngClass]="u.rolCSSClass">
+                        <p>{{ u.rolNombre }}</p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <svg class="text-secondary me-2" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                        </svg>
+                        <p>{{ u.email }}</p>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <svg class="text-secondary me-2" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                            </path>
+                        </svg>
+                        <p>{{ u.telefono }}</p>
+                    </div>
+                    <hr>
+                    <div class="d-flex text-center">
+                        <div class="w-50">
+                            <h2 class="fw-bold text-primary">{{ u.serv_completados_total }}</h2>
+                            <p>Completados</p>
+                        </div>
+                        <div class="vr"></div>
+                        <div class="w-50">
+                            <h2 class="fw-bold text-dark">{{ u.serv_completados_hoy }}</h2>
+                            <p>Hoy</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <p>Licencias: <kbd class="ms-2">{{ u.licenciasFormateadas }}</kbd></p>
+                </div>
+            </div>
+        </div>
+        }
+    </section>
     }
 
     <!-- Confirmacion eliminar -->
     @if (showConfirmation) {
-        <div class="modal d-block" style="background: rgba(0,0,0,0.5);">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">¿Eliminar usuario?</h5>
-                    </div>
-                    <div class="modal-body">
-                        ¿Seguro que quieres eliminar a <strong>{{ selected?.user }}</strong>?
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" (click)="cerrarEliminar()">Cancelar</button>
-                        <button class="btn btn-danger" (click)="confirmarEliminar()">Eliminar</button>
-                    </div>
+    <div class="modal d-block" style="background: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">¿Eliminar usuario?</h5>
+                </div>
+                <div class="modal-body">
+                    ¿Seguro que quieres eliminar a <strong>{{ selected?.user }}</strong>?
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" (click)="cerrarEliminar()">Cancelar</button>
+                    <button class="btn btn-danger" (click)="confirmarEliminar()">Eliminar</button>
                 </div>
             </div>
         </div>
+    </div>
     }
 
 </section>

@@ -1,10 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { SupabaseService } from '../services/supabase.service';
 import { AuthService } from '../services/auth-service/auth-service';
-import { debug } from 'console';
+import { Usuario } from '@services/tablas.supabase';
 
 @Component({
   selector: 'app-login',
@@ -18,26 +16,26 @@ import { debug } from 'console';
 export class Login {
   email = "";
   password = ""
-  error = false
-  validatingLogin = false
-  data: any[] = [];
+  error = signal('');
+  validatingLogin = signal(false);
+  data = signal<Usuario[]>([]);
+
   constructor(
     private authService: AuthService,
-    private router: Router,
-    private supabaseService: SupabaseService) { }
+    private router: Router) { }
 
   async login() {
-    this.validatingLogin = true
+    this.validatingLogin.set(true)
     let sucess = await this.authService.login(this.email, this.password)
-    this.validatingLogin = false
 
-    if (sucess) {
+    if (sucess == '') {
       console.log("Valido")
       this.router.navigate(['/home'])
     }
     else {
-      console.log("Error!")
-      this.error = true
+      console.log(sucess)
+      this.error.set(sucess)
     }
+    this.validatingLogin.set(false)
   }
 }
