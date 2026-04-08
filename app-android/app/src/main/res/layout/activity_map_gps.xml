@@ -13,19 +13,40 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <!-- Panel superior: instrucción -->
-    <TextView
-        android:id="@+id/tvInstruccion"
+    <!-- Panel superior: instrucción actual + siguiente -->
+    <LinearLayout
+        android:id="@+id/panelInstruccion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#CC1565C0"
+        android:orientation="vertical"
         android:padding="16dp"
-        android:text="Calculando ruta..."
-        android:textColor="#FFFFFF"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:maxLines="3"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Instrucción actual GRANDE -->
+        <TextView
+            android:id="@+id/tvInstruccion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Calculando ruta..."
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:maxLines="2"/>
+
+        <!-- Siguiente instrucción pequeña debajo -->
+        <TextView
+            android:id="@+id/tvSiguiente"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#90CAF9"
+            android:textSize="14sp"
+            android:layout_marginTop="6dp"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+    </LinearLayout>
 
     <!-- Panel inferior: info del viaje + datos ruta -->
     <LinearLayout
@@ -116,6 +137,17 @@
                 android:gravity="center"
                 android:text="--"
                 android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvHoraLlegada"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="--:--"
+                android:textColor="#FFCC80"
                 android:textSize="16sp"
                 android:textStyle="bold"/>
 

@@ -45,6 +45,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
+import java.util.Calendar
 
 class MapGPS : AppCompatActivity(), OnMapReadyCallback {
 
@@ -55,6 +56,7 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
     private var posicionActual: LatLng? = null
     private var marcadorUsuario: Marker? = null
     private var marcadorDestino: Marker? = null
+    private var rutaCalculada = false
     private var rutaPolyline: Polyline? = null
 
     companion object {
@@ -83,35 +85,43 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
             binding.tvMotivo.text = "Motivo: ${it.motivo}"
             binding.tvTelefono.text = "Tel: ${it.telefono}"
         }
+        // └─ Recoge las coordenadas y el id que mandó MainActivity
+        //    cuando pulsaste "Iniciar navegación"
 
         // GPS
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        // └─ Busca el viaje por su id en la lista
+        //    y rellena los TextView del panel inferior
 
         // Mapa
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+        // └─ Busca el fragmento del mapa en el XML
+        //    y avisa cuando esté listo → llama a onMapReady
 
         binding.btnSalir.setOnClickListener {
             ChangeActivity(this, MainActivity::class.java)
         }
+        // └─ El botón ✕ cierra la Activity
+
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Marcador destino
-        marcadorDestino = mMap.addMarker(
-            MarkerOptions().position(destino).title("Destino")
-        )
+        // Ocultar botones y puntos de interés del mapa
+        mMap.uiSettings.isMapToolbarEnabled   = false
+        mMap.uiSettings.isMyLocationButtonEnabled = false
+        mMap.isTrafficEnabled = false
 
+        // Sin marcadores — solo la ruta
         mMap.setOnMapClickListener { puntoClickado ->
             posicionActual = puntoClickado
             marcadorUsuario?.position = puntoClickado
             calcularRuta()
         }
 
-        // Permisos y arranca GPS
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             iniciarGPS()
@@ -123,9 +133,8 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
 
     private fun iniciarGPS() {
         val request = LocationRequest.Builder(
-            Priority.PRIORITY_HIGH_ACCURACY, 4000L
-        ).setMinUpdateDistanceMeters(5f).build()
-
+            Priority.PRIORITY_HIGH_ACCURACY, 1000L  // 4000L → 1000L (1 segundo)
+        ).setMinUpdateDistanceMeters(2f).build()    // 5f → 2f (cada 2 metros)
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) return
 
@@ -134,21 +143,22 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
                 val loc = result.lastLocation ?: return
                 posicionActual = LatLng(loc.latitude, loc.longitude)
 
+                if (!rutaCalculada) {
+                    rutaCalculada = true
+                    calcularRuta()
+                }
                 if (marcadorUsuario == null) {
                     marcadorUsuario = mMap.addMarker(
                         MarkerOptions()
                             .position(posicionActual!!)
-                            .title("Tú")
-                            .icon(BitmapDescriptorFactory
-                                .defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                            .anchor(0.5f, 0.5f)   // Centrado exacto
+                            .flat(true)           // Se queda fijo, no gira con el mapa
+                            .icon(crearIconoUsuario())
                     )
-                    // Calcular ruta y centrar cámara
                     calcularRuta()
                 } else {
                     marcadorUsuario!!.position = posicionActual!!
                 }
-
-                // Cámara sigue al usuario
                 mMap.animateCamera(
                     CameraUpdateFactory.newLatLngZoom(posicionActual!!, 15f)
                 )
@@ -181,20 +191,43 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
                 }
 
                 // Parsear datos
-                val ruta = obj.getJSONArray("routes").getJSONObject(0)
-                val tramo = ruta.getJSONArray("legs").getJSONObject(0)
-                val distancia = tramo.getJSONObject("distance").getString("text")
-                val tiempo = tramo.getJSONObject("duration").getString("text")
-                val instruccion = parsearInstruccion(tramo.getJSONArray("steps").getJSONObject(0))
-                val puntos = decodificarPolyline(
+                val ruta       = obj.getJSONArray("routes").getJSONObject(0)
+                val tramo      = ruta.getJSONArray("legs").getJSONObject(0)
+                val distancia  = tramo.getJSONObject("distance").getString("text")
+                val tiempo     = tramo.getJSONObject("duration").getString("text")
+                val segundos   = tramo.getJSONObject("duration").getInt("value")  // NUEVO
+                val steps      = tramo.getJSONArray("steps")                       // NUEVO
+                val instruccion = parsearInstruccion(steps.getJSONObject(0))
+                val siguiente  = if (steps.length() > 1)                          // NUEVO
+                    "Después: ${parsearInstruccion(steps.getJSONObject(1))}"
+                else "Después: llegarás al destino"
+                val puntos     = decodificarPolyline(
                     ruta.getJSONObject("overview_polyline").getString("points")
                 )
 
                 withContext(Dispatchers.Main) {
                     dibujarRuta(puntos)
                     binding.tvInstruccion.text = instruccion
-                    binding.tvDistancia.text = distancia
-                    binding.tvTiempo.text = tiempo
+                    binding.tvDistancia.text   = distancia
+                    binding.tvTiempo.text      = tiempo
+
+                    // Siguiente instrucción
+                    val siguienteStep = tramo.getJSONArray("steps")
+                    if (siguienteStep.length() > 1) {
+                        binding.tvSiguiente.text = "Después: " +
+                                parsearInstruccion(siguienteStep.getJSONObject(1))
+                    } else {
+                        binding.tvSiguiente.text = "Después: llegarás al destino"
+                    }
+
+                    // Hora de llegada = ahora + segundos que tarda
+                    val segundos = tramo.getJSONObject("duration").getInt("value")
+                    val calendar = Calendar.getInstance()
+                    calendar.add(Calendar.SECOND, segundos)
+                    val hora = String.format("%02d:%02d",
+                        calendar.get(Calendar.HOUR_OF_DAY),
+                        calendar.get(Calendar.MINUTE))
+                    binding.tvHoraLlegada.text = hora
                 }
 
             } catch (e: Exception) {
@@ -206,25 +239,59 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun parsearInstruccion(step: JSONObject): String {
-        val maniobra = if (step.has("maneuver")) step.getString("maneuver") else ""
-        val html = step.getString("html_instructions")
+        val maniobra  = if (step.has("maneuver")) step.getString("maneuver") else ""
+        val html      = step.getString("html_instructions")
         val distancia = step.getJSONObject("distance").getString("text")
-        val calle = Regex("<b>(.*?)</b>").find(html)?.groupValues?.get(1) ?: ""
+
+        // Limpiar el HTML completo para obtener el texto real
+        val textoLimpio = html
+            .replace(Regex("<div[^>]*>"), " ")   // <div ...> → espacio
+            .replace("</div>", "")
+            .replace(Regex("<b>|</b>"), "")      // quitar negritas
+            .replace(Regex("<[^>]*>"), "")       // cualquier otra etiqueta
+            .replace(Regex("\\s+"), " ")         // espacios dobles → uno
+            .trim()
+
+        // Extraer solo el nombre en negrita si existe (nombre de calle real)
+        val calle = Regex("<b>(.*?)</b>").findAll(html).lastOrNull()?.groupValues?.get(1) ?: ""
+
+        // Para rotondas extraer el número de salida
+        val salida = if (maniobra.contains("roundabout"))
+            Regex("(\\d+)").find(textoLimpio)?.value ?: "" else ""
 
         val texto = when {
-            maniobra.contains("turn-right") -> "Gira a la derecha${if (calle.isNotEmpty()) " en $calle" else ""}"
-            maniobra.contains("turn-left") -> "Gira a la izquierda${if (calle.isNotEmpty()) " en $calle" else ""}"
-            maniobra.contains("roundabout") -> {
-                val salida = Regex("(\\d+)").find(html)?.value ?: ""
-                "En la rotonda, toma la ${salida}ª salida${if (calle.isNotEmpty()) " hacia $calle" else ""}"
-            }
-            maniobra.contains("keep-right") -> "Manténgase en el carril derecho${if (calle.isNotEmpty()) " hacia $calle" else ""}"
-            maniobra.contains("keep-left") -> "Manténgase en el carril izquierdo${if (calle.isNotEmpty()) " hacia $calle" else ""}"
+            maniobra.contains("turn-right")  ->
+                if (calle.isNotEmpty()) "Gira a la derecha en $calle"
+                else textoLimpio
+
+            maniobra.contains("turn-left")   ->
+                if (calle.isNotEmpty()) "Gira a la izquierda en $calle"
+                else textoLimpio
+
+            maniobra.contains("roundabout")  ->
+                if (salida.isNotEmpty() && calle.isNotEmpty())
+                    "En la rotonda toma la ${salida}ª salida hacia $calle"
+                else if (salida.isNotEmpty())
+                    "En la rotonda toma la ${salida}ª salida"
+                else textoLimpio
+
+            maniobra.contains("keep-right")  ->
+                if (calle.isNotEmpty()) "Manténgase a la derecha hacia $calle"
+                else textoLimpio
+
+            maniobra.contains("keep-left")   ->
+                if (calle.isNotEmpty()) "Manténgase a la izquierda hacia $calle"
+                else textoLimpio
+
             maniobra.contains("ramp") ||
-                    maniobra.contains("fork") -> "Coja la salida${if (calle.isNotEmpty()) " hacia $calle" else ""}"
-            maniobra.contains("uturn") -> "Dé la vuelta"
-            maniobra.contains("arrive") -> "Ha llegado al destino"
-            else  -> "Continúe recto${if (calle.isNotEmpty()) " por $calle" else ""}"
+                    maniobra.contains("fork")        ->
+                if (calle.isNotEmpty()) "Coja la salida hacia $calle"
+                else textoLimpio
+
+            maniobra.contains("uturn")       -> "Dé la vuelta"
+            maniobra.contains("arrive")      -> "Ha llegado al destino"
+
+            else -> textoLimpio  // Usar el texto de Google directamente
         }
 
         return "$texto · $distancia"
@@ -258,6 +325,34 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
             puntos.add(LatLng(lat / 1E5, lng / 1E5))
         }
         return puntos
+    }
+
+    private fun crearIconoUsuario(): BitmapDescriptor {
+        val size   = 60
+        val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+
+        // Círculo exterior semitransparente
+        Paint(Paint.ANTI_ALIAS_FLAG).also {
+            it.color = Color.parseColor("#554285F4")  // Azul con 33% transparencia
+            canvas.drawCircle(30f, 30f, 28f, it)
+        }
+
+        // Círculo interior azul sólido
+        Paint(Paint.ANTI_ALIAS_FLAG).also {
+            it.color = Color.parseColor("#4285F4")
+            canvas.drawCircle(30f, 30f, 14f, it)
+        }
+
+        // Borde blanco
+        Paint(Paint.ANTI_ALIAS_FLAG).also {
+            it.color       = Color.WHITE
+            it.style       = Paint.Style.STROKE
+            it.strokeWidth = 3f
+            canvas.drawCircle(30f, 30f, 14f, it)
+        }
+
+        return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
 
     override fun onRequestPermissionsResult(
