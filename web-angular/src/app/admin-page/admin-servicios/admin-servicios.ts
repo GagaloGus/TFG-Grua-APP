@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Servicio, Tablas, Vehiculo } from '../../services/tablas.supabase';
 import { SupabaseService } from '../../services/supabase.service';
+import { DataService } from '@services/data.service';
 
 @Component({
   selector: 'app-servicios',
@@ -14,9 +15,8 @@ import { SupabaseService } from '../../services/supabase.service';
 })
 export class AdminServicios implements OnInit {
 
-  // ── Signals — se actualizan solos sin Zone.js
+  // ── Signals 
   finishedLoading = signal(false);
-  servicios = signal<Servicio[]>([]);
   serviciosFiltrados = signal<Servicio[]>([]);
   vehiculos = signal<Vehiculo[]>([]);
   errorMsg = signal('');
@@ -30,7 +30,11 @@ export class AdminServicios implements OnInit {
   showFormModal = false;
   modoEdicion = false;
   formData = Servicio.empty();
-  constructor(private supabaseService: SupabaseService) { }
+  constructor(private supabaseService: SupabaseService, private dataService: DataService) { }
+
+  get servicios(): Servicio[] {
+    return this.dataService.servicios()
+  }
 
   ngOnInit() {
     this.cargarServicios();
@@ -40,31 +44,28 @@ export class AdminServicios implements OnInit {
     this.finishedLoading.set(false);
     this.errorMsg.set('');
     try {
-      const data = await this.supabaseService.getAll(Tablas.SERVICIOS);
-      this.servicios.set(data.map((u: any) => new Servicio(u)));
+      this.dataService.cargarServicios();
       this.filtrar();
     } catch (err: any) {
-      this.errorMsg.set(err.message ?? 'Error al cargar servicios');
+      this.errorMsg.set(err.message);
     } finally {
       this.finishedLoading.set(true);
     }
   }
 
   async cargarVehiculos() {
-  try {
-    const data = await this.supabaseService.getAll(Tablas.VEHICULOS);
-    this.vehiculos.set(data.map((v: any) => new Vehiculo(v)));
-  } catch (err: any) {
-    this.errorMsg.set(err.message ?? 'Error al cargar vehiculos');
-    console.error('Error al cargar vehiculos:', err.message);
+    try {
+      this.dataService.cargarVehiculos()
+    } catch (err: any) {
+      this.errorMsg.set(err.message);
+    }
   }
-}
 
   // ── Filtrado
   filtrar() {
     const q = this.searchQuery.toLowerCase().trim();
     this.serviciosFiltrados.set(
-      this.servicios().filter(s => {
+      this.servicios.filter(s => {
         const matchQuery =
           !q ||
           String(s.id).includes(q) ||
@@ -77,9 +78,8 @@ export class AdminServicios implements OnInit {
     );
   }
 
-
   contarEstado(estado: string): number {
-    return this.servicios().filter(s => s.estado === estado).length;
+    return this.servicios.filter(s => s.estado === estado).length;
   }
 
   // ── Eliminar
@@ -97,8 +97,8 @@ export class AdminServicios implements OnInit {
     if (!this.selected) return;
     try {
       await this.supabaseService.deleteRow(Tablas.SERVICIOS, 'id', this.selected.id);
-      this.servicios.set(this.servicios().filter(s => s.id !== this.selected!.id));
-      this.filtrar();
+      this.dataService.invalidarServicios();
+      await this.cargarServicios();
       this.cerrarEliminar();
     } catch (err: any) {
       this.errorMsg.set(err.message ?? 'Error al eliminar');
@@ -110,14 +110,12 @@ export class AdminServicios implements OnInit {
     this.modoEdicion = false;
     this.formData = Servicio.empty();
     this.showFormModal = true;
-    await this.cargarVehiculos()
   }
 
   async abrirEditar(s: Servicio) {
     this.modoEdicion = true;
-    this.formData = s;
+    this.formData = new Servicio({...s});
     this.showFormModal = true;
-    await this.cargarVehiculos()
   }
 
   cerrarForm() {
@@ -125,25 +123,17 @@ export class AdminServicios implements OnInit {
   }
 
   async guardarServicio(): Promise<void> {
-    const validacion = this.validarServicio();
-    if (validacion != ""){
-      this.createErrorMsg.set(validacion);
-      return;
-    }
-
+    // ... validación ...
     try {
-      //Editando un servicio
       if (this.modoEdicion && this.formData.id != null) {
         await this.supabaseService.update(Tablas.SERVICIOS, 'id', this.formData.id.toString(), this.formData);
-      }
-      //Añadiendo un servicio
-      else {
+      } else {
         await this.supabaseService.insert(Tablas.SERVICIOS, this.formData);
       }
-
+      this.dataService.invalidarServicios();
       this.cerrarForm();
       this.createErrorMsg.set('');
-      this.cargarServicios();
+      await this.cargarServicios();
     } catch (err: any) {
       this.createErrorMsg.set(err.message ?? 'Error al guardar');
     }

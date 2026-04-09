@@ -49,7 +49,7 @@
     <div class="row g-3 mb-4">
         <div class="col-12 col-md-6 col-lg-3">
             <div class="stat-card">
-                <span class="stat-number">{{ servicios().length }}</span>
+                <span class="stat-number">{{ servicios.length }}</span>
                 <span class="stat-label">Total</span>
             </div>
         </div>
@@ -127,7 +127,7 @@
                         <td class="coordenadas">{{ s.formatCoordRecogida }}</td>
                         <td class="coordenadas">{{ s.formatCoordDestino }}</td>
                         <td class="text-nowrap">{{ s.fecha | date:'dd/MM/yy HH:mm' }}</td>
-                        <td><span class="badge-estado" [ngClass]="s.badgeClass">{{ s.estado }}</span></td>
+                        <td><span [ngClass]="s.badgeClass">{{ s.estado }}</span></td>
                         <td>{{ s.num_empleado ?? '—' }}</td>
                         <td>{{ s.vehiculo_matricula ?? '—' }}</td>
                         <td class="obs-cell">{{ s.observaciones ?? '—' }}</td>
@@ -159,7 +159,7 @@
 
     <!-- Total resultados -->
     <p class="text-secondary small mt-2">
-        Mostrando {{ serviciosFiltrados().length }} de {{ servicios().length }} servicios
+        Mostrando {{ serviciosFiltrados().length }} de {{ servicios.length }} servicios
     </p>
 
 </div>
@@ -241,7 +241,7 @@
                         <select class="form-select" [(ngModel)]="formData.estado">
                             <option value="Sin empezar">Sin empezar</option>
                             <option value="En curso">En curso</option>
-                            <option value="Finalizado">Finalizado</option>
+                            <option value="Terminado">Terminado</option>
                             <option value="Cancelado">Cancelado</option>
                         </select>
                     </div>

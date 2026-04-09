@@ -63,10 +63,10 @@ export class Servicio {
 
   get badgeClass(): string {
     const map: Record<string, string> = {
-      'Sin empezar': 'estado-sin-empezar',
-      'En curso': 'estado-en-curso',
-      'Finalizado': 'estado-finalizado',
-      'Cancelado': 'estado-cancelado',
+      'Sin empezar': 'badge-estado-sin-empezar',
+      'En curso': 'badge-estado-en-curso',
+      'Terminado': 'badge-estado-terminado',
+      'Cancelado': 'badge-estado-cancelado',
     };
     return map[this.estado] ?? '';
   }

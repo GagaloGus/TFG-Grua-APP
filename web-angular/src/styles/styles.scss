@@ -160,6 +160,35 @@ p {
     @include stat-card(#7b10b9)
 }
 
+// ─── Badges de estado ─────────────────────────────────────────────────────────
+@mixin badge-estado($bg, $color) {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.28rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    background: $bg;
+    color: $color;
+  }
+  
+  .badge-estado-sin-empezar {
+    @include badge-estado(#fef3c7, #92400e)
+  }
+  
+  .badge-estado-en-curso {
+    @include badge-estado(#dbeafe, #1e40af)
+  }
+  
+  .badge-estado-terminado {
+    @include badge-estado(#d1fae5, #065f46)
+  }
+  
+  .badge-estado-cancelado {
+    @include badge-estado(#e2e2e2, #3d3d3d)
+  }
+
 // ─── Filtros ─────────────────────────────────────────────────────────────────
 .filtros-bar {
     .search-wrapper {

@@ -1,11 +1,8 @@
 @use 'sass:color';
 @use '../../../styles/variables' as *;
 
-
-
-
 .tabla-servicios {
-  min-width: 960px;   // fuerza el scroll cuando la pantalla es más pequeña
+  min-width: 960px; // fuerza el scroll cuando la pantalla es más pequeña
   width: 100%;
 
   thead tr {
@@ -28,8 +25,13 @@
     border-bottom: 1px solid $border;
     transition: ease-in-out 0.12s;
 
-    &:last-child { border-bottom: none; }
-    &:hover { background: #f0f4ff; }
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: #f0f4ff;
+    }
   }
 
   tbody td {
@@ -54,7 +56,6 @@
   font-family: 'Courier New', monospace;
   font-size: 0.78rem;
   color: $text-muted;
-  white-space: nowrap;
 }
 
 .obs-cell {
@@ -63,34 +64,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   color: $text-muted;
-}
-
-// ─── Badges de estado ─────────────────────────────────────────────────────────
-.badge-estado {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.28rem 0.7rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  white-space: nowrap;
-
-  &.estado-sin-empezar {
-    background: #fef3c7;
-    color: #92400e;
-  }
-  &.estado-en-curso {
-    background: #dbeafe;
-    color: #1e40af;
-  }
-  &.estado-finalizado {
-    background: #d1fae5;
-    color: #065f46;
-  }
-  &.estado-cancelado {
-    background: #fee2e2;
-    color: #991b1b;
-  }
 }
 
 // ─── Botones de acción ────────────────────────────────────────────────────────

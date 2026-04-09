@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterOutlet, RouterLinkWithHref, Router } from '@angular/router';
 import { AuthService } from '../services/auth-service/auth-service';
+import { DataService } from '@services/data.service';
 
 @Component({
   selector: 'app-admin-page',
@@ -9,24 +10,42 @@ import { AuthService } from '../services/auth-service/auth-service';
   styleUrl: './admin-page.scss',
 })
 export class AdminPage {
+  errorMsg = signal('');
+  finishedLoading = signal(false);
 
-    constructor(private authService:AuthService, private router: Router,){}
+  constructor(private authService: AuthService, private router: Router, private dataService: DataService) { }
 
-    isLoggedIn(): boolean {
-      return this.authService.isLoggedIn()
+  async cargarServicios() {
+    try {
+      this.dataService.cargarServicios();
+    } catch (err: any) {
+      throw Error(`Error al cargar servicios: ${err.message}`);
     }
+  }
 
-    isAdmin(): boolean {
-      return this.authService.isAdmin()
+  async cargarVehiculos() {
+    try {
+      this.dataService.cargarVehiculos()
+    } catch (err: any) {
+      throw Error(`Error al cargar vehiculos: ${err.message}`);
     }
+  }
 
-    logout() {
-      console.log("bai")
-      this.authService.logout()
-      this.router.navigate(['/home'])
-    }
+  isLoggedIn(): boolean {
+    return this.authService.isLoggedIn()
+  }
 
-    getEmail() {
-      return this.authService.getEmail()
-    }
+  isAdmin(): boolean {
+    return this.authService.isAdmin()
+  }
+
+  logout() {
+    console.log("bai")
+    this.authService.logout()
+    this.router.navigate(['/home'])
+  }
+
+  getEmail() {
+    return this.authService.getEmail()
+  }
 }
