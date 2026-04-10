@@ -6,7 +6,7 @@ import { AdminDashboard } from './admin-page/admin-dashboard/admin-dashboard';
 import { AdminServicios } from './admin-page/admin-servicios/admin-servicios';
 import { AdminCreateuser } from './admin-page/admin-createuser/admin-createuser';
 import { AdminUsers } from './admin-page/admin-users/admin-users';
-import { AdminVehiculos } from './admin-vehiculos/admin-vehiculos';
+import { AdminVehiculos } from './admin-page/admin-vehiculos/admin-vehiculos';
 
 export const routes: Routes = [
 

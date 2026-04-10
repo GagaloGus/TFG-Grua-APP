@@ -8,7 +8,7 @@ export class Vehiculo {
   id!: number;
   matricula!: string;
   disponible!: boolean;
-  active!: boolean;
+  activo!: boolean;
   marca!: string | null;
   zona_trabajo!: string | null;
   num_empleado!: number | null;
@@ -20,7 +20,7 @@ export class Vehiculo {
   static empty(): Vehiculo {
     return new Vehiculo({
     disponible: false,
-    active: false,
+    activo: false,
     marca: null,
     zona_trabajo: null,
     num_empleado: null,
@@ -105,7 +105,7 @@ export class Usuario {
   }
 
   get nombreCompleto(): string {
-    return `${this.nombre} ${this.apellido1} ${this.apellido2}`.trim();
+    return `${this.nombre ?? ""} ${this.apellido1 ?? ""} ${this.apellido2 ?? ""}`.trim();
   }
 
   get licenciasFormateadas(): string {

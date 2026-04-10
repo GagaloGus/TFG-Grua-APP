@@ -26,7 +26,8 @@ export class SupabaseService {
   async getAll(table: Tablas) {
     const { data, error } = await this.supabase
       .from(table)
-      .select('*');
+      .select('*')
+      .order("id");
 
     if (error) {
       throw error;
@@ -63,10 +64,16 @@ export class SupabaseService {
   }
 
   async insert(table: Tablas, value: any){
-    const { id, fecha, ...payload } = value;
+    const { id, created_at, ...payload } = value;
+
+    // Elimina campos null/undefined para que Supabase use sus defaults
+    const payload_filtered = Object.fromEntries(
+      Object.entries(payload).filter(([_, v]) => v !== null && v !== undefined)
+    );
+
     const { error } = await this.supabase
       .from(table)
-      .insert([payload])
+      .insert([payload_filtered])
 
     if (error) throw error;
     console.log(`INSERTADO en '${table}'`)
@@ -74,9 +81,10 @@ export class SupabaseService {
 
   async update(table: Tablas, keyID: string, valueID: string, value: any){
     const { id, ...payload } = value;
+
     const { error } = await this.supabase
       .from(table)
-      .update(payload)
+      .update([payload])
       .eq(keyID, valueID);
 
     if (error) {
