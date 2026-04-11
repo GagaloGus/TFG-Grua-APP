@@ -1,0 +1,156 @@
+/* 
+   VARIABLES Y RESET
+ */
+:root {
+  --orange:       #F5A623;
+  --orange-dark:  #D4881A;
+  --blue-dark:    #0D1B2E;
+  --blue-mid:     #152540;
+  --blue-card:    #1A2E4A;
+  --blue-light:   #1F3A5F;
+  --text-main:    #FFFFFF;
+  --text-muted:   #A8BEDB;
+  --text-dim:     #6B89AA;
+  --accent-green: #22C55E;
+  --radius:       12px;
+  --radius-lg:    20px;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 
+   CUERPO DE LA WEB
+*/
+body{
+  font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+  background: var(--blue-dark);
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+nav{
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  background: rgba(13, 27, 46, 0.95);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+}
+
+/* 
+  LOGO
+*/
+.logo{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon{
+  width: 40px;
+  height: 40px;
+  background: var(--orange);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.logo-icon img{
+  width: 500%;
+  height: 100%;
+  object-fit: contain;
+}
+
+
+.logo-text{
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  font-size: 22px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.logo-text .tow {
+  color: #1E63A6;
+}
+
+.logo-text .app {
+  color: #F5A623;
+}
+
+.logo-text .systems {
+  font-size: 12px;
+  color: #9ca3af;
+  letter-spacing: 1.5px;
+  margin-left: 6px;
+  font-weight: 600;
+}
+
+.logo-text .sl {
+  font-size: 12px;
+  color:  #9ca3af;
+  margin-left: 4px;
+  font-weight: 500;
+}
+
+/* Menú */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+}
+
+.nav-links a {
+  color: #FFFFFF;
+}
+
+/* Botón */
+
+.btn-nav {
+  background: #F5A623;
+  color: #FFFFFF;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-nav:hover {
+  background: var(--orange-dark);
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(245, 166, 35, 0.4);
+}
+
+footer {
+  background: #0a1626;
+  text-align: center;
+  padding: 40px 20px;
+  margin-top: 60px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.footer-credits {
+  color: #6B89AA;
+}
+
+.footer-logo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: #FFFFFF;
+}

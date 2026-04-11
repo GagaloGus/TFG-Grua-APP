@@ -1,8 +1,32 @@
-<section>
-    <h1><kbd>Hola</kbd></h1>
-    <ul>
-        <li><a href="" routerLink="/login">Login</a></li>
-        <li><a href="" routerLink="/admin">Admin</a></li>
-        <li><a href=""></a></li>
-    </ul>
-</section>
+<nav>
+  <a routerLink="/" class="logo" style="text-decoration:none;">
+    <div class="logo-icon">
+      <img src="/truck.png" alt="Logo TowApp" />
+    </div>
+    <div class="logo-text">
+      <span class="tow">TOW</span><span class="app">APP</span>
+      <span class="systems"> SYSTEMS</span><span class="sl"> S.L.</span>
+    </div>
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="#inicio" class="active">Inicio</a></li>
+    <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#workflow">Cómo funciona</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+
+  <button class="btn-nav" routerLink="/login">Iniciar sesión</button>
+</nav>
+
+
+
+<footer id="contacto">
+  <div class="footer-logo">
+    TOW<span class="app">APP</span> SYSTEMS S.L.
+  </div>
+
+  <p class="footer-credits">
+    Proyecto de Grado · 2026 · Gabriel Méndez, Rubén Llanes, Paula Cárdenas
+  </p>
+</footer>
