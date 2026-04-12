@@ -109,7 +109,7 @@
 
     <!-- Total resultados -->
     <p class="text-secondary small my-2">
-        Mostrando {{ usersFiltered().length }} de {{ users().length }} usuarios
+        Mostrando {{ usuariosFiltrados().length }} de {{ usuarios().length }} usuarios
     </p>
 
     <!-- Usuarios -->
@@ -126,7 +126,7 @@
     </div>
 
     }
-    @else if (usersFiltered().length == 0){
+    @else if (usuariosFiltrados().length == 0){
     <div class="text-center py-5 text-secondary">
         <svg viewBox="0 0 16 16" width="32" height="32" fill="currentColor" class="mb-2 d-block mx-auto opacity-50">
             <path
@@ -136,7 +136,7 @@
     </div>
     } @else {
     <section class="row row-cols-sm-1 row-cols-lg-2 row-cols-xl-3 g-3">
-        @for (u of usersFiltered(); track u.id) {
+        @for (u of usuariosFiltrados(); track u.id) {
         <div class="col">
             <div class="card h-100 p-4">
                 <div class="card-title d-flex">
@@ -174,6 +174,18 @@
                         </svg>
                         <p>{{ u.telefono }}</p>
                     </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <svg class="text-secondary me-2" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
+                            <path d="M15 18H9"></path>
+                            <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14">
+                            </path>
+                            <circle cx="17" cy="18" r="2"></circle>
+                            <circle cx="7" cy="18" r="2"></circle>
+                        </svg>
+                        <p>{{ get_vehiculoUsuario(u) }}</p>
+                    </div>
                     <hr>
                     <div class="d-flex text-center">
                         <div class="w-50">
@@ -187,7 +199,25 @@
                         </div>
                     </div>
                     <hr>
-                    <p>Licencias: <kbd class="ms-2">{{ u.licenciasFormateadas }}</kbd></p>
+                    <div class="d-flex gap-2 mt-2 align-items-center justify-content-between">
+                        <p>Licencias: <kbd class="ms-2">{{ u.licenciasFormateadas }}</kbd></p>
+                        <div class="d-flex align-items-center justify-content-center gap-2">
+                            <button class="btn btn-sm btn-accion-edit w-fit px-4 py-2 " (click)="abrirEditar(u)">
+                                <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" class="me-1">
+                                    <path
+                                        d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" />
+                                </svg>
+                            </button>
+                            <button class="btn btn-sm btn-accion-delete w-fit px-4 py-2" (click)="abrirEliminar(u)">
+                                <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" class="me-1">
+                                    <path
+                                        d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                    <path
+                                        d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -209,6 +239,102 @@
                 <div class="modal-footer">
                     <button class="btn btn-secondary" (click)="cerrarEliminar()">Cancelar</button>
                     <button class="btn btn-danger" (click)="confirmarEliminar()">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- ===== MODAL EDITAR USUARIO ===== -->
+    @if (showEditModal) {
+    <div class="modal d-block modal-overlay" (click)="cerrarEditar()">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable"
+            (click)="$event.stopPropagation()">
+            <div class="modal-content modal-custom">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold">Editar usuario — {{ formData.nombreCompleto }}</h5>
+                    <button type="button" class="btn-close" (click)="cerrarEditar()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+
+                        <!-- Nombre -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Nombre</label>
+                            <input class="form-control" type="text" [(ngModel)]="formData.nombre" placeholder="Nombre">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Primer apellido</label>
+                            <input class="form-control" type="text" [(ngModel)]="formData.apellido1"
+                                placeholder="Apellido 1">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Segundo apellido</label>
+                            <input class="form-control" type="text" [(ngModel)]="formData.apellido2"
+                                placeholder="Apellido 2">
+                        </div>
+
+                        <!-- Contacto -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Email</label>
+                            <input class="form-control" type="email" [(ngModel)]="formData.email"
+                                placeholder="email@ejemplo.com">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Teléfono</label>
+                            <input class="form-control" type="tel" [(ngModel)]="formData.telefono"
+                                placeholder="+34 600 000 000">
+                        </div>
+
+                        <!-- Rol y disponibilidad -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Rol</label>
+                            <select class="form-select" [(ngModel)]="formData.rol">
+                                <option value="A">Admin</option>
+                                <option value="T">Trabajador</option>
+                                <option value="U">Usuario</option>
+                                <option value="N">Sin rol</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Disponibilidad</label>
+                            <select class="form-select" [(ngModel)]="formData.disponibilidad">
+                                <option value="Disponible">Disponible</option>
+                                <option value="En servicio">En servicio</option>
+                                <option value="Inactivo">Inactivo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Grua Asignada</label>
+                            <input class="form-control" type="number" [(ngModel)]="formData.num_empleado">
+                        </div>
+
+                        <!-- Licencias -->
+                        <div class="col-12">
+                            <label class="form-label fw-medium">Licencias de conducir</label>
+                            <div class="d-flex gap-3 flex-wrap mt-1">
+                                @for (lic of opcionesLicencia; track lic) {
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" [id]="'lic-' + lic"
+                                        [checked]="formData.licencia_conducir?.includes(lic)"
+                                        (change)="toggleLicencia(lic)">
+                                    <label class="form-check-label" [for]="'lic-' + lic">
+                                        <kbd>{{ lic }}</kbd>
+                                    </label>
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+
+                    @if (modalErrorMsg() !== '') {
+                    <p class="text-danger mt-3 mb-0">{{ modalErrorMsg() }}</p>
+                    }
+                </div>
+                <div class="modal-footer border-0 gap-2">
+                    <button class="btn btn-outline-secondary px-4" (click)="cerrarEditar()">Cancelar</button>
+                    <button class="btn btn-primary px-4" (click)="guardarUsuario()">Guardar cambios</button>
                 </div>
             </div>
         </div>

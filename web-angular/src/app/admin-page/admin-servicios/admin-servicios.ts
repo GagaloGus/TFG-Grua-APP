@@ -27,11 +27,12 @@ export class AdminServicios implements OnInit {
   // ── Local
   searchQuery = '';
   filtroEstado = '';
+  showDetalles = false;
   showConfirmacion = false;
   showFormModal = false;
-  showAsignarTrabajador = false;
   modoEdicion = false;
   selected: Servicio | null = null;
+  usuarios_vehiculo: Usuario[] | null = [];
   formData = Servicio.empty();
   constructor(private supabaseService: SupabaseService) { }
 
@@ -40,10 +41,11 @@ export class AdminServicios implements OnInit {
   }
 
 
-  async cargarTodo(){
+  async cargarTodo() {
     this.finishedLoading.set(false);
     await this.cargarUsuarios()
     await this.cargarServicios()
+    await this.cargarVehiculos()
     this.finishedLoading.set(true);
   }
 
@@ -82,6 +84,15 @@ export class AdminServicios implements OnInit {
   getUserByNumEmpleado(numEmpleado: number): Usuario | undefined {
     return this.usuarios().find(u => u.num_empleado === numEmpleado);
   }
+  getVehiculo(matricula: string): Vehiculo | undefined {
+    return this.vehiculos().find(v => v.matricula === matricula);
+  }
+
+  onVehiculoChange() {
+    let v = this.vehiculos().find(v => v.matricula === this.formData.vehiculo_matricula)
+    let u = this.usuarios().filter(u => u.num_empleado === v?.num_empleado);
+    this.usuarios_vehiculo = u ?? null;
+  }
 
   // ── Filtrado
   filtrar() {
@@ -107,21 +118,33 @@ export class AdminServicios implements OnInit {
 
   // ── Modals
 
-  abrirModal(s: Servicio){
-    this.selected = new Servicio({...s});
+  abrirModal(s: Servicio) {
+    this.selected = new Servicio({ ...s });
     this.errorMsg.set('')
     this.successMsg.set('')
     this.modalErrorMsg.set('')
   }
 
-  cerrarModal(){
+  cerrarModal() {
     this.selected = null;
+    this.formData = Servicio.empty();
   }
 
+
+  // ── Detalles
+  abrirDetalles(s: Servicio) {
+    this.abrirModal(s);
+    this.showDetalles = true;
+  }
+
+  cerrarDetalles() {
+    this.cerrarModal();
+    this.showDetalles = false;
+  }
   // ── Duplicar
-  async duplicarServicio(s: Servicio){
+  async duplicarServicio(s: Servicio) {
     try {
-      await this.supabaseService.insert(Tablas.SERVICIOS, new Servicio({...s}));
+      await this.supabaseService.insert(Tablas.SERVICIOS, new Servicio({ ...s }));
       this.cerrarForm();
       this.successMsg.set(`Servicio duplicado correctamente`)
       await this.cargarServicios();
@@ -142,7 +165,7 @@ export class AdminServicios implements OnInit {
   }
 
   async confirmarEliminar() {
-    if (!this.selected){
+    if (!this.selected) {
       this.cerrarEliminar()
       return
     }
@@ -150,58 +173,32 @@ export class AdminServicios implements OnInit {
     try {
       await this.supabaseService.deleteRow(Tablas.SERVICIOS, 'id', this.selected.id);
       this.cerrarEliminar();
-      await this.cargarUsuarios()
       this.successMsg.set(`Servicio eliminado correctamente`)
+      await this.cargarUsuarios()
+      window.location.reload()
     } catch (err: any) {
-      this.errorMsg.set(err.message ?? 'Error al eliminar');
+      this.errorMsg.set('Error al eliminar: ' + err.message);
     }
   }
 
-
-  // ── Asignar trabajador
-  async abrirAsignar(s: Servicio) {
-    this.abrirModal(s)
-    this.showAsignarTrabajador = true;
-    await this.cargarUsuarios()
-  }
-
-  cerrarAsignar(){
-    this.cerrarModal()
-    this.showAsignarTrabajador = false;
-  }
-
-  async confirmarAsignar(){
-    if(!this.formData.num_empleado){
-      this.modalErrorMsg.set('Para guardar debes asignar algun trabajador!')
-      return
-    }
-
-    try {
-      await this.supabaseService.update(Tablas.SERVICIOS, 'id', this.formData.id.toString(), {num_empleado: this.formData.num_empleado});
-      this.cerrarAsignar();
-      await this.cargarServicios();
-      this.successMsg.set(`Trabajador asignado correctamente`)
-    } catch (err: any) {
-      this.modalErrorMsg.set(`Error al asignar: ${err.message}`);
-    }
-
-  }
 
   // ── Crear / Editar
   async abrirCrear() {
-    this.abrirModal(new Servicio({}))
     this.modoEdicion = false;
     this.formData = Servicio.empty();
+    this.abrirModal(this.formData)
     this.showFormModal = true;
     await this.cargarVehiculos()
+    this.onVehiculoChange()
   }
 
   async abrirEditar(s: Servicio) {
-    this.abrirModal(new Servicio({}))
     this.modoEdicion = true;
-    this.formData = new Servicio({...s});
+    this.formData = new Servicio({ ...s });
+    this.abrirModal(this.formData)
     this.showFormModal = true;
     await this.cargarVehiculos()
+    this.onVehiculoChange()
   }
 
   cerrarForm() {
@@ -240,7 +237,6 @@ export class AdminServicios implements OnInit {
     if (!this.formData.tel_cliente) return "El teléfono del cliente es obligatorio";
     if (!this.formData.ubicacion_recogida_lat || !this.formData.ubicacion_recogida_lng) return "La ubicación de recogida es obligatoria";
     if (!this.formData.ubicacion_destino_lat || !this.formData.ubicacion_destino_lng) return "La ubicación de destino es obligatoria";
-    if (!this.formData.vehiculo_matricula) return "La matrícula del vehículo es obligatoria";
 
     return '';
   }

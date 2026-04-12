@@ -47,6 +47,7 @@ export class AdminDashboard {
     this.finishedLoading.set(false);
     await this.cargarUsuarios()
     await this.cargarServicios()
+    await this.cargarVehiculos()
     this.finishedLoading.set(true);
   }
 

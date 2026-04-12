@@ -55,7 +55,7 @@ p {
 }
 
 .chip-text-green {
-    @include chip-text(#d7fce8, #01c753);
+    @include chip-text(#d7fce8, #009940);
 }
 
 .chip-text-blue {
@@ -63,11 +63,11 @@ p {
 }
 
 .chip-text-red {
-    @include chip-text(#fcded7, #c71801);
+    @include chip-text(#fcded7, #9b1200);
 }
 
 .chip-text-purple {
-    @include chip-text(#f3d7fc, #9f01c7);
+    @include chip-text(#f2dbfa, #9f01c7);
 }
 
 .chip-text-grey {
@@ -236,7 +236,7 @@ p {
 
 .loading-icono {
     text-align: center;
-    padding: 2.5rem 0 !important;
+    padding: 2.5rem 0;
 
     @keyframes spin {
         from {
@@ -328,6 +328,9 @@ p {
 }
 .btn-accion-duplicar{
   @include btn-accion(#fff8ef, #ffcb7c, #ff9900)
+}
+.btn-accion-white{
+  @include btn-accion(#fafcff, #212529, #212529)
 }
 
 // ─── Modales ─────────────────────────────────────────────────────────────────

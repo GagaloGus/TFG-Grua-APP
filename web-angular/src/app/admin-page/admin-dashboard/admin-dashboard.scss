@@ -28,3 +28,17 @@
 .dashboard-mini-info-green{
     @include dashboard-mini-info(#0ABF53)
 }
+
+.blink-text{
+    animation: blink 1.5s ease 1s infinite normal forwards;
+}
+
+@keyframes blink {
+    0%, 100% {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 0;
+	}
+}

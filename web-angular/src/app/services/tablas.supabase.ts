@@ -19,22 +19,25 @@ export class Vehiculo {
 
   static empty(): Vehiculo {
     return new Vehiculo({
-    disponible: false,
-    activo: false,
-    marca: null,
-    zona_trabajo: null,
-    num_empleado: null,
-  });
+      disponible: false,
+      activo: false,
+      marca: null,
+      zona_trabajo: null,
+      num_empleado: null,
+    });
   }
 }
 
 export class Servicio {
   id!: number;
+  direccion_ubi_recogida!: string | null;
   ubicacion_recogida_lat!: number;
   ubicacion_recogida_lng!: number;
+  direccion_ubi_destino!: string | null;
   ubicacion_destino_lat!: number;
   ubicacion_destino_lng!: number;
   fecha!: string;
+  costo: number = 0;
   num_empleado!: number | null;
   vehiculo_matricula!: string | null;
   observaciones!: string | null;
@@ -48,17 +51,19 @@ export class Servicio {
 
   static empty(): Servicio {
     return new Servicio({
-    ubicacion_recogida_lat: 0,
-    ubicacion_recogida_lng: 0,
-    ubicacion_destino_lat: 0,
-    ubicacion_destino_lng: 0,
-    estado: 'Sin empezar',
-    num_empleado: null,
-    vehiculo_matricula: null,
-    observaciones: null,
-    tel_cliente: null,
-    nombre_cliente: null,
-  });
+      direccion_ubi_recogida: null,
+      ubicacion_recogida_lat: 0,
+      ubicacion_recogida_lng: 0,
+      direccion_ubi_destino: null,
+      ubicacion_destino_lat: 0,
+      ubicacion_destino_lng: 0,
+      estado: "Sin empezar",
+      num_empleado: null,
+      vehiculo_matricula: null,
+      observaciones: null,
+      tel_cliente: null,
+      nombre_cliente: null,
+    });
   }
 
   get badgeClass(): string {
