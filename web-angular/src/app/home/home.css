@@ -142,8 +142,8 @@ nav{
     linear-gradient(rgba(8, 22, 38, 0.70), rgba(8, 22, 38, 0.72)),
     url("/Tow Truck.jpeg") center center / cover no-repeat;
   position: relative;
-  height: 90vh;
-  padding: 120px 5% 40px;
+  height: 70vh;
+  padding: 120px 5% 20px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -173,6 +173,7 @@ nav{
 }
 
 .hero h1 {
+  font-family: 'Barlow Condensed', sans-serif;
   font-size: 3.5rem;
   white-space: nowrap;
   color: #FFFFFF;
@@ -208,6 +209,113 @@ nav{
   color: white;
   text-decoration: none;
 }
+/* workflow */
+.workflow {
+  background:linear-gradient(rgba(8, 22, 38, 0.70), rgba(8, 22, 38, 0.72)),
+  url("/gps.jpg") center center / cover no-repeat;
+  padding: 90px 5%;
+  height: 70vh;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.section-header h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 3rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin-bottom: 10px;
+}
+
+.section-header p {
+  color: #FFFFFF;
+  font-size: 1.05rem;
+  max-width: 720px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* CONTENEDOR PRINCIPAL */
+.workflow-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 40px;
+  align-items: start;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* COLUMNAS */
+.wf-col {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.wf-step {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 24px 26px;
+  transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+
+.wf-step:hover {
+  transform: translateY(-4px);
+  border-color: rgba(245, 166, 35, 0.35);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.wf-step-body h3 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 10px;
+}
+
+.wf-step-body p {
+  color: #FFFFFF;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+/* BLOQUES DERECHA */
+.wf-stat {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 26px 28px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.big-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin-bottom: 10px;
+  line-height: 1;
+}
+
+.big-label {
+  color: #FFFFFF;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.big-sub {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 10px;
+  line-height: 1.1;
+}
+
+
 
 /* pie*/
 footer {
