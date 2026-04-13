@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         val tvUrgente = tarjeta.findViewById<TextView>(R.id.tvUrgente)
         tvUrgente.visibility = if (viaje.urgente) View.VISIBLE else View.GONE
 
-        // Botón navegar → lanza MapGPS con los datos del viaje
+        // Botón navegar: lanza MapGPS con los datos del viaje
         tarjeta.findViewById<Button>(R.id.btnNavegar).setOnClickListener {
             val intent = Intent(this, MapGPS::class.java).apply {
                 putExtra(MapGPS.EXTRA_LAT, viaje.lat)
@@ -67,6 +67,7 @@ class MainActivity : AppCompatActivity() {
                 putExtra(MapGPS.EXTRA_ID,  viaje.id)
             }
             startActivity(intent)
+            finish()
         }
 
         binding.listaViajes.addView(tarjeta)

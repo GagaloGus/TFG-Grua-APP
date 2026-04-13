@@ -13,6 +13,7 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -49,18 +50,18 @@ import java.util.Calendar
 
 class MapGPS : AppCompatActivity(), OnMapReadyCallback {
 
-    private lateinit var mMap: GoogleMap
+    private lateinit var mMap: GoogleMap // Mapa
     private lateinit var binding: ActivityMapGpsBinding
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var destino: LatLng
-    private var posicionActual: LatLng? = null
-    private var marcadorUsuario: Marker? = null
-    private var marcadorDestino: Marker? = null
-    private var rutaCalculada = false
-    private var rutaPolyline: Polyline? = null
+    private lateinit var fusedLocationClient: FusedLocationProviderClient // GPS
+    private lateinit var destino: LatLng // Ubicacion Usuario
+    private var posicionActual: LatLng? = null // Ubicacion destino
+    private var marcadorUsuario: Marker? = null // Marcador azul
+    //private var marcadorDestino: Marker? = null
+    //private var rutaCalculada = false
+    private var rutaPolyline: Polyline? = null // Linea de recorrido
 
     companion object {
-        const val API_KEY = "AIzaSyAxLBlpI6vtCy658BaQDMH8Mpmepl6CafM"
+        const val API_KEY = "AIzaSyAxLBlpI6vtCy658BaQDMH8Mpmepl6CafM" // Credencial API Maps
         const val EXTRA_LAT = "destino_lat"
         const val EXTRA_LNG = "destino_lng"
         const val EXTRA_ID = "viaje_id"
@@ -71,6 +72,11 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityMapGpsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Quita la barra de tareas superior
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN)
+
         // Recoge datos del Intent
         val lat = intent.getDoubleExtra(EXTRA_LAT, 0.0)
         val lng = intent.getDoubleExtra(EXTRA_LNG, 0.0)
@@ -78,33 +84,28 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         destino = LatLng(lat, lng)
 
         // Mostrar datos del viaje en el panel
-        val viaje = RecogidasRepo.Recogidas.find { it.id == recogidaID }
+        val viaje = RecogidasRepo.Recogidas.find { it.id == recogidaID } // Lista global de todos los viajes
         viaje?.let {
             binding.tvCliente.text = "Cliente: ${it.cliente}"
             binding.tvMatricula.text = "Matrícula: ${it.matricula}"
             binding.tvMotivo.text = "Motivo: ${it.motivo}"
             binding.tvTelefono.text = "Tel: ${it.telefono}"
+            // Rellena cada campo del panel inferior con los datos del viaje
         }
-        // └─ Recoge las coordenadas y el id que mandó MainActivity
-        //    cuando pulsaste "Iniciar navegación"
 
         // GPS
+        // Busca el viaje por su id en la lista y rellena los TextView del panel inferior
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        // └─ Busca el viaje por su id en la lista
-        //    y rellena los TextView del panel inferior
 
         // Mapa
+        // Busca el fragmento del mapa en el XML y lo convierte al tipo correcto para poder llamar a getMapAsync
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
-        // └─ Busca el fragmento del mapa en el XML
-        //    y avisa cuando esté listo → llama a onMapReady
+        mapFragment.getMapAsync(this) // Carga el mapa
 
         binding.btnSalir.setOnClickListener {
             ChangeActivity(this, MainActivity::class.java)
         }
-        // └─ El botón ✕ cierra la Activity
-
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -143,22 +144,20 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
                 val loc = result.lastLocation ?: return
                 posicionActual = LatLng(loc.latitude, loc.longitude)
 
-                if (!rutaCalculada) {
-                    rutaCalculada = true
-                    calcularRuta()
-                }
+                // Siempre actualiza el marcador con la posición real
                 if (marcadorUsuario == null) {
                     marcadorUsuario = mMap.addMarker(
                         MarkerOptions()
                             .position(posicionActual!!)
-                            .anchor(0.5f, 0.5f)   // Centrado exacto
-                            .flat(true)           // Se queda fijo, no gira con el mapa
+                            .anchor(0.5f, 0.5f)
+                            .flat(true)
                             .icon(crearIconoUsuario())
                     )
                     calcularRuta()
                 } else {
-                    marcadorUsuario!!.position = posicionActual!!
+                    marcadorUsuario!!.position = posicionActual!!  // Sobreescribe siempre
                 }
+
                 mMap.animateCamera(
                     CameraUpdateFactory.newLatLngZoom(posicionActual!!, 15f)
                 )
