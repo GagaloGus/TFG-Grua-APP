@@ -109,80 +109,89 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
+        mMap = googleMap // Mapa
 
         // Ocultar botones y puntos de interés del mapa
         mMap.uiSettings.isMapToolbarEnabled   = false
         mMap.uiSettings.isMyLocationButtonEnabled = false
         mMap.isTrafficEnabled = false
 
-        // Sin marcadores — solo la ruta
+        // Cambia la posicion con un click
         mMap.setOnMapClickListener { puntoClickado ->
             posicionActual = puntoClickado
             marcadorUsuario?.position = puntoClickado
             calcularRuta()
         }
 
+        // Revisa si el usuario concedio permisos y arranca el GPS
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             iniciarGPS()
-        } else {
+        } else { // Si no hay permisos mouestra popup de permisos
             ActivityCompat.requestPermissions(this,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1001)
         }
     }
 
     private fun iniciarGPS() {
-        val request = LocationRequest.Builder(
-            Priority.PRIORITY_HIGH_ACCURACY, 1000L  // 4000L → 1000L (1 segundo)
-        ).setMinUpdateDistanceMeters(2f).build()    // 5f → 2f (cada 2 metros)
+
+        val request = LocationRequest.Builder( // Peticion al GPS
+            Priority.PRIORITY_HIGH_ACCURACY /* Pide que use el más preciso*/, 1000L  // Intervalo de segundos en actualizarse 1000L (1 segundo)
+        ).setMinUpdateDistanceMeters(2f).build()    // Distancia de actualizacion 2f (cada 2 metros)
+
+        // Comprueba si hay permisos de ubicacion de nuevo
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) return
 
+        // Actualizaciones de ubicacion
         fusedLocationClient.requestLocationUpdates(request, object : LocationCallback() {
-            override fun onLocationResult(result: LocationResult) {
-                val loc = result.lastLocation ?: return
-                posicionActual = LatLng(loc.latitude, loc.longitude)
 
-                // Siempre actualiza el marcador con la posición real
+            override fun onLocationResult(result: LocationResult) {
+
+                val loc = result.lastLocation ?: return // Guarda la localizacion mas reciente del user
+                posicionActual = LatLng(loc.latitude, loc.longitude) // Convierte ubicacion el coordenadas
+
                 if (marcadorUsuario == null) {
-                    marcadorUsuario = mMap.addMarker(
+
+                    marcadorUsuario = mMap.addMarker( // Añade el marcador en la posicion
                         MarkerOptions()
                             .position(posicionActual!!)
                             .anchor(0.5f, 0.5f)
                             .flat(true)
                             .icon(crearIconoUsuario())
                     )
-                    calcularRuta()
+                    calcularRuta() // Calcula la ruta
                 } else {
-                    marcadorUsuario!!.position = posicionActual!!  // Sobreescribe siempre
+                    marcadorUsuario!!.position = posicionActual!!  // Sobreescribe la posicion del marcador
                 }
-
+                // Mueve la camara o zoom de maps hacia la ubicacion
                 mMap.animateCamera(
                     CameraUpdateFactory.newLatLngZoom(posicionActual!!, 15f)
                 )
             }
-        }, Looper.getMainLooper())
+        }, Looper.getMainLooper()) // Ejecuta en el hilo principal
     }
 
-    private fun calcularRuta() {
-        val origen = posicionActual ?: return
+    private fun calcularRuta() { // Llama a la API, interpreta la respuesta (JSON) y actualiza la UI
+
+        val origen = posicionActual ?: return // Posicion actual guardada
         binding.tvInstruccion.text = "Calculando ruta..."
 
-        lifecycleScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) { // Corrutina
+
             try {
-                val url = "https://maps.googleapis.com/maps/api/directions/json" +
+                val url = "https://maps.googleapis.com/maps/api/directions/json" + // Llamada a la API
                         "?origin=${origen.latitude},${origen.longitude}" +
                         "&destination=${destino.latitude},${destino.longitude}" +
                         "&mode=driving&language=es&key=$API_KEY"
 
-                val json = OkHttpClient()
+                val json = OkHttpClient() // Peticion HTTP a Google
                     .newCall(Request.Builder().url(url).build())
                     .execute().body?.string() ?: return@launch
 
-                val obj = JSONObject(json)
+                val obj = JSONObject(json) // Convierte JSON a objeto
 
-                if (obj.getString("status") != "OK") {
+                if (obj.getString("status") != "OK") { // Respuesta Google
                     withContext(Dispatchers.Main) {
                         binding.tvInstruccion.text = "Error: ${obj.getString("status")}"
                     }
@@ -194,38 +203,39 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
                 val tramo      = ruta.getJSONArray("legs").getJSONObject(0)
                 val distancia  = tramo.getJSONObject("distance").getString("text")
                 val tiempo     = tramo.getJSONObject("duration").getString("text")
-                val segundos   = tramo.getJSONObject("duration").getInt("value")  // NUEVO
-                val steps      = tramo.getJSONArray("steps")                       // NUEVO
+                val segundos   = tramo.getJSONObject("duration").getInt("value")
+                val steps      = tramo.getJSONArray("steps")
                 val instruccion = parsearInstruccion(steps.getJSONObject(0))
-                val siguiente  = if (steps.length() > 1)                          // NUEVO
+                val siguiente  = if (steps.length() > 1)
                     "Después: ${parsearInstruccion(steps.getJSONObject(1))}"
                 else "Después: llegarás al destino"
                 val puntos     = decodificarPolyline(
                     ruta.getJSONObject("overview_polyline").getString("points")
                 )
 
-                withContext(Dispatchers.Main) {
-                    dibujarRuta(puntos)
+                withContext(Dispatchers.Main) { // Hilo principal
+                    dibujarRuta(puntos) // Divuja la ruta en el mapa
                     binding.tvInstruccion.text = instruccion
                     binding.tvDistancia.text   = distancia
                     binding.tvTiempo.text      = tiempo
 
-                    // Siguiente instrucción
+                    // Carga los 'steps' de la ruta
                     val siguienteStep = tramo.getJSONArray("steps")
+                    // Muestra la siguiente instruccion
                     if (siguienteStep.length() > 1) {
                         binding.tvSiguiente.text = "Después: " +
                                 parsearInstruccion(siguienteStep.getJSONObject(1))
                     } else {
                         binding.tvSiguiente.text = "Después: llegarás al destino"
                     }
-
-                    // Hora de llegada = ahora + segundos que tarda
-                    val segundos = tramo.getJSONObject("duration").getInt("value")
+                    //Calcula la hora de llegada
                     val calendar = Calendar.getInstance()
                     calendar.add(Calendar.SECOND, segundos)
+
                     val hora = String.format("%02d:%02d",
                         calendar.get(Calendar.HOUR_OF_DAY),
                         calendar.get(Calendar.MINUTE))
+
                     binding.tvHoraLlegada.text = hora
                 }
 
@@ -354,7 +364,7 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
 
-    override fun onRequestPermissionsResult(
+    override fun onRequestPermissionsResult( // Permisos
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 1001 &&
