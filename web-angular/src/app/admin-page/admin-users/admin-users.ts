@@ -25,7 +25,7 @@ export class AdminUsers implements OnInit {
   // ── Local
   searchQuery = '';
   showConfirmation = false;
-  selected: any = null;
+  selected: Usuario | null = Usuario.empty();
   showEditModal = false;
   formData = Usuario.empty();
   opcionesLicencia = ['A', 'B', 'C', 'D', 'E'];

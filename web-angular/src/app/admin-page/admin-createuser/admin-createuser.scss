@@ -1,3 +1,32 @@
-.form-group{
-    width: 75%;
+@use '../../../styles/variables' as *;
+
+.user-avatar-edit{
+    min-width: 4.5rem;
+    max-width: (min(100%, 90px));
+    position: relative;
+    overflow: visible;
+    cursor: pointer;
+
+}
+
+.edit-icon {
+    position: absolute;
+    bottom: 0%;
+    right: 0%;
+    background: $primary;
+    color: $surface;
+    width: 30%;
+    height: 30%;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid $surface;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease-in-out;
+
+    svg {
+        width: 70%;
+        height: 70%;
+    }
 }

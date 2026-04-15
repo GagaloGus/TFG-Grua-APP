@@ -31,34 +31,21 @@ p {
   }
 }
 
-@mixin user-pfp($sizepx){
-    width: $sizepx;
+.user-pfp{
     margin: 0;
+    padding: 0;
+    height: fit-content;
+    aspect-ratio: 1/1;
     border: 0.15rem solid #e5eaf1;
-    height: max-content;
     border-radius: 100%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 
     >img {
         width: 100%;
+        aspect-ratio: 1/1;
         margin: 0;
         border-radius: 100%;
     }
-}
-
-.user-pfp {
-  @include user-pfp(70px)
-}
-
-.big-user-pfp {
-  @include user-pfp(120px)
-}
-
-.small-user-pfp {
-  @include user-pfp(50px)
-}
-
-.w-100-user-pfp{
-  @include user-pfp(100%)
 }
 
 @mixin chip-text($bg, $color) {

@@ -53,14 +53,14 @@
         <div class="text-start mt-auto">
             <hr>
             <p class="m-0 mb-1 text-white-50">Sesión iniciada:</p>
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
+            <div class="row">
+                <div class="col-9">
                     @if (nombre){
                     <p class="email-text">Hola, {{nombre}}!</p>
                     }
                     <p class="fw-bold email-text">{{ email ?? '—'}}</p>
                 </div>
-                <figure class="small-user-pfp m-0">
+                <figure class="user-pfp col-3 m-0">
                     <img src="/img/pfp_default.jpg" alt="">
                 </figure>
             </div>

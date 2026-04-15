@@ -15,30 +15,38 @@
                             <input [(ngModel)]="apellido2" name="usuario" class="form-control" type="text" placeholder="Apellido 2">
                         </div>
                     </div>
-                    <div class="col-4 p-2">
-                        <figure class="w-100-user-pfp m-0 ">
+                    <div class="col-4 p-3 d-flex align-items-center">
+                        <figure class="user-pfp m-0 user-avatar-edit">
                             <img src="/img/pfp_default.jpg" alt="">
+
+                            <span class="edit-icon">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32L19.513 8.2Z" />
+                                </svg>
+                            </span>
                         </figure>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>Contraseña</label>
-                    <input [(ngModel)]="password" name="password" class="form-control" type="password"
-                        placeholder="contraseña">
+                <div class="d-flex gap-3">
+                    <div class="form-group flex-grow-1">
+                        <label>Contraseña</label>
+                        <input [(ngModel)]="password" name="password" class="form-control" type="password"
+                            placeholder="contraseña">
+                    </div>
+                    <div class="form-group flex-grow-1">
+                        <label>Confirmar contraseña</label>
+                        <input [(ngModel)]="password2" name="password" class="form-control" type="password"
+                            placeholder="contraseña">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Confirmar contraseña</label>
-                    <input [(ngModel)]="password2" name="password" class="form-control" type="password"
-                        placeholder="contraseña">
-                </div>
-                <div class="form-group d-flex">
-                    <div class=" w-50">
+                <div class="d-flex gap-3">
+                    <div class="form-group flex-grow-1">
                         <label>Teléfono</label>
                         <input [(ngModel)]="tel" name="tel" class="form-control" type="tel"
                             placeholder="+34 600 000 000">
                     </div>
-                    <div class="mx-1"></div>
-                    <div class="w-50">
+                    <div class="form-group flex-grow-1">
                         <label>Correo</label>
                         <input [(ngModel)]="mail" name="mail" class="form-control" type="email"
                             placeholder="ejemplo@compañia.com">

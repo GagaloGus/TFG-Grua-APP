@@ -139,16 +139,16 @@
         @for (u of usuariosFiltrados(); track u.id) {
         <div class="col">
             <div class="card h-100 p-4">
-                <div class="card-title d-flex">
-                    <figure class="user-pfp me-4">
-                        <img class="rounded-circle" src="/img/house.png" alt="">
+                <div class="card-title row">
+                    <figure class="user-pfp col-md-3">
+                        <img class="w-100 rounded-circle" src="/img/house.png" alt="">
                     </figure>
-                    <div class="me-3">
+                    <div class="col-md-9">
                         <h4 class="m-0 mb-1 text-wrap">{{ u.nombreCompleto }}</h4>
                         <p class="text-secondary">EMP-{{ u.num_empleado }}</p>
                     </div>
                 </div>
-                <div class="d-flex flex-wrap">
+                <div class="d-flex flex-wrap mt-1">
                     <div class="align-self-start" [ngClass]="u.disponibilidadCSSClass">
                         <p>{{ u.disponibilidad }}</p>
                     </div>
@@ -237,7 +237,7 @@
                     <h5 class="modal-title">¿Eliminar usuario?</h5>
                 </div>
                 <div class="modal-body">
-                    ¿Seguro que quieres eliminar a <strong>{{ selected?.user }}</strong>?
+                    ¿Seguro que quieres eliminar a <span class="fw-bold">{{ selected?.nombreCompleto }}</span>?
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" (click)="cerrarEliminar()">Cancelar</button>
