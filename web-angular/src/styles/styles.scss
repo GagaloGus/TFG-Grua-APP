@@ -21,18 +21,40 @@ p {
     background-color: $gray-blue;
 }
 
-.user-pfp {
-    min-width: 40px;
-    width: 70px;
+.info-div-btn {
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #e5eaf1;
+    box-shadow: 0 4px 14px rgba(#8f9297, 0.35);
+    transform: translateY(-2px);
+  }
+}
+
+@mixin user-pfp($sizepx){
+    width: $sizepx;
     margin: 0;
+    border: 0.15rem solid #e5eaf1;
     height: max-content;
-    display: flex;
-    align-items: center;
+    border-radius: 100%;
 
     >img {
         width: 100%;
         margin: 0;
+        border-radius: 100%;
     }
+}
+
+.user-pfp {
+  @include user-pfp(70px)
+}
+
+.big-user-pfp {
+  @include user-pfp(120px)
+}
+
+.small-user-pfp {
+  @include user-pfp(50px)
 }
 
 @mixin chip-text($bg, $color) {

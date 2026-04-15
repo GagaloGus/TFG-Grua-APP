@@ -23,7 +23,7 @@
                 <path
                     d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.099zm-5.242 1.156a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11" />
             </svg>
-            <input class="form-control search-input" type="text" placeholder="Buscar por ID, Nº empleado o nombre..."
+            <input class="form-control search-input" type="text" placeholder="Buscar por Nº empleado o nombre..."
                 [(ngModel)]="searchQuery" (input)="filtrar()" />
         </div>
 
@@ -174,9 +174,11 @@
                         </svg>
                         <p>{{ u.telefono }}</p>
                     </div>
+                    @if(get_vehiculoUsuario(u) != ""){
+
                     <div class="d-flex align-items-center mb-2">
-                        <svg class="text-secondary me-2" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg class="text-secondary me-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
                             <path d="M15 18H9"></path>
                             <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14">
@@ -186,6 +188,7 @@
                         </svg>
                         <p>{{ get_vehiculoUsuario(u) }}</p>
                     </div>
+                    }
                     <hr>
                     <div class="d-flex text-center">
                         <div class="w-50">
@@ -200,7 +203,7 @@
                     </div>
                     <hr>
                     <div class="d-flex gap-2 mt-2 align-items-center justify-content-between">
-                        <p>Licencias: <kbd class="ms-2">{{ u.licenciasFormateadas }}</kbd></p>
+                        <p>Licencias: <kbd class="ms-2 text-nowrap">{{ u.licenciasFormateadas }}</kbd></p>
                         <div class="d-flex align-items-center justify-content-center gap-2">
                             <button class="btn btn-sm btn-accion-edit w-fit px-4 py-2 " (click)="abrirEditar(u)">
                                 <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" class="me-1">
@@ -257,67 +260,86 @@
                 </div>
                 <div class="modal-body">
                     <div class="row g-3">
-
                         <!-- Nombre -->
-                        <div class="col-md-4">
-                            <label class="form-label fw-medium">Nombre</label>
-                            <input class="form-control" type="text" [(ngModel)]="formData.nombre" placeholder="Nombre">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-medium">Primer apellido</label>
-                            <input class="form-control" type="text" [(ngModel)]="formData.apellido1"
-                                placeholder="Apellido 1">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-medium">Segundo apellido</label>
-                            <input class="form-control" type="text" [(ngModel)]="formData.apellido2"
-                                placeholder="Apellido 2">
+                        <div class="d-flex gap-3">
+                            <div class="flex-grow-1">
+                                <label class="form-label fw-medium">Nombre</label>
+                                <input class="form-control" type="text" [(ngModel)]="formData.nombre" placeholder="Nombre">
+                            </div>
+                            <div class="flex-grow-1">
+                                <label class="form-label fw-medium">Primer apellido</label>
+                                <input class="form-control" type="text" [(ngModel)]="formData.apellido1"
+                                    placeholder="Apellido 1">
+                            </div>
+                            <div class="flex-grow-1">
+                                <label class="form-label fw-medium">Segundo apellido</label>
+                                <input class="form-control" type="text" [(ngModel)]="formData.apellido2"
+                                    placeholder="Apellido 2">
+                            </div>
                         </div>
 
                         <!-- Contacto -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-medium">Email</label>
-                            <input class="form-control" type="email" [(ngModel)]="formData.email"
-                                placeholder="email@ejemplo.com">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-medium">Teléfono</label>
-                            <input class="form-control" type="tel" [(ngModel)]="formData.telefono"
-                                placeholder="+34 600 000 000">
+                        <div class="d-flex gap-3">
+                            <div class="flex-grow-1">
+                                <label class="form-label fw-medium">Email</label>
+                                <input class="form-control" type="email" [(ngModel)]="formData.email"
+                                    placeholder="email@ejemplo.com">
+                            </div>
+                            <div class="flex-grow-1">
+                                <label class="form-label fw-medium">Teléfono</label>
+                                <input class="form-control" type="tel" [(ngModel)]="formData.telefono"
+                                    placeholder="+34 600 000 000">
+                            </div>
                         </div>
 
-                        <!-- Rol y disponibilidad -->
-                        <div class="col-md-4">
-                            <label class="form-label fw-medium">Rol</label>
-                            <select class="form-select" [(ngModel)]="formData.rol">
-                                <option value="A">Admin</option>
-                                <option value="T">Trabajador</option>
-                                <option value="U">Usuario</option>
-                                <option value="N">Sin rol</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-medium">Disponibilidad</label>
-                            <select class="form-select" [(ngModel)]="formData.disponibilidad">
-                                <option value="Disponible">Disponible</option>
-                                <option value="En servicio">En servicio</option>
-                                <option value="Inactivo">Inactivo</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-medium">Grua Asignada</label>
-                            <input class="form-control" type="number" [(ngModel)]="formData.num_empleado">
+                        <!-- Rol, disponibilidad y vehiculo -->
+                        <div class="d-flex gap-3">
+                            <div class="flex-grow-1">
+                                <label class="form-label fw-medium">Disponibilidad</label>
+                                <select class="form-select" [(ngModel)]="formData.disponibilidad">
+                                    <option disabled>Seleccione un estado</option>
+                                    <option value="Disponible">Disponible</option>
+                                    <option value="En servicio">En servicio</option>
+                                    <option value="Inactivo">Inactivo</option>
+                                </select>
+                            </div>
+                            <div class="flex-grow-1">
+                                <label class="form-label fw-medium">Rol</label>
+                                @if(rol_actual == "A"){
+                                    <select class="form-select" [(ngModel)]="formData.rol">
+                                        <option value="N" disabled>Sin rol</option>
+                                        <option value="A">Admin</option>
+                                        <option value="T">Trabajador</option>
+                                        <option value="U">Usuario</option>
+                                    </select>
+                                }
+                                @else {
+                                    <input class="form-control" type="text" disabled placeholder="{{opcionesRol.find(o => o.value == formData.rol)?.label}}">
+                                }
+                            </div>
+                            @if(formData.rol == "T"){
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-medium">Grua Asignada</label>
+                                    <select class="form-select" type="text" [(ngModel)]="formData.vehiculo_asignado">
+                                        <option [value]="null" disabled>Seleccione una grua</option>
+                                        @for (v of vehiculos(); track v.matricula){
+                                            <option [value]="v.matricula">{{v.matricula}} - {{v.marca}}</option>
+                                        }
+                                    </select>
+                                </div>
+                            }
                         </div>
 
                         <!-- Licencias -->
-                        <div class="col-12">
+                        <div>
                             <label class="form-label fw-medium">Licencias de conducir</label>
                             <div class="d-flex gap-3 flex-wrap mt-1">
                                 @for (lic of opcionesLicencia; track lic) {
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" [id]="'lic-' + lic"
                                         [checked]="formData.licencia_conducir?.includes(lic)"
-                                        (change)="toggleLicencia(lic)">
+                                        (change)="toggleLicencia(lic)"
+                                        [disabled]="rol_actual != 'A'">
                                     <label class="form-check-label" [for]="'lic-' + lic">
                                         <kbd>{{ lic }}</kbd>
                                     </label>

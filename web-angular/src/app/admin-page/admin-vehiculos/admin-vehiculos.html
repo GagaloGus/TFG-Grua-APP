@@ -63,25 +63,25 @@
     <!-- Stats rapidas -->
     <div class="row g-3 mb-4">
         <div class="col-12 col-md-6 col-lg-3">
-            <div class="stat-card">
+            <div (click)="btnFiltrarEstado('')" class="info-div-btn stat-card">
                 <span class="stat-number">{{ vehiculos().length }}</span>
                 <span class="stat-label">Total</span>
             </div>
         </div>
         <div class="col-12 col-md-6 col-lg-3">
-            <div class="stat-card-green">
+            <div (click)="btnFiltrarEstado('disponible')" class="info-div-btn stat-card-green">
                 <span class="stat-number">{{ contarDisponibles() }}</span>
                 <span class="stat-label">Disponibles</span>
             </div>
         </div>
         <div class="col-12 col-md-6 col-lg-3">
-            <div class="stat-card-orange">
+            <div (click)="btnFiltrarEstado('no-disponible')" class="info-div-btn stat-card-orange">
                 <span class="stat-number">{{ vehiculos().length - contarDisponibles() }}</span>
                 <span class="stat-label">No disponibles</span>
             </div>
         </div>
         <div class="col-12 col-md-6 col-lg-3">
-            <div class="stat-card-blue">
+            <div (click)="btnFiltrarEstado('activo')" class="info-div-btn stat-card-blue">
                 <span class="stat-number">{{ contarActivos() }}</span>
                 <span class="stat-label">Activos</span>
             </div>
@@ -98,7 +98,7 @@
                         <th>Matrícula</th>
                         <th>Marca</th>
                         <th>Zona trabajo</th>
-                        <th>Trabajador asignado</th>
+                        <th>Trabajadores asignados</th>
                         <th>Disponible</th>
                         <th>Activo</th>
                         <th class="text-center">Acciones</th>
@@ -137,16 +137,15 @@
                         <td class="coordenadas fw-medium">{{ v.matricula }}</td>
                         <td>{{ v.marca ?? '—' }}</td>
                         <td>{{ v.zona_trabajo ?? '—' }}</td>
-                        <td class="d-flex align-items-center justify-content-between gap-1">
-                            <p class="obs-cell">{{ (v.num_empleado == null ? '—' : v.num_empleado + ' - ' +
-                                getUserByNumEmpleado(v.num_empleado)?.nombre) }}</p>
-                            <button class="btn btn-sm btn-accion-asignar" (click)="abrirAsignar(v)"
+                        <td>
+                            <p class="obs-cell">{{ (getUsuariosAsignados(v).length)}}</p>
+                            <!-- <button class="btn btn-sm btn-accion-asignar" (click)="abrirAsignar(v)"
                                 title="Asignar un Trabajador">
                                 <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
                                     <path
                                         d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z" />
                                 </svg>
-                            </button>
+                            </button> -->
                         </td>
                         <td>
                             <span [ngClass]="v.disponible ? 'badge-estado-terminado' : 'badge-estado-borrado'">
@@ -219,7 +218,7 @@
 
 <!-- ===== MODAL ASIGNAR TRABAJADOR ===== -->
 @if (showAsignarTrabajador) {
-<div class="modal d-block modal-overlay" (click)="cerrarAsignar()">
+<!-- <div class="modal d-block modal-overlay" (click)="cerrarAsignar()">
     <div class="modal-dialog modal-dialog-centered" (click)="$event.stopPropagation()">
         <div class="modal-content modal-custom">
             <div class="modal-header border-0 pb-0">
@@ -245,7 +244,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 }
 
 <!-- ===== MODAL CREAR / EDITAR ===== -->
@@ -291,6 +290,7 @@
                 @if (modalErrorMsg() !== '') {
                 <p class="text-danger mt-2">{{ modalErrorMsg() }}</p>
                 }
+                <p class="mt-2 text-secondary">Para asignar trabajadores a vehiculos se hace desde la pestaña <a class="text-primary fw-bold" routerLink="/admin/usuarios">Usuarios</a></p>
             </div>
             <div class="modal-footer border-0 gap-2">
                 <button class="btn btn-outline-secondary px-4" (click)="cerrarForm()">Cancelar</button>

@@ -58,13 +58,19 @@ export class AuthService {
     this._isAdmin = false
   }
 
-  getEmail() {
+  get nombre() {
+    if(this._currentUsuario == null)
+      return null
+    return this._currentUsuario.nombre == "" ? null : this._currentUsuario.nombre
+  }
+
+  get email() {
     if(this._currentUsuario == null)
       return null
     return this._currentUsuario.email == "" ? null : this._currentUsuario.email
   }
 
-  getRol(){
+  get rol(){
     if(this._currentUsuario == null)
       return null
     return this._currentUsuario.rol;

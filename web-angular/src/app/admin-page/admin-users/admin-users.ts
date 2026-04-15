@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase.service';
 import { Tablas, Usuario, Vehiculo } from '../../services/tablas.supabase';
+import { AuthService } from '@services/auth-service/auth-service';
 
 @Component({
   selector: 'app-admin-users',
@@ -11,7 +12,7 @@ import { Tablas, Usuario, Vehiculo } from '../../services/tablas.supabase';
   templateUrl: './admin-users.html',
   styleUrl: './admin-users.scss',
 })
-export class AdminUsers implements OnInit, OnDestroy {
+export class AdminUsers implements OnInit {
 
   // ── Signals
   finishedLoading = signal(false);
@@ -25,7 +26,6 @@ export class AdminUsers implements OnInit, OnDestroy {
   searchQuery = '';
   showConfirmation = false;
   selected: any = null;
-  refreshInterval: any;
   showEditModal = false;
   formData = Usuario.empty();
   opcionesLicencia = ['A', 'B', 'C', 'D', 'E'];
@@ -48,14 +48,14 @@ export class AdminUsers implements OnInit, OnDestroy {
   filtrosDisp = new Set<string>();
   dropdownDispAbierto = false;
 
-  constructor(private supabaseService: SupabaseService) { }
+  constructor(private supabaseService: SupabaseService, private authService: AuthService) { }
+
+  get rol_actual(){
+    return this.authService.rol ?? "N"
+  }
 
   async ngOnInit() {
     this.cargarTodo()
-  }
-
-  ngOnDestroy() {
-    clearInterval(this.refreshInterval);
   }
 
   // ── Cierra dropdowns al hacer click fuera
@@ -99,8 +99,8 @@ export class AdminUsers implements OnInit, OnDestroy {
 
   // ── Obtener el vehiculo del usuario
   get_vehiculoUsuario(u: Usuario): string{
-    let v = this.vehiculos().find(v => v.num_empleado == u.num_empleado)
-    return !v ? "(Sin vehiculo asignado)" : `Grúa ${v.marca} — ${v.matricula}`
+    let v = this.vehiculos().find(v => v.matricula == u.vehiculo_asignado)
+    return v ? `Grúa ${v.marca} — ${v.matricula}` : ""
   }
 
   // ── Filtrado
@@ -112,7 +112,7 @@ export class AdminUsers implements OnInit, OnDestroy {
         // Busqueda por texto
         const matchTexto =
           !t ||
-          (u.id?.toString() ?? '').includes(t) ||
+          (u.num_empleado?.toString() ?? '').includes(t) ||
           (u.nombreCompleto ?? '').toLowerCase().includes(t);
 
         // Filtro por rol (si no hay ninguno marcado, pasan todos)
@@ -144,7 +144,7 @@ export class AdminUsers implements OnInit, OnDestroy {
     } else {
       this.filtrosRol.add(value);
     }
-    this.filtrosRol = new Set(this.filtrosRol); // fuerza detección de cambio
+    this.filtrosRol = new Set(this.filtrosRol); // fuerza deteccion de cambio
     this.filtrar();
   }
 
@@ -233,4 +233,3 @@ async guardarUsuario() {
   }
 }
 }
-

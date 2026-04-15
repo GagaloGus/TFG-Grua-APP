@@ -64,26 +64,26 @@
 
     <!-- Stats rápidas -->
     <div class="row g-3 mb-4">
-        <div class="col-12 col-md-6 col-lg-3">
-            <div class="stat-card">
+        <div class=" col-12 col-md-6 col-lg-3">
+            <div (click)="btnFiltrarEstado('')" class="info-div-btn stat-card">
                 <span class="stat-number">{{ servicios().length }}</span>
                 <span class="stat-label">Total</span>
             </div>
         </div>
-        <div class="col-12 col-md-6 col-lg-3">
-            <div class="stat-card-orange">
+        <div class=" col-12 col-md-6 col-lg-3">
+            <div (click)="btnFiltrarEstado('Sin empezar')" class="info-div-btn stat-card-orange">
                 <span class="stat-number">{{ contarEstado('Sin empezar') }}</span>
                 <span class="stat-label">Sin empezar</span>
             </div>
         </div>
-        <div class="col-12 col-md-6 col-lg-3">
-            <div class="stat-card-blue">
+        <div class=" col-12 col-md-6 col-lg-3">
+            <div (click)="btnFiltrarEstado('En curso')" class="info-div-btn stat-card-blue">
                 <span class="stat-number">{{ contarEstado('En curso') }}</span>
                 <span class="stat-label">En curso</span>
             </div>
         </div>
-        <div class="col-12 col-md-6 col-lg-3">
-            <div class="stat-card-green">
+        <div class=" col-12 col-md-6 col-lg-3">
+            <div (click)="btnFiltrarEstado('Terminado')" class="info-div-btn stat-card-green">
                 <span class="stat-number">{{ contarEstado('Terminado') }}</span>
                 <span class="stat-label">Terminados</span>
             </div>

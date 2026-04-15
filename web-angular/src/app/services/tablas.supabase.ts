@@ -11,7 +11,6 @@ export class Vehiculo {
   activo!: boolean;
   marca!: string | null;
   zona_trabajo!: string | null;
-  num_empleado!: number | null;
 
   constructor(data: Partial<Vehiculo> = {}) {
     Object.assign(this, data);
@@ -23,7 +22,6 @@ export class Vehiculo {
       activo: false,
       marca: null,
       zona_trabajo: null,
-      num_empleado: null,
     });
   }
 }
@@ -88,6 +86,7 @@ export class Servicio {
 export class Usuario {
   id!: number;
   num_empleado!: number;
+  vehiculo_asignado!: string | null;
   created_at?: string;
   nombre!: string;
   apellido1!: string;
@@ -115,11 +114,11 @@ export class Usuario {
 
   get licenciasFormateadas(): string {
     // "B + C" o "Sin licencia"
-    return this.licencia_conducir?.join(' + ') ?? 'Sin licencia';
+    return this.licencia_conducir?.join('+') ?? 'Sin licencia';
   }
 
   get disponibilidadCSSClass(): string {
-    if (this.disponibilidad == "En servicio") return "chip-text-orange"
+    if (this.disponibilidad == "En servicio") return "chip-text-blue"
     else if (this.disponibilidad == "Disponible") return "chip-text-green"
     else if (this.disponibilidad == "Inactivo") return "chip-text-grey"
     return "chip-text"

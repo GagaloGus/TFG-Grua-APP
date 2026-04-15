@@ -8,9 +8,12 @@
                 <div class="form-group">
                     <label>Nombre y apellidos</label>
                     <div class="d-flex">
-                        <input [(ngModel)]="nombre" name="usuario" class="form-control flex-grow-1" type="text" placeholder="Nombre">
-                        <input [(ngModel)]="apellido1" name="usuario" class="form-control flex-grow-1 mx-2" type="text" placeholder="Apellido 1">
-                        <input [(ngModel)]="apellido2" name="usuario" class="form-control flex-grow-1" type="text" placeholder="Apellido 2">
+                        <input [(ngModel)]="nombre" name="usuario" class="form-control flex-grow-1" type="text"
+                            placeholder="Nombre">
+                        <input [(ngModel)]="apellido1" name="usuario" class="form-control flex-grow-1 mx-2" type="text"
+                            placeholder="Apellido 1">
+                        <input [(ngModel)]="apellido2" name="usuario" class="form-control flex-grow-1" type="text"
+                            placeholder="Apellido 2">
                     </div>
                 </div>
                 <div class="form-group">
@@ -26,12 +29,14 @@
                 <div class="form-group d-flex">
                     <div class=" w-50">
                         <label>Teléfono</label>
-                        <input [(ngModel)]="tel" name="tel" class="form-control" type="tel" placeholder="+34 600 000 000">
+                        <input [(ngModel)]="tel" name="tel" class="form-control" type="tel"
+                            placeholder="+34 600 000 000">
                     </div>
                     <div class="mx-1"></div>
                     <div class="w-50">
                         <label>Correo</label>
-                        <input [(ngModel)]="mail" name="mail" class="form-control" type="email" placeholder="ejemplo@compañia.com">
+                        <input [(ngModel)]="mail" name="mail" class="form-control" type="email"
+                            placeholder="ejemplo@compañia.com">
                     </div>
                 </div>
 
@@ -42,10 +47,11 @@
                 <div class="form-group">
                     <label>Rol del usuario</label>
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">{{chosenRol.display}}</button>
+                        <button class="btn btn-secondary dropdown-toggle" type="button"
+                            data-bs-toggle="dropdown">{{chosenRol.display}}</button>
                         <div class="dropdown-menu">
                             @for (rol of roles; track rol){
-                                <button class="dropdown-item" (click)="setRol(rol[0], rol[1])">{{rol[1]}}</button>
+                            <button class="dropdown-item" (click)="setRol(rol[0], rol[1])">{{rol[1]}}</button>
                             }
                         </div>
                     </div>
@@ -57,7 +63,8 @@
                         <div class="card-body">
                             @for (letra of carnetLetras; track letra) {
                             <div class="mb-1 form-check form-switch">
-                                <input class="form-check-input" type="checkbox" [checked]="chosenCarnet[letra]"(change)="setCarnet(letra)" />
+                                <input class="form-check-input" type="checkbox" [checked]="chosenCarnet[letra]"
+                                    (change)="setCarnet(letra)" />
                                 <label class="ms-3">{{ letra }}</label>
                             </div>
                             }
@@ -72,7 +79,10 @@
         @if(success()){
         <p class="text-success font-weight-bold">{{success()}}</p>
         }
-        <button type="button" class="btn btn-primary mt-2" (click)="createNewUser()">Crear usuario</button>
+        <div class="mt-2 d-flex gap-3">
+            <button type="button" class="btn btn-primary" (click)="createNewUser()">Crear usuario</button>
+            <button type="button" class="btn btn-outline-secondary" routerLink="/admin/usuarios">Cancelar</button>
+        </div>
     </div>
 
 </section>

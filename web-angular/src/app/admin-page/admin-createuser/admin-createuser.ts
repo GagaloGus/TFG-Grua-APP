@@ -3,10 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase.service';
 import { CommonModule } from '@angular/common';
 import { Tablas, Usuario } from '../../services/tablas.supabase';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-admin-createuser',
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, RouterLink],
   standalone: true,
   templateUrl: './admin-createuser.html',
   styleUrl: './admin-createuser.scss',

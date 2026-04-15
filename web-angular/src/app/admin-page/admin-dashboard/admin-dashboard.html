@@ -16,11 +16,11 @@
             <h5 class="blink-text text-secondary m-0">Cargando datos...</h5>
         </div>
     }
-    
+
     <!-- Resumen diario -->
     <div class="d-flex flex-wrap p-3 gap-4">
         <!-- Servicios activos -->
-        <div (click)="redirigir('servicio')" class="dashboard-mini-info-orange card">
+        <div (click)="redirigir('servicios')" class="dashboard-mini-info-orange card info-div-btn">
             <div class="card-body d-flex">
                 <div>
                     <p class="card-title text-secondary">Servicios activos</p>
@@ -41,7 +41,7 @@
         </div>
 
         <!-- Servicios completados -->
-        <div (click)="redirigir('servicio')" class="dashboard-mini-info-green card">
+        <div (click)="redirigir('servicios')" class="dashboard-mini-info-green card info-div-btn">
             <div class="card-body d-flex">
                 <div>
                     <p class="card-title text-secondary">Servicios completados</p>
@@ -60,7 +60,7 @@
         </div>
 
         <!-- Gruas disponibles -->
-        <div (click)="redirigir('vehiculos')" class="dashboard-mini-info-purple card">
+        <div (click)="redirigir('vehiculos')" class="dashboard-mini-info-purple card info-div-btn">
             <div class="card-body d-flex">
                 <div>
                     <p class="card-title text-secondary">Gruas disponibles</p>
@@ -83,7 +83,7 @@
         </div>
 
         <!-- Conductores disponibles -->
-        <div (click)="redirigir('usuarios')" class="dashboard-mini-info-blue card">
+        <div (click)="redirigir('usuarios')" class="dashboard-mini-info-blue card info-div-btn">
             <div class="card-body d-flex">
                 <div>
                     <p class="card-title text-secondary">Conductores disponibles</p>
@@ -103,4 +103,6 @@
             </div>
         </div>
     </div>
+
+    
 </section>

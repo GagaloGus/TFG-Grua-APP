@@ -36,7 +36,7 @@ export class AdminDashboard {
   }
 
   redirigir(ruta: string){
-    this.router.navigate([`/home/admin/${ruta}`])
+    this.router.navigate([`/admin/${ruta}`])
   }
 
   ngOnInit() {

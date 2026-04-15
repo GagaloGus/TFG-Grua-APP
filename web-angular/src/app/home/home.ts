@@ -24,7 +24,7 @@ export class Home {
     this.authService.logout()
   }
 
-  getEmail() {
-    return this.authService.getEmail()
+  get email() {
+    return this.authService.email
   }
 }

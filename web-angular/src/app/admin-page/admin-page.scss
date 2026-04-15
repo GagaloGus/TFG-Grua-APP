@@ -32,3 +32,9 @@
     display: flex;
     align-items: center;
 }
+
+.email-text{
+    max-width: 135px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

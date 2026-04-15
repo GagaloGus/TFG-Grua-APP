@@ -26,7 +26,11 @@ export class AdminPage {
       this.router.navigate(['/home'])
     }
 
-    getEmail() {
-      return this.authService.getEmail()
+    get email() {
+      return this.authService.email
+    }
+
+    get nombre(){
+      return this.authService.nombre
     }
 }

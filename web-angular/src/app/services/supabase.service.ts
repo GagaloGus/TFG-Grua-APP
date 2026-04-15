@@ -93,5 +93,4 @@ export class SupabaseService {
 
     console.log(`UPDATED '${table}' (${keyID} = ${valueID})`)
   }
-
 }

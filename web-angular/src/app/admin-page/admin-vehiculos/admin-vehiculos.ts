@@ -69,8 +69,9 @@ export class AdminVehiculos implements OnInit {
     }
   }
 
-  getUserByNumEmpleado(numEmpleado: number): Usuario | undefined {
-    return this.usuarios().find(u => u.num_empleado === numEmpleado);
+  getUsuariosAsignados(v: Vehiculo): Usuario[] {
+    let u = this.usuarios().filter(u => u.vehiculo_asignado === v.matricula);
+    return u ?? []
   }
 
   // ── Filtrado
@@ -93,6 +94,11 @@ export class AdminVehiculos implements OnInit {
         return matchQuery && matchDisp;
       })
     );
+  }
+
+  btnFiltrarEstado(estado: string){
+    this.filtroDisp = estado
+    this.filtrar()
   }
 
   contarDisponibles(): number {
@@ -152,7 +158,7 @@ export class AdminVehiculos implements OnInit {
   }
 
   async confirmarAsignar() {
-    if (this.formData.num_empleado == null) {
+    /*if (this.formData.num_empleado == null) {
       this.modalErrorMsg.set('Para guardar debes asignar algún trabajador');
       return;
     }
@@ -161,12 +167,12 @@ export class AdminVehiculos implements OnInit {
         Tablas.VEHICULOS, 'id', this.formData.id.toString(),
         { num_empleado: this.formData.num_empleado }
       );
-      this.cerrarAsignar();
       await this.cargarVehiculos();
       this.successMsg.set('Trabajador asignado correctamente');
     } catch (err: any) {
       this.modalErrorMsg.set(`Error al asignar: ${err.message}`);
-    }
+    }*/
+    this.cerrarAsignar();
   }
 
   // ── Crear / Editar

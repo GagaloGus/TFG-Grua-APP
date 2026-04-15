@@ -89,8 +89,7 @@ export class AdminServicios implements OnInit {
   }
 
   onVehiculoChange() {
-    let v = this.vehiculos().find(v => v.matricula === this.formData.vehiculo_matricula)
-    let u = this.usuarios().filter(u => u.num_empleado === v?.num_empleado);
+    let u = this.usuarios().filter(u => u.vehiculo_asignado === this.formData.vehiculo_matricula)
     this.usuarios_vehiculo = u ?? null;
   }
 
@@ -111,6 +110,10 @@ export class AdminServicios implements OnInit {
     );
   }
 
+  btnFiltrarEstado(estado: string){
+    this.filtroEstado = estado
+    this.filtrar()
+  }
 
   contarEstado(estado: string): number {
     return this.servicios().filter(s => s.estado === estado).length;
