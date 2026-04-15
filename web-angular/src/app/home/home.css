@@ -16,9 +16,7 @@
   --radius-lg:    20px;
 }
 
-*,
-*::before,
-*::after {
+*,*::before,*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -69,8 +67,8 @@ nav{
 }
 
 .logo-icon img{
-  width: 500%;
-  height: 100%;
+  width: 70%;
+  height: 70%;
   object-fit: contain;
 }
 
@@ -138,11 +136,11 @@ nav{
 /* hero */
 
 .hero {
-  background:
-    linear-gradient(rgba(8, 22, 38, 0.70), rgba(8, 22, 38, 0.72)),
-    url("/Tow Truck.jpeg") center center / cover no-repeat;
+  background:linear-gradient(rgba(8, 22, 38, 0.70), rgba(8, 22, 38, 0.72)),
+  url("/Tow Truck.jpeg") center center / cover no-repeat;
   position: relative;
-  height: 70vh;
+  min-height: 70vh;
+  height: auto;
   padding: 120px 5% 20px;
   overflow: hidden;
   display: flex;
@@ -214,7 +212,8 @@ nav{
   background:linear-gradient(rgba(8, 22, 38, 0.70), rgba(8, 22, 38, 0.72)),
   url("/gps.jpg") center center / cover no-repeat;
   padding: 90px 5%;
-  height: 70vh;
+  min-height: 70vh;
+  height: auto;
 }
 
 .section-header {
@@ -244,7 +243,7 @@ nav{
   grid-template-columns: 1.1fr 0.9fr;
   gap: 40px;
   align-items: start;
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
 }
 
@@ -265,13 +264,13 @@ nav{
 
 .wf-step:hover {
   transform: translateY(-4px);
-  border-color: rgba(245, 166, 35, 0.35);
-  background: rgba(255, 255, 255, 0.05);
+  border-color: #D4881A;
+  background: #1A2E4A;
 }
 
 .wf-step-body h3 {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1.6rem;
+  font-size: 2rem;
   font-weight: 700;
   color: #FFFFFF;
   margin-bottom: 10px;
@@ -285,13 +284,20 @@ nav{
 
 /* BLOQUES DERECHA */
 .wf-stat {
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  padding: 26px 28px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border-radius: 18px;
+  padding: 24px 26px;
+  transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
 }
 
-.big-num {
+.wf-stat:hover {
+  transform: translateY(-4px);
+  border-color: #D4881A;
+  background:  #1A2E4A;
+}
+
+.big-num h3{
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 2rem;
   font-weight: 800;
@@ -300,19 +306,123 @@ nav{
   line-height: 1;
 }
 
-.big-label {
+.big-num p {
   color: #FFFFFF;
   font-size: 1rem;
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
-.big-sub {
+
+.big-sub h3{
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 2rem;
   font-weight: 700;
   color: #FFFFFF;
   margin-bottom: 10px;
   line-height: 1.1;
+}
+
+.big-sub p {
+  color: #FFFFFF;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+/* perfiles */
+
+.profiles{
+  padding: 90px 5%;
+  background:
+    linear-gradient(rgba(8, 22, 38, 0.70), rgba(8, 22, 38, 0.72)),
+    url("/appauto.jpg") center center / cover no-repeat;
+}
+
+.profiles-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.profiles-card{
+  border-radius: 20px;
+  padding: 40px;
+  border: 1px solid #D4881A;
+
+}
+
+.profiles-card.admin{
+  background: #0a1626;
+  border: 2px solid #1e3a8a;
+}
+
+.profiles-card h3{
+  font-family: sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 10px;
+  line-height: 1.1;
+}
+
+.profiles-card li{
+  color: #6B89AA;
+  font-size: 1.1rem;
+  position: relative;
+  display: flex;
+}
+
+.profiles-card.operator{
+  background: #D4881A;
+  border: 2px solid #854d0e;
+}
+
+
+/* contacto*/
+
+.contact{
+  padding: 90px 5%;
+  background: #0D1B2E;
+}
+
+.contact-form h3 { 
+  color: #fff; 
+}
+
+.form-row { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 16px; 
+}
+
+.form-group { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 6px; 
+}
+.form-group label { 
+  color: #6B89AA; 
+  font-size: 11px; 
+  font-weight: 700; 
+  letter-spacing: 0.08em; 
+  text-transform: uppercase; 
+}
+.form-group input, .form-group textarea {
+  background: #0D1B2E;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px; padding: 10px 14px; color: #FFFFFF; font-size: 14px;
+}
+.form-group textarea { 
+  height: 90px; 
+  resize: none; 
+}
+.btn-send {
+  background: #F5A623; color: #0D1B2E;
+  font-weight: 700; 
+  padding: 12px 28px; 
+  border: none; 
+  border-radius: 8px; 
+  cursor: pointer;
 }
 
 
@@ -322,7 +432,7 @@ footer {
   background: #0a1626;
   text-align: center;
   padding: 40px 20px;
-  margin-top: 60px;
+  margin-top: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 

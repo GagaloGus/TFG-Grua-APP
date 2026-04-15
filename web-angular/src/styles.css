@@ -20,3 +20,10 @@
 .background{
     background: var(--gradient-main);
 }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #0D1B2E;
+  font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+}
