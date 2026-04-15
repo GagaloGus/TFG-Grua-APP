@@ -99,6 +99,7 @@ export class Usuario {
   licencia_conducir!: string[] | null;
   telefono!: string | null;
   email!: string | null;
+  avatar_url!: string | null;
 
   constructor(data: Partial<Usuario> = {}) {
     Object.assign(this, data);

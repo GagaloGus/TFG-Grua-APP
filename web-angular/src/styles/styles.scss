@@ -57,6 +57,10 @@ p {
   @include user-pfp(50px)
 }
 
+.w-100-user-pfp{
+  @include user-pfp(100%)
+}
+
 @mixin chip-text($bg, $color) {
     border: 1.5px;
     border-color: $color;

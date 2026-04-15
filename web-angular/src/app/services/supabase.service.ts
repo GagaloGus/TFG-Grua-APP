@@ -93,4 +93,25 @@ export class SupabaseService {
 
     console.log(`UPDATED '${table}' (${keyID} = ${valueID})`)
   }
+
+  async subirAvatarUsuario(keyID: string, valueID: string, imagen: File){
+    const imagenExt = imagen.name.split('.').pop();
+    const imagenNombre = `${Math.random()}.${imagenExt}`;
+    const imagenPath = `avatares/${imagenNombre}`;
+
+    // Subir el archivo al Bucket 'imagenes'
+    let { error } = await this.supabase.storage
+    .from('imagenes')
+    .upload(imagenPath, imagen);
+
+    // Url publica
+    const { data } = this.supabase.storage
+    .from('imagenes')
+    .getPublicUrl(imagenPath);
+
+    const urlPublica = data.publicUrl;
+
+    // Guardar en enlace en la tabla SQL
+    await this.update(Tablas.USUARIOS, keyID, valueID, {"avatar_url": urlPublica})
+  }
 }
