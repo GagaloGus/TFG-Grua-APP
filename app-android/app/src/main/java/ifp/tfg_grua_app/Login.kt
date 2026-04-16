@@ -4,6 +4,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -14,27 +18,23 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class Login : AppCompatActivity() {
-<<<<<<< Updated upstream
-=======
-    private var loginJob: Job? = null
 
+    private var loginJob: Job? = null
     private lateinit var email: EditText
     private lateinit var password: EditText
     private lateinit var btnEntrar: Button
     private lateinit var cbRecuerdame: CheckBox
 
->>>>>>> Stashed changes
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-<<<<<<< Updated upstream
-=======
 
         email = findViewById(R.id.email)
         password = findViewById(R.id.Password)
@@ -127,6 +127,11 @@ class Login : AppCompatActivity() {
         if(context is Activity){
             context.finish()
         }
->>>>>>> Stashed changes
+
+        if (cbRecuerdame.isChecked){
+            Toast.makeText(this,"Login correcto. Opción activada", Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(this, "Login correcto", Toast.LENGTH_SHORT).show()
+        }
     }
 }
