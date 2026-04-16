@@ -27,6 +27,15 @@ class Login : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Si el usuario marcó "Recuérdame" en un login anterior,
+        // saltamos directamente a MainActivity sin mostrar la pantalla de login.
+        if (SesionUsuario.haySesionPersistente(this)) {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+            return
+        }
+
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
 
@@ -81,7 +90,7 @@ class Login : AppCompatActivity() {
                     .from("usuarios")
                     .select {
                         filter {
-                            eq("mail", correo)
+                            eq("email", correo)
                             eq("password", clave)
                         }
                     }
@@ -97,7 +106,7 @@ class Login : AppCompatActivity() {
                 } else {
                     // Login OK: guardamos la sesión y entramos
                     val usuario = resultado.first()
-                    SesionUsuario.guardar(this@Login, usuario)
+                    SesionUsuario.guardar(this@Login, usuario, cbRecuerdame.isChecked)
                     Toast.makeText(
                         this@Login,
                         "Bienvenido, ${usuario.nombre ?: usuario.mail}",
@@ -126,12 +135,6 @@ class Login : AppCompatActivity() {
 
         if(context is Activity){
             context.finish()
-        }
-
-        if (cbRecuerdame.isChecked){
-            Toast.makeText(this,"Login correcto. Opción activada", Toast.LENGTH_SHORT).show()
-        }else{
-            Toast.makeText(this, "Login correcto", Toast.LENGTH_SHORT).show()
         }
     }
 }

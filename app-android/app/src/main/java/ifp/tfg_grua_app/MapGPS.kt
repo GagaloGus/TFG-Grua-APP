@@ -82,6 +82,7 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         val lng = intent.getDoubleExtra(EXTRA_LNG, 0.0)
         val recogidaID = intent.getIntExtra(EXTRA_ID, -1)
         destino = LatLng(lat, lng)
+        android.util.Log.d("MAPGPS", "Extras recibidos -> id=$recogidaID, lat=$lat, lng=$lng")
 
         // Mostrar datos del viaje en el panel
         val viaje = RecogidasRepo.Recogidas.find { it.id == recogidaID } // Lista global de todos los viajes
@@ -190,6 +191,7 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
                     .execute().body?.string() ?: return@launch
 
                 val obj = JSONObject(json) // Convierte JSON a objeto
+                android.util.Log.d("MAPGPS", "Respuesta Google status=${obj.optString("status")} body=$json")
 
                 if (obj.getString("status") != "OK") { // Respuesta Google
                     withContext(Dispatchers.Main) {

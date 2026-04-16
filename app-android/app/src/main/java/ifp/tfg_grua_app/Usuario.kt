@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Usuario(
-    val id: Int? = null,
+    val id: String? = null,
     val nombre: String? = null,
     val apellido1: String? = null,
     val apellido2: String? = null,
@@ -19,9 +19,9 @@ data class Usuario(
     val mail: String? = null,
     @SerialName("created_at") val createdAt: String? = null,
     @SerialName("servicios_completados") val serviciosCompletados: Int? = null,
-    @SerialName("licencia_conducir") val licenciaConducir: String? = null,
+    @SerialName("licencia_conducir") val licenciaConducir: List<String>? = null,
     val password: String? = null,
-    val disponibilidad: Boolean? = null,
+    val disponibilidad: String? = null,
     val rol: String? = null,
     @SerialName("num_empleado") val numEmpleado: Int? = null,
     @SerialName("vehiculo_asignado") val vehiculoAsignado: String? = null
