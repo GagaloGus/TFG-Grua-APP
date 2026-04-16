@@ -10,27 +10,48 @@
                         <label class="w-100">Nombre y apellidos</label>
                         <div>
                             <div class="row g-2">
-                                <input [(ngModel)]="nombre" name="usuario" class="form-control" type="text"
-                                    placeholder="Nombre">
-                                <input [(ngModel)]="apellido1" name="usuario" class="form-control" type="text"
-                                    placeholder="Apellido 1">
-                                <input [(ngModel)]="apellido2" name="usuario" class="form-control" type="text"
-                                    placeholder="Apellido 2">
+                                <input [(ngModel)]="nombre" name="usuario" class="form-control" type="text" placeholder="Nombre">
+                                <input [(ngModel)]="apellido1" name="usuario" class="form-control" type="text" placeholder="Apellido 1">
+                                <input [(ngModel)]="apellido2" name="usuario" class="form-control" type="text" placeholder="Apellido 2">
                             </div>
                         </div>
                     </div>
-                    <div class="d-block mt-lg-0 mt-2 col-12 col-lg-4" (click)="fileInput.click()">
+                    <div class="mt-lg-0 mt-2 col-12 col-lg-4">
                         <label class="w-100 text-center">Foto de Perfil</label>
-                        <figure class="user-pfp mt-2 mx-auto user-avatar-edit">
-                            <img src="{{avatar_path}}" alt="">
-                            <span class="edit-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32L19.513 8.2Z" />
-                                </svg>
-                            </span>
-                        </figure>
-                    <input #fileInput class="d-none" type="file" accept="image/*" (change)="onArchivoSeleccionado($event)">
+                        <div class="mt-2 d-flex align-items-center">
+                            <div style="position: relative; display: inline-block; margin: 0 auto;">
+                                <figure class="user-pfp m-0 user-avatar-edit">
+                                    <img #avatarImg src="/img/pfp_default.jpg" alt="Avatar">
+                                    <span class="edit-icon" (click)="abrirSelectorArchivo()" style="cursor: pointer;">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path
+                                                d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32L19.513 8.2Z" />
+                                        </svg>
+                                    </span>
+                                </figure>
+                                <input
+                                    #fileInput
+                                    type="file"
+                                    accept="image/*"
+                                    style="display: none;"
+                                    (change)="onArchivoSeleccionado($event)"
+                                >
+                            </div>
+                        </div>
+                        @if(imagenPreview()) {
+                        <div class="mt-2 text-center">
+                            <small class="text-success">✓ Avatar seleccionado</small>
+                            <div>
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-outline-danger mt-2"
+                                    (click)="eliminarImagenSeleccionada()"
+                                >
+                                    Cambiar imagen
+                                </button>
+                            </div>
+                        </div>
+                        }
                     </div>
                 </div>
                 <div class="row">
@@ -98,36 +119,46 @@
         <p class="text-success font-weight-bold">{{success()}}</p>
         }
         <div class="mt-2 d-flex gap-3">
-            <button type="button" class="btn btn-primary" (click)="createNewUser()">Crear usuario</button>
+            <button
+                type="button"
+                class="btn btn-primary"
+                (click)="createNewUser()"
+                [disabled]="cargandoImagen()"
+            >
+                @if(cargandoImagen()) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Subiendo imagen...
+                } @else {
+                    Crear usuario
+                }
+            </button>
             <button type="button" class="btn btn-outline-secondary" routerLink="/admin/usuarios">Cancelar</button>
         </div>
     </div>
 
-
-    <!-- MODAL IMAGEN -->
-    @if (modalimagen())
-    {
-    <div class="modal d-block modal-overlay">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content modal-custom">
+    <!-- Modal de Confirmación de Imagen -->
+    @if(mostrarModalConfirmacion()) {
+    <div class="modal-backdrop fade show" style="display: block;"></div>
+    <div class="modal fade show" style="display: block;" #confirmModal>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Confirmar avatar de usuario</h5>
-                    <button type="button" class=" btn-close" (click)="cerrarModalImagen()"></button>
+                    <h5 class="modal-title">Confirmar imagen de perfil</h5>
+                    <button type="button" class="btn-close" (click)="cancelarImagen()"></button>
                 </div>
                 <div class="modal-body text-center">
                     @if(imagenPreview()) {
-                    <figure class="w-25 mx-auto">
-                        <img [src]="imagenPreview()" alt="Preview" class="w-100 shadow border img-fluid rounded">
-                    </figure>
+                    <img [src]="imagenPreview()" alt="Preview" class="img-fluid rounded" style="max-height: 300px; max-width: 100%;">
                     }
-                    <p class="mt-3 text-muted">¿Quieres usar esta imagen como foto de perfil?</p>
+                    <p class="mt-3 text-muted">¿Usas esta imagen como avatar de perfil?</p>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="cancelarImagen()">Cancelar</button>
                     <button type="button" class="btn btn-primary" (click)="confirmarImagen()">Confirmar</button>
-                    <button type="button" class="btn btn-outline-secondary" (click)="cerrarModalImagen()">Cancelar</button>
                 </div>
             </div>
         </div>
     </div>
     }
+
 </section>

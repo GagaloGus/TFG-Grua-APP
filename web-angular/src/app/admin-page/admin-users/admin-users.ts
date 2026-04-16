@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase.service';
-import { Tablas, Usuario, Vehiculo } from '../../services/tablas.supabase';
+import { CarnetsConducir, Tablas, Usuario, Vehiculo } from '../../services/tablas.supabase';
 import { AuthService } from '@services/auth-service/auth-service';
 
 @Component({
@@ -28,7 +28,7 @@ export class AdminUsers implements OnInit {
   selected: Usuario | null = Usuario.empty();
   showEditModal = false;
   formData = Usuario.empty();
-  opcionesLicencia = ['A', 'B', 'C', 'D', 'E'];
+  opcionesLicencia = Object.keys(CarnetsConducir);
 
   // ── Filtros por rol
   opcionesRol = [
@@ -217,8 +217,10 @@ cerrarEditar() {
 toggleLicencia(lic: string) {
   const licencias = [...(this.formData.licencia_conducir ?? [])];
   const idx = licencias.indexOf(lic);
-  if (idx > -1) licencias.splice(idx, 1);
-  else licencias.push(lic);
+  if (idx > -1)
+    licencias.splice(idx, 1);
+  else
+    licencias.push(lic);
   this.formData.licencia_conducir = licencias;
 }
 

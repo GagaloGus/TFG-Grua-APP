@@ -4,6 +4,21 @@ export enum Tablas {
   SERVICIOS = 'servicios'
 }
 
+export enum CarnetsConducir {
+  A = 'A',
+  A1 = 'A1',
+  A2 = 'A2',
+  B = 'B',
+  B1 = 'B1',
+  C = 'C',
+  C1 = 'C1',
+  D = 'D',
+  D1 = 'D1',
+  'B+E' = 'B+E',
+  'C+E' = 'C+E',
+  'D+E' = 'D+E',
+}
+
 export class Vehiculo {
   id!: number;
   matricula!: string;

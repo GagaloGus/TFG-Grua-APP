@@ -139,11 +139,11 @@
         @for (u of usuariosFiltrados(); track u.id) {
         <div class="col">
             <div class="card h-100 p-4">
-                <div class="card-title row">
-                    <figure class="user-pfp col-md-3">
+                <div class="card-title d-flex gap-3">
+                    <figure class="user-pfp">
                         <img class="w-100 rounded-circle" src="/img/house.png" alt="">
                     </figure>
-                    <div class="col-md-9">
+                    <div class="user-name">
                         <h4 class="m-0 mb-1 text-wrap">{{ u.nombreCompleto }}</h4>
                         <p class="text-secondary">EMP-{{ u.num_empleado }}</p>
                     </div>
@@ -333,9 +333,9 @@
                         <!-- Licencias -->
                         <div>
                             <label class="form-label fw-medium">Licencias de conducir</label>
-                            <div class="d-flex gap-3 flex-wrap mt-1">
+                            <div class="row g-2 p-2">
                                 @for (lic of opcionesLicencia; track lic) {
-                                <div class="form-check">
+                                <div class="col-lg-2 col-sm-3 form-check form-switch">
                                     <input class="form-check-input" type="checkbox" [id]="'lic-' + lic"
                                         [checked]="formData.licencia_conducir?.includes(lic)"
                                         (change)="toggleLicencia(lic)"

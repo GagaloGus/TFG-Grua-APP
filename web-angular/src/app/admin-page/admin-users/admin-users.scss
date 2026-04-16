@@ -1,3 +1,11 @@
+.user-pfp{
+  min-width: 65px;
+  max-width: 85px;
+}
+.user-name{
+  flex-grow: 1;
+}
+
 // ── Filtro dropdown con checkboxes ───────────────────────────────────────────
 .filtro-dropdown {
   position: relative;
@@ -87,7 +95,7 @@
   }
 
   input[type="checkbox"] {
-    display: none; // ocultamos el nativo, usamos el custom
+    display: none;
   }
 
   // Checkbox visual custom

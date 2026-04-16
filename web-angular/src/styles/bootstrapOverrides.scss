@@ -2,7 +2,7 @@
 @use 'variables' as *;
 
 .btn, .dropdown-toggle, .form-check-input {
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 
     &:hover {
     box-shadow: 0 4px 14px rgba($primary, 0.35);
