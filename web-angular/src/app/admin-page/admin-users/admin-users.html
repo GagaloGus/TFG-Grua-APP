@@ -141,7 +141,7 @@
             <div class="card h-100 p-4">
                 <div class="card-title d-flex gap-3">
                     <figure class="user-pfp">
-                        <img class="w-100 rounded-circle" src="/img/house.png" alt="">
+                        <img class="w-100 rounded-circle" src="{{u.avatar_url ?? '/img/pfp_default.jpg'}}" alt="">
                     </figure>
                     <div class="user-name">
                         <h4 class="m-0 mb-1 text-wrap">{{ u.nombreCompleto }}</h4>
@@ -177,8 +177,8 @@
                     @if(get_vehiculoUsuario(u) != ""){
 
                     <div class="d-flex align-items-center mb-2">
-                        <svg class="text-secondary me-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg class="text-secondary me-2" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
                             <path d="M15 18H9"></path>
                             <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14">
@@ -202,24 +202,29 @@
                         </div>
                     </div>
                     <hr>
-                    <div class="d-flex gap-2 mt-2 align-items-center justify-content-between">
-                        <p>Licencias: <kbd class="ms-2 text-nowrap">{{ u.licenciasFormateadas }}</kbd></p>
-                        <div class="d-flex align-items-center justify-content-center gap-2">
-                            <button class="btn btn-sm btn-accion-edit w-fit px-4 py-2 " (click)="abrirEditar(u)">
-                                <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" class="me-1">
-                                    <path
-                                        d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" />
-                                </svg>
-                            </button>
-                            <button class="btn btn-sm btn-accion-delete w-fit px-4 py-2" (click)="abrirEliminar(u)">
-                                <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" class="me-1">
-                                    <path
-                                        d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                                    <path
-                                        d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                                </svg>
-                            </button>
-                        </div>
+                    <div class="d-flex gap-2 mt-2 align-items-center justify-content-end">
+                        <button class="btn btn-sm btn-accion-white w-fit px-4 py-2" (click)="abrirDetalles(u)" title="Ver detalles">
+                            <svg width="14" height="14" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                class="bi bi-eye">
+                                <path
+                                    d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
+                                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
+                            </svg>
+                        </button>
+                        <button class="btn btn-sm btn-accion-edit w-fit px-4 py-2 " (click)="abrirEditar(u)" title="Editar">
+                            <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" class="me-1">
+                                <path
+                                    d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" />
+                            </svg>
+                        </button>
+                        <button class="btn btn-sm btn-accion-delete w-fit px-4 py-2" (click)="abrirEliminar(u)" title="Eliminar">
+                            <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" class="me-1">
+                                <path
+                                    d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                <path
+                                    d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -261,20 +266,36 @@
                 <div class="modal-body">
                     <div class="row g-3">
                         <!-- Nombre -->
-                        <div class="d-flex gap-3">
-                            <div class="flex-grow-1">
-                                <label class="form-label fw-medium">Nombre</label>
-                                <input class="form-control" type="text" [(ngModel)]="formData.nombre" placeholder="Nombre">
+                        <div class="row">
+                            <div class="col-8">
+                                <div class="w-100">
+                                    <label class="form-label fw-medium">Nombre</label>
+                                    <input class="form-control" type="text" [(ngModel)]="formData.nombre" placeholder="Nombre">
+                                </div>
+                                <div class="d-lg-flex gap-3 mt-2">
+                                    <div class="flex-grow-1">
+                                        <label class="form-label fw-medium">Primer apellido</label>
+                                        <input class="form-control" type="text" [(ngModel)]="formData.apellido1" placeholder="Apellido 1">
+                                    </div>
+                                    <div class="flex-grow-1 mt-2 mt-lg-0">
+                                        <label class="form-label fw-medium">Segundo apellido</label>
+                                        <input class="form-control" type="text" [(ngModel)]="formData.apellido2" placeholder="Apellido 2">
+                                    </div>
+                                </div>
+
                             </div>
-                            <div class="flex-grow-1">
-                                <label class="form-label fw-medium">Primer apellido</label>
-                                <input class="form-control" type="text" [(ngModel)]="formData.apellido1"
-                                    placeholder="Apellido 1">
-                            </div>
-                            <div class="flex-grow-1">
-                                <label class="form-label fw-medium">Segundo apellido</label>
-                                <input class="form-control" type="text" [(ngModel)]="formData.apellido2"
-                                    placeholder="Apellido 2">
+                            <div class="col-4 mt-2 mt-lg-0 d-flex flex-column justify-content-center" (click)="fileInput.click()">
+                                <label class="w-100 text-center">Foto de Perfil</label>
+                                <figure class="user-pfp user-pfp--edit mt-2 mx-auto user-avatar-edit">
+                                    <img src="{{avatar_path}}" alt="">
+                                    <span class="edit-icon">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path
+                                                d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32L19.513 8.2Z" />
+                                        </svg>
+                                    </span>
+                                </figure>
+                                <input #fileInput class="d-none" type="file" accept="image/*" (change)="onArchivoSeleccionado($event)">
                             </div>
                         </div>
 
@@ -306,40 +327,40 @@
                             <div class="flex-grow-1">
                                 <label class="form-label fw-medium">Rol</label>
                                 @if(rol_actual == "A"){
-                                    <select class="form-select" [(ngModel)]="formData.rol">
-                                        <option value="N" disabled>Sin rol</option>
-                                        <option value="A">Admin</option>
-                                        <option value="T">Trabajador</option>
-                                        <option value="U">Usuario</option>
-                                    </select>
+                                <select class="form-select" [(ngModel)]="formData.rol">
+                                    <option value="N" disabled>Sin rol</option>
+                                    <option value="A">Admin</option>
+                                    <option value="T">Trabajador</option>
+                                    <option value="U">Usuario</option>
+                                </select>
                                 }
                                 @else {
-                                    <input class="form-control" type="text" disabled placeholder="{{opcionesRol.find(o => o.value == formData.rol)?.label}}">
+                                <input class="form-control" type="text" disabled
+                                    placeholder="{{opcionesRol.find(o => o.value == formData.rol)?.label}}">
                                 }
                             </div>
                             @if(formData.rol == "T"){
-                                <div class="flex-grow-1">
-                                    <label class="form-label fw-medium">Grua Asignada</label>
-                                    <select class="form-select" type="text" [(ngModel)]="formData.vehiculo_asignado">
-                                        <option [value]="null" disabled>Seleccione una grua</option>
-                                        @for (v of vehiculos(); track v.matricula){
-                                            <option [value]="v.matricula">{{v.matricula}} - {{v.marca}}</option>
-                                        }
-                                    </select>
-                                </div>
+                            <div class="flex-grow-1">
+                                <label class="form-label fw-medium">Grua Asignada</label>
+                                <select class="form-select" type="text" [(ngModel)]="formData.vehiculo_asignado">
+                                    <option [value]="null" disabled>Seleccione una grua</option>
+                                    @for (v of vehiculos(); track v.matricula){
+                                    <option [value]="v.matricula">{{v.matricula}} - {{v.marca}}</option>
+                                    }
+                                </select>
+                            </div>
                             }
                         </div>
 
                         <!-- Licencias -->
                         <div>
                             <label class="form-label fw-medium">Licencias de conducir</label>
-                            <div class="row g-2 p-2">
+                            <div class="d-flex flex-wrap gap-4 p-2">
                                 @for (lic of opcionesLicencia; track lic) {
-                                <div class="col-lg-2 col-sm-3 form-check form-switch">
+                                <div class=" form-check form-switch">
                                     <input class="form-check-input" type="checkbox" [id]="'lic-' + lic"
-                                        [checked]="formData.licencia_conducir?.includes(lic)"
-                                        (change)="toggleLicencia(lic)"
-                                        [disabled]="rol_actual != 'A'">
+                                        [checked]="formData.licencia_conducir.includes(lic)"
+                                        (change)="toggleLicencia(lic)" [disabled]="rol_actual != 'A'">
                                     <label class="form-check-label" [for]="'lic-' + lic">
                                         <kbd>{{ lic }}</kbd>
                                     </label>
@@ -363,4 +384,30 @@
     </div>
     }
 
+        <!-- MODAL IMAGEN -->
+    @if (modalimagen())
+    {
+    <div class="modal d-block modal-overlay">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content modal-custom">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar avatar de usuario</h5>
+                    <button type="button" class=" btn-close" (click)="cerrarModalImagen()"></button>
+                </div>
+                <div class="modal-body text-center">
+                    @if(imagenPreview()) {
+                    <figure class="user-pfp user-pfp--square w-50 mx-auto">
+                        <img [src]="imagenPreview()" alt="Preview">
+                    </figure>
+                    }
+                    <p class="mt-3 text-muted">¿Quieres usar esta imagen como foto de perfil?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" (click)="confirmarImagen()">Confirmar</button>
+                    <button type="button" class="btn btn-outline-secondary" (click)="cerrarModalImagen()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
 </section>

@@ -14,13 +14,17 @@ import { AuthService } from '@services/auth-service/auth-service';
 })
 export class AdminUsers implements OnInit {
 
+  constructor(private supabaseService: SupabaseService, private authService: AuthService) { }
+
   // ── Signals
   finishedLoading = signal(false);
   usuarios = signal<Usuario[]>([]);
   usuariosFiltrados = signal<Usuario[]>([]);
   vehiculos = signal<Vehiculo[]>([]);
   errorMsg = signal('');
+  successMsg = signal('');
   modalErrorMsg = signal('');
+  modalSuccessMsg = signal('');
 
   // ── Local
   searchQuery = '';
@@ -48,9 +52,14 @@ export class AdminUsers implements OnInit {
   filtrosDisp = new Set<string>();
   dropdownDispAbierto = false;
 
-  constructor(private supabaseService: SupabaseService, private authService: AuthService) { }
+  // Avatar
+  imagenSeleccionada: File | null = null;
+  imagenPreview = signal<string | null>(null);
+  modalimagen = signal(false);
+  cargandoImagen = signal(false);
+  avatar_path = "/img/pfp_default.jpg"
 
-  get rol_actual(){
+  get rol_actual() {
     return this.authService.rol ?? "N"
   }
 
@@ -98,7 +107,7 @@ export class AdminUsers implements OnInit {
   }
 
   // ── Obtener el vehiculo del usuario
-  get_vehiculoUsuario(u: Usuario): string{
+  get_vehiculoUsuario(u: Usuario): string {
     let v = this.vehiculos().find(v => v.matricula == u.vehiculo_asignado)
     return v ? `Grúa ${v.marca} — ${v.matricula}` : ""
   }
@@ -181,8 +190,14 @@ export class AdminUsers implements OnInit {
     this.filtrar();
   }
 
+  // ── Detalles
+  abrirDetalles(u: Usuario) {
+
+  }
+
+
   // ── Eliminar
-  abrirEliminar(u: any) {
+  abrirEliminar(u: Usuario) {
     this.selected = u;
     this.showConfirmation = true;
   }
@@ -205,33 +220,104 @@ export class AdminUsers implements OnInit {
   }
 
   abrirEditar(u: Usuario) {
-  this.formData = new Usuario({ ...u });
-  this.modalErrorMsg.set('');
-  this.showEditModal = true;
-}
-
-cerrarEditar() {
-  this.showEditModal = false;
-}
-
-toggleLicencia(lic: string) {
-  const licencias = [...(this.formData.licencia_conducir ?? [])];
-  const idx = licencias.indexOf(lic);
-  if (idx > -1)
-    licencias.splice(idx, 1);
-  else
-    licencias.push(lic);
-  this.formData.licencia_conducir = licencias;
-}
-
-async guardarUsuario() {
-  if (!this.formData.nombre) { this.modalErrorMsg.set('El nombre es obligatorio'); return; }
-  try {
-    await this.supabaseService.update(Tablas.USUARIOS, 'id', this.formData.id.toString(), this.formData);
-    this.cerrarEditar();
-    await this.cargarTodo();
-  } catch (err: any) {
-    this.modalErrorMsg.set(err.message ?? 'Error al guardar');
+    this.formData = new Usuario({ ...u });
+    this.modalErrorMsg.set('');
+    this.showEditModal = true;
   }
-}
+
+  cerrarEditar() {
+    this.showEditModal = false;
+  }
+
+  toggleLicencia(lic: string) {
+    const licencias = [...(this.formData.licencia_conducir ?? [])];
+    const idx = licencias.indexOf(lic);
+    if (idx > -1)
+      licencias.splice(idx, 1);
+    else
+      licencias.push(lic);
+    this.formData.licencia_conducir = licencias;
+  }
+
+  async guardarUsuario() {
+    if (!this.formData.nombre) {
+      this.modalErrorMsg.set('El nombre es obligatorio');
+      return;
+    }
+    try {
+      await this.supabaseService.update(Tablas.USUARIOS, 'id', this.formData.id.toString(), this.formData);
+
+      if (this.imagenSeleccionada) {
+        
+        //Otro try catch para que si falla la imagen el resto se pueda guardar
+        try {
+          this.cargandoImagen.set(true);
+          await this.supabaseService.subirAvatarUsuario("id", this.formData.id.toString(), this.imagenSeleccionada);
+          this.successMsg.set("Usuario con avatar editado!");
+        } catch (e: any) {
+          console.error("Error al subir avatar:", e);
+          this.successMsg.set("Usuario editado con exito");
+          this.errorMsg.set("Hubo un problema editando el avatar: "+e.message)
+        } finally {
+          this.cargandoImagen.set(false);
+        }
+      }
+      else{
+        this.successMsg.set("Usuario editado con exito");
+      }
+
+      this.cerrarEditar();
+      await this.cargarTodo();
+    } catch (err: any) {
+      this.modalErrorMsg.set('Error al guardar: '+err.message);
+    }
+  }
+
+  // AVATAR
+
+  cerrarModalImagen() {
+    this.modalimagen.set(false)
+  }
+
+  // Muestra la imagen en el form
+  confirmarImagen() {
+    if (this.imagenSeleccionada && this.imagenPreview()) {
+      this.avatar_path = this.imagenPreview()!;
+      this.modalimagen.set(false);
+    }
+  }
+
+  onArchivoSeleccionado(event: Event) {
+    console.log("clic")
+    const input = event.target as HTMLInputElement;
+    const archivo = input.files?.[0];
+
+    if (!archivo)
+      return;
+
+    // Validar que sea una imagen
+    if (!archivo.type.startsWith('image/')) {
+      this.errorMsg.set('Selecciona una imagen válida');
+      return;
+    }
+
+    // Validar tamaño (maximo 5MB)
+    const maxSizeMB = 5;
+    if (archivo.size > maxSizeMB * 1024 * 1024) {
+      this.errorMsg.set(`La imagen no puede superar ${maxSizeMB}MB`);
+      return;
+    }
+
+    this.errorMsg.set('');
+    this.imagenSeleccionada = archivo;
+
+    // Mostrar preview en el modal
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const preview = e.target?.result as string;
+      this.imagenPreview.set(preview);
+      this.modalimagen.set(true);
+    };
+    reader.readAsDataURL(archivo);
+  }
 }

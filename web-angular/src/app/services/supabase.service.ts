@@ -9,17 +9,11 @@ export class SupabaseService {
 
   tablas!: Tablas;
   private supabase: SupabaseClient;
-  private supabaseAdmin: SupabaseClient;
 
   constructor() {
     this.supabase = createClient(
       'https://sgyidsdrwqkqtqimozvm.supabase.co',
       'sb_publishable_SOBQAb6mNQod2cCeG8QS-w_6XT1D-YJ' //publishable key
-    );
-
-    this.supabaseAdmin = createClient(
-      'https://chdjeqqvuhqqxywiolmh.supabase.co',
-      'sb_secret_6_U-B0yASzMKhFPOwz209w_INEwdpbx' //secret key
     );
   }
 
@@ -63,7 +57,7 @@ export class SupabaseService {
     console.log(`DELETE from '${table}'`)
   }
 
-  async insert(table: Tablas, value: any){
+  async insert(table: Tablas, value: any) {
     const { id, created_at, ...payload } = value;
 
     // Elimina campos null/undefined para que Supabase use sus defaults
@@ -79,7 +73,7 @@ export class SupabaseService {
     console.log(`INSERTADO en '${table}'`)
   }
 
-  async update(table: Tablas, keyID: string, valueID: string, value: any){
+  async update(table: Tablas, keyID: string, valueID: string, value: any) {
     const { id, ...payload } = value;
 
     const { error } = await this.supabase
@@ -94,24 +88,29 @@ export class SupabaseService {
     console.log(`UPDATED '${table}' (${keyID} = ${valueID})`)
   }
 
-  async subirAvatarUsuario(keyID: string, valueID: string, imagen: File){
+  async subirAvatarUsuario(keyID: string, valueID: string, imagen: File) {
     const imagenExt = imagen.name.split('.').pop();
     const imagenNombre = `${Math.random()}.${imagenExt}`;
     const imagenPath = `avatares/${imagenNombre}`;
 
-    // Subir el archivo al Bucket 'imagenes'
+    // 1. Subir el archivo
     let { error } = await this.supabase.storage
-    .from('imagenes')
-    .upload(imagenPath, imagen);
+      .from('imagenes')
+      .upload(imagenPath, imagen);
 
-    // Url publica
+    // 2. Comprobar el error ANTES de continuar
+    if (error) {
+      throw error;
+    }
+
+    // 3. Obtener la URL pública
     const { data } = this.supabase.storage
-    .from('imagenes')
-    .getPublicUrl(imagenPath);
+      .from('imagenes')
+      .getPublicUrl(imagenPath);
 
     const urlPublica = data.publicUrl;
 
-    // Guardar en enlace en la tabla SQL
-    await this.update(Tablas.USUARIOS, keyID, valueID, {"avatar_url": urlPublica})
+    // 4. Guardar en la BD
+    await this.update(Tablas.USUARIOS, keyID, valueID, { avatar_url: urlPublica });
   }
 }

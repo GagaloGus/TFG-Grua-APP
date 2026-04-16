@@ -2,8 +2,8 @@
     <h1>Crear nuevo usuario</h1>
     <h5 class="text-secondary">Interfaz para crear un usuario en la base de datos</h5>
     <div class="w-100 p-3">
-        <form class="d-flex">
-            <div class="w-50">
+        <form class="row">
+            <div class="col-lg-6 col-12">
                 <h5 class="text-secondary w-fit">Datos de la persona</h5>
                 <div class="form-group row">
                     <div class="mt-lg-0 mt-2 col-12 col-lg-8">
@@ -21,7 +21,7 @@
                     </div>
                     <div class="d-block mt-lg-0 mt-2 col-12 col-lg-4" (click)="fileInput.click()">
                         <label class="w-100 text-center">Foto de Perfil</label>
-                        <figure class="user-pfp mt-2 mx-auto user-avatar-edit">
+                        <figure class="user-pfp user-pfp--edit mt-2 mx-auto">
                             <img src="{{avatar_path}}" alt="">
                             <span class="edit-icon">
                                 <svg viewBox="0 0 24 24" fill="currentColor">
@@ -59,8 +59,9 @@
                 </div>
 
             </div>
-            <section class="vr mx-5"></section>
-            <div class="w-50">
+            <section class="vr col-lg-1 mx-4 d-lg-block d-none p-0"></section>
+            <hr class="d-lg-none d-block my-4">
+            <div class="col-lg-5 col-12">
                 <h5 class="text-secondary">Informacion de trabajo</h5>
                 <div class="form-group">
                     <label>Rol del usuario</label>
@@ -78,9 +79,9 @@
                 <div class="form-group">
                     <label>Carnet de conducir</label>
                     <div class="card w-fit">
-                        <div class="card-body row g-2">
+                        <div class="card-body d-flex flex-wrap gap-4">
                             @for (letra of carnetLetras; track letra) {
-                            <div class="col-xl-4 col-sm-12 form-check form-switch">
+                            <div class=" form-check form-switch">
                                 <input class="form-check-input" type="checkbox" [checked]="chosenCarnet[letra]"
                                     (change)="setCarnet(letra)" />
                                 <kbd class="form-check-label">{{ letra }}</kbd>
@@ -91,8 +92,8 @@
                 </div>
             </div>
         </form>
-        @if(error()){
-        <p class="text-danger font-weight-bold">{{error()}}</p>
+        @if(errorMsg()){
+        <p class="text-danger font-weight-bold">{{errorMsg()}}</p>
         }
         @if(success()){
         <p class="text-success font-weight-bold">{{success()}}</p>
@@ -116,8 +117,8 @@
                 </div>
                 <div class="modal-body text-center">
                     @if(imagenPreview()) {
-                    <figure class="w-25 mx-auto">
-                        <img [src]="imagenPreview()" alt="Preview" class="w-100 shadow border img-fluid rounded">
+                    <figure class="user-pfp user-pfp--square w-25 mx-auto">
+                        <img [src]="imagenPreview()" alt="Preview">
                     </figure>
                     }
                     <p class="mt-3 text-muted">¿Quieres usar esta imagen como foto de perfil?</p>

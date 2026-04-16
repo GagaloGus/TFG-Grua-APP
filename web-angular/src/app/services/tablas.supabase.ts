@@ -111,7 +111,7 @@ export class Usuario {
   disponibilidad!: string;
   serv_completados_total!: number;
   serv_completados_hoy!: number;
-  licencia_conducir!: string[] | null;
+  licencia_conducir: string[] = [];
   telefono!: string | null;
   email!: string | null;
   avatar_url!: string | null;

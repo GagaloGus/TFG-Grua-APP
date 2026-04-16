@@ -45,7 +45,7 @@ export class AdminCreateuser {
   }
   readonly carnetLetras = Object.keys(CarnetsConducir)
 
-  error = signal('');
+  errorMsg = signal('');
   success = signal('');
 
   // Avatar
@@ -74,19 +74,19 @@ export class AdminCreateuser {
   }
 
   async createNewUser() {
-    this.error.set('')
+    this.errorMsg.set('')
     this.success.set('')
 
     const validationError = this.validar()
     if (validationError != '') {
-      this.error.set(validationError);
+      this.errorMsg.set(validationError);
       return;
     }
 
     try {
       const match = await this.supabaseService.find(Tablas.USUARIOS, "email", this.mail)
       if (match.length > 0) {
-        this.error.set(`Ya existe un usuario con el correo '${this.mail}'!`);
+        this.errorMsg.set(`Ya existe un usuario con el correo '${this.mail}'!`);
         return;
       }
 
@@ -103,10 +103,25 @@ export class AdminCreateuser {
       })
 
       await this.supabaseService.insert(Tablas.USUARIOS, nuevo_usuario);
-      this.success.set("Usuario creado!");
+
+      if (this.imagenSeleccionada) {
+        try {
+          this.cargandoImagen.set(true);
+          await this.supabaseService.subirAvatarUsuario("email", this.mail, this.imagenSeleccionada);
+          this.success.set("Usuario con avatar creado!");
+        } catch (e) {
+          console.error("Error al subir avatar:", e);
+          this.success.set("Usuario creado pero hubo error al subir el avatar");
+        } finally {
+          this.cargandoImagen.set(false);
+        }
+      } else {
+        this.success.set("Usuario creado!");
+      }
+
 
     } catch (e) {
-      this.error.set("Hubo un error de base de datos..");
+      this.errorMsg.set("Hubo un error de base de datos..");
       console.error(e);
     }
   }
@@ -117,6 +132,7 @@ export class AdminCreateuser {
     this.modalimagen.set(false)
   }
 
+  // Muestra la imagen en el form
   confirmarImagen() {
     if (this.imagenSeleccionada && this.imagenPreview()) {
       this.avatar_path = this.imagenPreview()!;
@@ -134,18 +150,18 @@ export class AdminCreateuser {
 
     // Validar que sea una imagen
     if (!archivo.type.startsWith('image/')) {
-      this.error.set('Selecciona una imagen válida');
+      this.errorMsg.set('Selecciona una imagen válida');
       return;
     }
 
     // Validar tamaño (maximo 5MB)
     const maxSizeMB = 5;
     if (archivo.size > maxSizeMB * 1024 * 1024) {
-      this.error.set(`La imagen no puede superar ${maxSizeMB}MB`);
+      this.errorMsg.set(`La imagen no puede superar ${maxSizeMB}MB`);
       return;
     }
 
-    this.error.set('');
+    this.errorMsg.set('');
     this.imagenSeleccionada = archivo;
 
     // Mostrar preview en el modal
