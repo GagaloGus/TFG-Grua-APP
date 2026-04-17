@@ -44,13 +44,14 @@ export class Vehiculo {
 export class Servicio {
   id!: number;
   direccion_ubi_recogida!: string | null;
-  ubicacion_recogida_lat!: number;
-  ubicacion_recogida_lng!: number;
+  ubicacion_recogida_lat: number = 0;
+  ubicacion_recogida_lng: number = 0;
   direccion_ubi_destino!: string | null;
-  ubicacion_destino_lat!: number;
-  ubicacion_destino_lng!: number;
+  ubicacion_destino_lat: number = 0;
+  ubicacion_destino_lng: number = 0;
   fecha!: string;
   costo: number = 0;
+  ingresos: number = 0;
   num_empleado!: number | null;
   vehiculo_matricula!: string | null;
   observaciones!: string | null;
@@ -65,11 +66,7 @@ export class Servicio {
   static empty(): Servicio {
     return new Servicio({
       direccion_ubi_recogida: null,
-      ubicacion_recogida_lat: 0,
-      ubicacion_recogida_lng: 0,
       direccion_ubi_destino: null,
-      ubicacion_destino_lat: 0,
-      ubicacion_destino_lng: 0,
       estado: "Sin empezar",
       num_empleado: null,
       vehiculo_matricula: null,
@@ -109,8 +106,8 @@ export class Usuario {
   password!: string;
   rol!: string;
   disponibilidad!: string;
-  serv_completados_total!: number;
-  serv_completados_hoy!: number;
+  serv_completados_total: number = 0;
+  serv_completados_hoy: number = 0;
   licencia_conducir: string[] = [];
   telefono!: string | null;
   email!: string | null;

@@ -298,37 +298,6 @@
 </div>
 }
 
-<!-- ===== MODAL ASIGNAR ===== -->
-<!-- @if (showAsignar) {
-<div class="modal d-block modal-overlay" (click)="cerrarAsignar()">
-    <div class="modal-dialog modal-dialog-centered" (click)="$event.stopPropagation()">
-        <div class="modal-content modal-custom">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold">Asignar trabajador y vehiculo al servicio<span class="text-primary"> S-{{selected?.id}}</span></h5>
-            </div>
-            <div class="modal-body pt-2">
-                    <select class="form-select" [(ngModel)]="formData.num_empleado">
-                        <option [value]="null" disabled>Selecciona un empleado</option>
-                        @for (u of usuarios(); track u.id) {
-                            @if (u.rol == 'T'){
-                                <option [value]="u.num_empleado">{{ u.num_empleado }} — {{ u.nombreCompleto }}</option>
-                            }
-                        }
-                    </select>
-                @if (modalErrorMsg() != ''){
-                <p class="text-danger mt-2">{{modalErrorMsg()}}</p>
-                }
-            </div>
-            <div class="modal-footer border-0 gap-2">
-                <button class="btn btn-outline-secondary px-4" (click)="cerrarAsignar()">Cancelar</button>
-                <button class="btn btn-success px-4" (click)="confirmarAsignar()">Guardar</button>
-            </div>
-        </div>
-    </div>
-</div>
-} -->
-
-
 <!-- ===== MODAL CREAR / EDITAR ===== -->
 @if (showFormModal) {
 <div class="modal d-block modal-overlay" (click)="cerrarForm()">

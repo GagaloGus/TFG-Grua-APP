@@ -89,7 +89,7 @@ export class AdminServicios implements OnInit {
   }
 
   onVehiculoChange() {
-    let u = this.usuarios().filter(u => u.vehiculo_asignado === this.formData.vehiculo_matricula)
+    let u = this.usuarios().filter(u => u.rol == "T" && u.vehiculo_asignado === this.formData.vehiculo_matricula)
     this.usuarios_vehiculo = u ?? null;
   }
 

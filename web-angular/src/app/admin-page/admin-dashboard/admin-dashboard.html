@@ -1,108 +1,322 @@
 <section>
-    <h1>Dashboard</h1>
-    <h5 class="text-secondary">Resumen general del sistema</h5>
-
-    @if(!finishedLoading()){
-        <div class="d-flex align-items-center">
-            <div class="loading-icono p-0 me-2">
-                <svg width="30" height="30" viewBox="0 0 60 60">
-                    <circle cx="30" cy="30" r="22" fill="none" stroke="#dee2e6" stroke-width="6" stroke-linecap="round" />
-                    <g>
-                        <circle cx="30" cy="30" r="22" fill="none" stroke="#0d6efd" stroke-width="6" stroke-linecap="round"
-                            stroke-dasharray="35 105" />
-                    </g>
-                </svg>
-            </div>
-            <h5 class="blink-text text-secondary m-0">Cargando datos...</h5>
+    <!-- Header -->
+    <div class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-2">
+        <div>
+            <h1>Dashboard</h1>
+            <h5 class="text-secondary">Resumen general del sistema</h5>
         </div>
+        <button class="btn btn-outline-secondary btn-sm" (click)="cargarTodo()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                <path d="M21 3v5h-5" />
+                <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+                <path d="M8 16H3v5" />
+            </svg>
+            Actualizar
+        </button>
+    </div>
+
+    @if (!finishedLoading()) {
+    <div class="d-flex align-items-center gap-2 mb-3">
+        <div class="loading-icono p-0">
+            <svg width="26" height="26" viewBox="0 0 60 60">
+                <circle cx="30" cy="30" r="22" fill="none" stroke="#dee2e6" stroke-width="6" stroke-linecap="round" />
+                <g>
+                    <circle cx="30" cy="30" r="22" fill="none" stroke="#0d6efd" stroke-width="6" stroke-linecap="round"
+                        stroke-dasharray="35 105" />
+                </g>
+            </svg>
+        </div>
+        <span class="blink-text text-secondary">Cargando datos...</span>
+    </div>
     }
 
-    <!-- Resumen diario -->
-    <div class="d-flex flex-wrap p-3 gap-4">
-        <!-- Servicios activos -->
-        <div (click)="redirigir('servicios')" class="dashboard-mini-info-orange card info-div-btn">
-            <div class="card-body d-flex">
-                <div>
-                    <p class="card-title text-secondary">Servicios activos</p>
-                    <h2 class="fw-bold">{{contarServiciosActivos()}}</h2>
-                </div>
-                <div class="mini-icon-orange">
-                    <figure>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            data-fg-38d19="1.20:1.7316:/src/app/pages/Dashboard.tsx:85:19:2826:49:e:stat.icon"
-                            data-fgid-38d19=":re8:">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                    </figure>
+    @if (errorMsg()) {
+    <div class="alert alert-danger py-2">{{ errorMsg() }}</div>
+    }
+
+    <!-- ── KPI Cards ──────────────────────────────────────────────────────── -->
+    <div class="d-flex flex-wrap gap-4 mb-4">
+
+        <div class="kpi-card kpi-orange info-div-btn" (click)="redirigir('servicios')">
+            <div class="kpi-icon" style="background:#fff3e6; color:#ff8c00">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                </svg>
+            </div>
+            <div>
+                <p class="kpi-label">Servicios activos</p>
+                <p class="kpi-value">{{ contarServiciosActivos() }}</p>
+            </div>
+        </div>
+
+        <div class="kpi-card kpi-green info-div-btn" (click)="redirigir('servicios')">
+            <div class="kpi-icon" style="background:#e6f8f0; color:#0abf53">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21.801 10A10 10 0 1 1 17 3.335" />
+                    <path d="m9 11 3 3L22 4" />
+                </svg>
+            </div>
+            <div>
+                <p class="kpi-label">Servicios completados</p>
+                <p class="kpi-value">{{ contarServiciosCompletados() }}</p>
+            </div>
+        </div>
+
+        <div class="kpi-card kpi-purple info-div-btn" (click)="redirigir('vehiculos')">
+            <div class="kpi-icon" style="background:#f3e8ff; color:#9810fa">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" />
+                    <path d="M15 18H9" />
+                    <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14" />
+                    <circle cx="17" cy="18" r="2" />
+                    <circle cx="7" cy="18" r="2" />
+                </svg>
+            </div>
+            <div>
+                <p class="kpi-label">Grúas disponibles</p>
+                <p class="kpi-value">{{ contarVehiculosDisponibles() }}</p>
+            </div>
+        </div>
+
+        <div class="kpi-card kpi-blue info-div-btn" (click)="redirigir('usuarios')">
+            <div class="kpi-icon" style="background:#e6f2ff; color:#0066ff">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+            </div>
+            <div>
+                <p class="kpi-label">Conductores disponibles</p>
+                <p class="kpi-value">{{ contarTrabajDisponibles() }}</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ── Fila gráficos ─────────────────────────────────────────────────── -->
+    <div class="charts-row mb-4">
+
+        <!-- Donut de estados de servicios -->
+        <div class="chart-card">
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <p class="chart-title mb-0">Estado de servicios</p>
+            </div>
+            <div class="donut-wrapper">
+                <svg viewBox="0 0 160 160" class="donut-svg">
+                    @for (seg of donutSegmentosServicios(); track seg.label) {
+                    <circle cx="80" cy="80" r="60" fill="none" [attr.stroke]="seg.color" stroke-width="22"
+                        [attr.stroke-dasharray]="seg.dash + ' ' + seg.gap"
+                        [attr.stroke-dashoffset]="-(seg.offset - (2 * 3.14159 * 60 / 4))" stroke-linecap="butt" />
+                    }
+                    <text x="80" y="85" text-anchor="middle" class="fs-3 fw-bold">{{ totalServicios() }}</text>
+                    <text x="80" y="101" text-anchor="middle" class="small text-secondary">Total</text>
+                </svg>
+                <div class="w-100 d-flex flex-column gap-1">
+                    @for (seg of donutSegmentosServicios(); track seg.label) {
+                    <div class="legend-item">
+                        <span class="legend-dot" [style.background]="seg.color"></span>
+                        <span class="legend-text">{{ seg.label }}</span>
+                        <span class="legend-count">{{ seg.value }}</span>
+                    </div>
+                    }
                 </div>
             </div>
         </div>
 
-        <!-- Servicios completados -->
-        <div (click)="redirigir('servicios')" class="dashboard-mini-info-green card info-div-btn">
-            <div class="card-body d-flex">
+         <!-- ── Grafico de lineas: ingresos vs gastos ────────────────────── -->
+        <div class="chart-card linechart-card d-flex flex-column">
+            <!-- Cabecera con resumen -->
+            <div class="linechart-header">
                 <div>
-                    <p class="card-title text-secondary">Servicios completados</p>
-                    <h2 class="fw-bold">{{contarServiciosCompletados()}}</h2>
+                    <p class="chart-title mb-0">Ingresos y gastos</p>
+                    <p class="linechart-sub">Últimos {{lineChartCantidadDias()}} días</p>
                 </div>
-                <div class="mini-icon-green">
-                    <figure>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21.801 10A10 10 0 1 1 17 3.335"></path>
-                            <path d="m9 11 3 3L22 4"></path>
-                        </svg>
-                    </figure>
+                <div class="linechart-totales">
+                    <div class="linechart-total linechart-total--green">
+                        <span class="linechart-total-label">Ingresos</span>
+                        <span class="linechart-total-value">+{{ totalIngresos() }}€</span>
+                    </div>
+                    <div class="linechart-total linechart-total--red">
+                        <span class="linechart-total-label">Gastos</span>
+                        <span class="linechart-total-value">-{{ totalGastos() }}€</span>
+                    </div>
+                    <div class="linechart-total linechart-total--blue">
+                        <span class="linechart-total-label">Beneficio</span>
+                        <span class="linechart-total-value">{{ totalBeneficios() }}€</span>
+                    </div>
                 </div>
+            </div>
+
+            <!-- SVG gráfico de líneas -->
+            <div class="linechart-svg-wrapper px-2 flex-grow-1 d-flex align-items-center">
+                <svg [attr.viewBox]="'0 0 ' + lineChartSvg().W + ' ' + lineChartSvg().H"
+                    class="linechart-svg">
+                    <defs>
+                        <linearGradient id="gradI" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#10b981" stop-opacity="0.25" />
+                            <stop offset="100%" stop-color="#10b981" stop-opacity="0" />
+                        </linearGradient>
+                        <linearGradient id="gradG" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#ef4444" stop-opacity="0.15" />
+                            <stop offset="100%" stop-color="#ef4444" stop-opacity="0" />
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Líneas guía horizontales -->
+                    @for (yl of lineChartSvg().yLabels; track yl.label) {
+                    <line x1="8" [attr.x2]="lineChartSvg().W - 8" [attr.y1]="yl.y" [attr.y2]="yl.y"
+                        stroke="#e5e7eb" stroke-width="1" stroke-dasharray="3 3" />
+                    <text [attr.x]="lineChartSvg().W - 6" [attr.y]="+yl.y - 3" class="linechart-ylabel">{{ yl.label }}</text>
+                    }
+
+                    <!-- Áreas rellenas -->
+                    <path [attr.d]="lineChartSvg().areaI" fill="url(#gradI)" />
+                    <path [attr.d]="lineChartSvg().areaG" fill="url(#gradG)" />
+
+                    <!-- Líneas -->
+                    <path [attr.d]="lineChartSvg().pathI" fill="none" stroke="#10b981" stroke-width="2.5"
+                        stroke-linejoin="round" stroke-linecap="round" />
+                    <path [attr.d]="lineChartSvg().pathG" fill="none" stroke="#ef4444" stroke-width="2.5"
+                        stroke-linejoin="round" stroke-linecap="round" />
+
+                    <!-- Puntos + etiquetas X -->
+                    @for (p of lineChartSvg().puntos; track p.label) {
+                    <circle [attr.cx]="p.x" [attr.cy]="p.yI" r="3.5" fill="#10b981" stroke="#fff" stroke-width="1.5" style="cursor: pointer;"/>
+                    <circle [attr.cx]="p.x" [attr.cy]="p.yG" r="3.5" fill="#ef4444" stroke="#fff" stroke-width="1.5" style="cursor: pointer;"/>
+                    <text [attr.x]="p.x" [attr.y]="lineChartSvg().H - 4" class="linechart-xlabel">{{ p.label }}</text>
+                    }
+                </svg>
+            </div>
+
+            <!-- Leyenda -->
+            <div class="linechart-legend">
+                <span class="linechart-legend-item">
+                    <span class="linechart-legend-dot" style="background:#10b981"></span>Ingresos
+                </span>
+                <span class="linechart-legend-item">
+                    <span class="linechart-legend-dot" style="background:#ef4444"></span>Gastos
+                </span>
             </div>
         </div>
 
-        <!-- Gruas disponibles -->
-        <div (click)="redirigir('vehiculos')" class="dashboard-mini-info-purple card info-div-btn">
-            <div class="card-body d-flex">
-                <div>
-                    <p class="card-title text-secondary">Gruas disponibles</p>
-                    <h2 class="fw-bold">{{contarVehiculosDisponibles()}}</h2>
+        <!-- Barras: conductores -->
+        <div class="chart-card">
+            <p class="chart-title">Disponibilidad de conductores</p>
+            <div class="bar-chart">
+                @for (item of disponibilidadTrabajadores(); track item.label) {
+                <div class="bar-row">
+                    <span class="bar-label">{{ item.label }}</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" [style.width.%]="item.pct" [style.background]="item.color"></div>
+                    </div>
+                    <span class="bar-count" [style.color]="item.color">{{ item.count }}</span>
                 </div>
-                <div class="mini-icon-purple">
-                    <figure>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
-                            <path d="M15 18H9"></path>
-                            <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14">
-                            </path>
-                            <circle cx="17" cy="18" r="2"></circle>
-                            <circle cx="7" cy="18" r="2"></circle>
-                        </svg>
-                    </figure>
+                }
+            </div>
+
+            <p class="chart-title mt-4">Disponibilidad de grúas</p>
+            <div class="bar-chart">
+                @for (item of disponibilidadVehiculos(); track item.label) {
+                <div class="bar-row">
+                    <span class="bar-label">{{ item.label }}</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" [style.width.%]="item.pct" [style.background]="item.color"></div>
+                    </div>
+                    <span class="bar-count" [style.color]="item.color">{{ item.count }}</span>
                 </div>
+                }
             </div>
         </div>
 
-        <!-- Conductores disponibles -->
-        <div (click)="redirigir('usuarios')" class="dashboard-mini-info-blue card info-div-btn">
-            <div class="card-body d-flex">
-                <div>
-                    <p class="card-title text-secondary">Conductores disponibles</p>
-                    <h2 class="fw-bold">{{contarTrabajDisponibles()}}</h2>
-                </div>
-                <div class="mini-icon-blue">
-                    <figure>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
+
+    </div>
+
+    <div class="d-flex flex-wrap gap-3">
+        <!-- ── Ultimos servicios ─────────────────────────────────────────────── -->
+        <div class="chart-card last-services-card">
+            <div class="d-flex align-items-center mb-3">
+                <p class="chart-title mb-0">Últimos servicios</p>
+                <button class="btn btn-sm btn-outline-primary ms-auto" (click)="redirigir('servicios')">Ver
+                    todos</button>
+            </div>
+            @if (ultimosServicios().length === 0) {
+            <p class="text-secondary small">No hay servicios registrados.</p>
+            } @else {
+            <div class="table-responsive">
+                <table class="tabla-datos">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Cliente</th>
+                            <th>Recogida</th>
+                            <th>Destino</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (s of ultimosServicios(); track s.id) {
+                        <tr>
+                            <td><span class="id-badge">S-{{ s.id }}</span></td>
+                            <td>
+                                <div>
+                                    <p class="fw-semibold small">{{ s.nombre_cliente ?? '—' }}</p>
+                                    <p class="text-secondary small">Tel: {{ s.tel_cliente ?? '' }}</p>
+                                </div>
+                            </td>
+                            <td>
+                                <abbr title="{{ s.direccion_ubi_recogida ?? ''}}" class="obs-cell text-secondary">{{
+                                    s.direccion_ubi_recogida ?? '—' }}</abbr>
+                            </td>
+                            <td class="obs-cell text-secondary">{{ s.direccion_ubi_destino ?? '—' }}</td>
+                            <td><span [class]="'badge-estado ' + s.badgeClass">{{ s.estado }}</span></td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            }
+        </div>
+
+        <!-- Top trabajadores -->
+        <div class="flex-grow-1 chart-card">
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <p class="chart-title mb-0">Top trabajadores</p>
+            </div>
+            @if (topTrabajadores().length === 0) {
+            <p class="text-secondary small">Sin datos de trabajadores.</p>
+            }
+            <div class="top-list">
+                @for (u of topTrabajadores(); track u.id; let i = $index) {
+                <div class="top-row">
+                    <span class="top-rank" [class.top-rank--gold]="i==0" [class.top-rank--silver]="i==1" [class.top-rank--bronze]="i==2">{{ i + 1 }}</span>
+                    <figure class="user-pfp user-pfp--mini">
+                        @if (u.avatar_url) {
+                        <img [src]="u.avatar_url" [alt]="u.nombreCompleto">
+                        } @else {
+                        <p>{{ u.nombre.charAt(0) }}{{ u.apellido1.charAt(0) }}</p>
+                        }
                     </figure>
+                    <div class="flex-grow-1">
+                        <p class="top-name">({{ u.email }}) {{ u.nombreCompleto }}</p>
+                        <div class="top-bar-track">
+                            <div class="top-bar-fill"
+                                [style.width.%]="((u.serv_completados_total) / maxServCompletados()) * 100"></div>
+                        </div>
+                    </div>
+                    <span class="top-num">{{ u.serv_completados_total }}</span>
                 </div>
+                }
             </div>
         </div>
     </div>
 
-    
 </section>

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SupabaseService } from '@services/supabase.service';
@@ -11,75 +11,186 @@ import { Servicio, Vehiculo, Usuario, Tablas } from '@services/tablas.supabase';
   styleUrl: './admin-dashboard.scss',
 })
 export class AdminDashboard {
-    // ── Signals — se actualizan solos sin Zone.js
-  finishedLoading = signal(false);
-  servicios = signal<Servicio[]>([]);
-  vehiculos = signal<Vehiculo[]>([]);
-  usuarios = signal<Usuario[]>([]);
-  successMsg = signal('');
-  errorMsg = signal('');
-  modalErrorMsg = signal('')
-
   constructor(private supabaseService: SupabaseService, private router: Router) { }
 
-  contarTrabajDisponibles(): number {
-    return this.usuarios().filter(u => u.disponibilidad == "Disponible").length;
-  }
-  contarServiciosActivos(): number {
-    return this.servicios().filter(s => s.estado == "En curso").length;
-  }
-  contarServiciosCompletados(): number {
-    return this.servicios().filter(s => s.estado == "Terminado").length;
-  }
-  contarVehiculosDisponibles(): number {
-    return this.vehiculos().filter(v => v.disponible).length;
-  }
+  // ── SIGNALS ──────────────────────────────────────────────────────────────────
+  finishedLoading = signal(false);
+  servicios       = signal<Servicio[]>([]);
+  vehiculos       = signal<Vehiculo[]>([]);
+  usuarios        = signal<Usuario[]>([]);
+  successMsg      = signal('');
+  errorMsg        = signal('');
+  modalErrorMsg   = signal('');
 
-  redirigir(ruta: string){
-    this.router.navigate([`/admin/${ruta}`])
-  }
+  // ── KPIs ──────────────────────────────────────────────────────────────────────
+  contarTrabajDisponibles    = computed(() => this.usuarios().filter(u => u.disponibilidad === 'Disponible').length);
+  contarServiciosActivos     = computed(() => this.servicios().filter(s => s.estado === 'En curso').length);
+  contarServiciosCompletados = computed(() => this.servicios().filter(s => s.estado === 'Terminado').length);
+  contarVehiculosDisponibles = computed(() => this.vehiculos().filter(v => v.disponible).length);
+  totalServicios             = computed(() => this.servicios().length);
 
-  ngOnInit() {
-    this.cargarTodo()
-  }
+  // ── DONUT ─────────────────────────────────────────────────────────────────────
+  donutSegmentosServicios = computed(() => {
+    const counts = [
+      { value: this.servicios().filter(s => s.estado === 'En curso').length,    color: '#3b82f6', label: 'En curso' },
+      { value: this.servicios().filter(s => s.estado === 'Terminado').length,   color: '#10b981', label: 'Terminado' },
+      { value: this.servicios().filter(s => s.estado === 'Sin empezar').length, color: '#f59e0b', label: 'Sin empezar' },
+      { value: this.servicios().filter(s => s.estado === 'Cancelado').length,   color: '#9ca3af', label: 'Cancelado' },
+    ];
+    const total = counts.reduce((s, c) => s + c.value, 0) || 1;
+    const circ = 2 * Math.PI * 60;
+    let offset = 0;
+    return counts.map(seg => {
+      const dash = (seg.value / total) * circ;
+      const gap  = circ - dash;
+      const result = { ...seg, dash, gap, offset, pct: Math.round((seg.value / total) * 100) };
+      offset += dash;
+      return result;
+    });
+  });
+
+  // ── BARRAS CONDUCTORES ────────────────────────────────────────────────────────
+  disponibilidadTrabajadores = computed(() => {
+    const disponible = this.usuarios().filter(u => u.disponibilidad === 'Disponible').length;
+    const enServicio = this.usuarios().filter(u => u.disponibilidad === 'En servicio').length;
+    const inactivo   = this.usuarios().filter(u => u.disponibilidad === 'Inactivo').length;
+    const max = Math.max(disponible, enServicio, inactivo, 1);
+    return [
+      { label: 'Disponible',  count: disponible, pct: (disponible / max) * 100, color: '#10b981' },
+      { label: 'En servicio', count: enServicio,  pct: (enServicio  / max) * 100, color: '#3b82f6' },
+      { label: 'Inactivo',    count: inactivo,    pct: (inactivo    / max) * 100, color: '#9ca3af' },
+    ];
+  });
+
+  // ── BARRAS VEHÍCULOS ──────────────────────────────────────────────────────────
+  disponibilidadVehiculos = computed(() => {
+    const disponible = this.vehiculos().filter(v => v.disponible && v.activo).length;
+    const ocupada    = this.vehiculos().filter(v => !v.disponible && v.activo).length;
+    const inactiva   = this.vehiculos().filter(v => !v.activo).length;
+    const max = Math.max(disponible, ocupada, inactiva, 1);
+    return [
+      { label: 'Disponible', count: disponible, pct: (disponible / max) * 100, color: '#10b981' },
+      { label: 'Ocupada',    count: ocupada,    pct: (ocupada    / max) * 100, color: '#f59e0b' },
+      { label: 'Inactiva',   count: inactiva,   pct: (inactiva   / max) * 100, color: '#9ca3af' },
+    ];
+  });
+
+  lineChartCantidadDias = signal(7)
+
+  // ── GRÁFICO DE LÍNEAS ── últimos 7 días ───────────────────────────────────────
+  lineChartDias = computed(() => {
+    const hoy = new Date();
+    return Array.from({ length: this.lineChartCantidadDias() }, (_, i) => {
+      const d = new Date(hoy);
+      d.setDate(hoy.getDate() - (this.lineChartCantidadDias() - 1 - i));
+      const label = d.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' });
+      const yyyy  = d.getFullYear();
+      const mm    = String(d.getMonth() + 1).padStart(2, '0');
+      const dd    = String(d.getDate()).padStart(2, '0');
+      const key   = `${yyyy}-${mm}-${dd}`;
+      const delDia  = this.servicios().filter(s => s.fecha?.startsWith(key));
+      const ingresos = delDia.reduce((sum, s) => sum + ((s as any).ingresos ?? 0), 0);
+      const gastos   = delDia.reduce((sum, s) => sum + (s.costo ?? 0), 0);
+      return { label, key, ingresos, gastos };
+    });
+  });
+
+  lineChartSvg = computed(() => {
+    const dias  = this.lineChartDias();
+    const W = 420, H = 140, padX = 8, padTop = 10, padBot = 24;
+    const innerH = H - padTop - padBot;
+
+    const maxY = Math.max(...dias.flatMap(d => [d.ingresos, d.gastos]), 1);
+    const xStep  = (W - padX * 2) / (dias.length - 1);
+    const xOf    = (i: number) => padX + i * xStep;
+    const yOf    = (v: number) => padTop + innerH - (v / maxY) * innerH;
+
+    const polyline = (key: 'ingresos' | 'gastos') =>
+      dias.map((d, i) => `${xOf(i).toFixed(1)},${yOf(d[key]).toFixed(1)}`).join(' ');
+
+    const toPath = (pts: string) =>
+      pts.split(' ').map((p, i) => (i === 0 ? `M${p}` : `L${p}`)).join(' ');
+
+    const ptsI = polyline('ingresos');
+    const ptsG = polyline('gastos');
+    const baseY = (padTop + innerH).toFixed(1);
+    const lastX = xOf(dias.length - 1).toFixed(1);
+
+    const areaI = toPath(ptsI) + ` L${lastX},${baseY} L${padX},${baseY} Z`;
+    const areaG = toPath(ptsG) + ` L${lastX},${baseY} L${padX},${baseY} Z`;
+
+    // etiquetas Y (3 niveles)
+    const yLabels = [0, 0.5, 1].map(f => ({
+      y:     yOf(maxY * f).toFixed(1),
+      label: Math.round(maxY * f) + '€',
+    }));
+
+    // puntos de tooltip
+    const puntos = dias.map((d, i) => ({
+      x: xOf(i),
+      yI: yOf(d.ingresos),
+      yG: yOf(d.gastos),
+      label: d.label,
+      ingresos: d.ingresos,
+      gastos: d.gastos,
+    }));
+
+    return { pathI: toPath(ptsI), pathG: toPath(ptsG), areaI, areaG, yLabels, puntos, W, H, xOf, baseY };
+  });
+
+  // ── COSTOS TOTALES ────────────────────────────────────────────────────────────
+  totalIngresos = computed(() => this.servicios().reduce((s, x) => s + ((x as any).ingresos ?? 0), 0));
+  totalGastos   = computed(() => this.servicios().reduce((s, x) => s + (x.costo ?? 0), 0));
+  totalBeneficios = computed(() => this.totalIngresos() - this.totalGastos());
+
+  // ── TABLA & RANKING ───────────────────────────────────────────────────────────
+  ultimosServicios = computed(() =>
+    [...this.servicios()].sort((a, b) => b.id - a.id).slice(0, 5)
+  );
+
+  topTrabajadores = computed(() =>
+    [...this.usuarios()]
+      .filter(u => u.rol === 'T')
+      .sort((a, b) => (b.serv_completados_total ?? 0) - (a.serv_completados_total ?? 0))
+      .slice(0, 8)
+  );
+
+  maxServCompletados = computed(() =>
+    Math.max(...this.topTrabajadores().map(u => u.serv_completados_total ?? 0), 1)
+  );
+
+  // ── HELPERS ───────────────────────────────────────────────────────────────────
+  redirigir(ruta: string) { this.router.navigate([`/admin/${ruta}`]); }
+
+  ngOnInit() { this.cargarTodo(); }
 
   async cargarTodo() {
     this.finishedLoading.set(false);
-    await this.cargarUsuarios()
-    await this.cargarServicios()
-    await this.cargarVehiculos()
+    await this.cargarUsuarios();
+    await this.cargarServicios();
+    await this.cargarVehiculos();
     this.finishedLoading.set(true);
   }
-
 
   async cargarServicios() {
     this.errorMsg.set('');
     try {
       const data = await this.supabaseService.getAll(Tablas.SERVICIOS);
       this.servicios.set(data.map((u: any) => new Servicio(u)));
-    } catch (err: any) {
-      this.errorMsg.set('Error al cargar servicios: ' + err.message);
-      console.error('Error al cargar servicios: ' + err.message);
-    }
+    } catch (err: any) { this.errorMsg.set('Error al cargar servicios: ' + err.message); }
   }
 
   async cargarVehiculos() {
     try {
       const data = await this.supabaseService.getAll(Tablas.VEHICULOS);
       this.vehiculos.set(data.map((v: any) => new Vehiculo(v)));
-    } catch (err: any) {
-      this.errorMsg.set('Error al cargar vehiculos: ' + err.message);
-      console.error('Error al cargar vehiculos:', err.message);
-    }
+    } catch (err: any) { this.errorMsg.set('Error al cargar vehículos: ' + err.message); }
   }
 
   async cargarUsuarios() {
     try {
       const data = await this.supabaseService.getAll(Tablas.USUARIOS);
       this.usuarios.set(data.map((v: any) => new Usuario(v)));
-    } catch (err: any) {
-      this.errorMsg.set('Error al cargar usuarios: ' + err.message);
-      console.error('Error al cargar usuarios:', err.message);
-    }
+    } catch (err: any) { this.errorMsg.set('Error al cargar usuarios: ' + err.message); }
   }
 }

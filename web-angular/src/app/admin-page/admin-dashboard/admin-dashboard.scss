@@ -1,44 +1,324 @@
 @use '../../../styles/variables' as *;
 
-@mixin dashboard-mini-info($border-col){
-    flex-grow: 1;
-    border-radius: 10px;
-    border-color: $border;
-    border-left: 5px solid #d1d5db;
-    border-left-color: $border-col;
+// ── KPI Grid ──────────────────────────────────────────────────────────────────
 
-    > .card-body{
-        gap: 20px;
-    }
+.kpi-card {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  gap: 1rem;
+  background: $surface;
+  border: 1.5px solid $border;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
 
-    p {
-        text-wrap: nowrap;
-    }
-}
-
-.dashboard-mini-info-orange{
-    @include dashboard-mini-info(#FF8C00)
-}
-.dashboard-mini-info-blue{
-    @include dashboard-mini-info(#0066ff)
-}
-.dashboard-mini-info-purple{
-    @include dashboard-mini-info(#9810FA)
-}
-.dashboard-mini-info-green{
-    @include dashboard-mini-info(#0ABF53)
+  &.kpi-orange { border-left: 4px solid #ff8c00; }
+  &.kpi-green  { border-left: 4px solid #0abf53; }
+  &.kpi-purple { border-left: 4px solid #9810fa; }
+  &.kpi-blue   { border-left: 4px solid #0066ff; }
 }
 
-.blink-text{
-    animation: blink 1.5s ease 1s infinite normal forwards;
+.kpi-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kpi-label {
+  font-size: 0.78rem;
+  color: $text-muted;
+  font-weight: 500;
+  white-space: nowrap;
+  margin: 0;
+}
+
+.kpi-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: $text;
+  line-height: 1;
+  margin: 0;
+}
+
+// ── Charts Row ────────────────────────────────────────────────────────────────
+.charts-row {
+  display: grid;
+  grid-template-columns: 280px 1fr 1fr;
+  gap: 1rem;
+
+  @media (max-width: 1100px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-card {
+  background: $surface;
+  border: 1.5px solid $border;
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.chart-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: $text;
+  margin: 0 0 1rem 0;
+}
+
+// ── Donut ─────────────────────────────────────────────────────────────────────
+.donut-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.donut-svg {
+  width: 160px;
+  height: 160px;
+
+  circle { transition: stroke-dasharray 0.5s ease; }
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-text {
+  color: $text-muted;
+  flex: 1;
+}
+
+.legend-count {
+  font-weight: 600;
+  color: $text;
+}
+
+// ── Bar Chart ─────────────────────────────────────────────────────────────────
+.bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.bar-label {
+  font-size: 0.8rem;
+  color: $text-muted;
+  width: 90px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.bar-track {
+  flex: 1;
+  height: 10px;
+  background: $border;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.5s ease;
+}
+
+.bar-count {
+  font-size: 0.85rem;
+  font-weight: 700;
+  width: 24px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+// ── Top trabajadores ──────────────────────────────────────────────────────────
+.top-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.top-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.top-rank {
+  font-size: 0.75rem;
+  font-weight: 700;
+  width: 20px;
+  text-align: center;
+  color: $text-muted;
+
+  &--gold   { color: #f59e0b; }
+  &--silver { color: #9ca3af; }
+  &--bronze { color: #b45309; }
+}
+
+.top-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: $text;
+  margin: 0 0 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.top-bar-track {
+  height: 6px;
+  background: $border;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.top-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #1a56db);
+  border-radius: 99px;
+  transition: width 0.5s ease;
+}
+
+.top-num {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: $text-muted;
+  flex-shrink: 0;
+}
+
+// ── Loading / blink ───────────────────────────────────────────────────────────
+.blink-text {
+  animation: blink 1.5s ease 1s infinite;
 }
 
 @keyframes blink {
-    0%, 100% {
-		opacity: 1;
-	}
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
 
-	50% {
-		opacity: 0;
-	}
+// ── Gráfico de líneas ─────────────────────────────────────────────────────────
+.linechart-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.linechart-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.linechart-sub {
+  font-size: 0.75rem;
+  color: $text-muted;
+  margin: 0;
+}
+
+.linechart-totales {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.linechart-total {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 0.25rem 0.6rem;
+  border-radius: 8px;
+  min-width: 72px;
+
+  &--green { background: #f0fdf4; }
+  &--red   { background: #fef2f2; }
+  &--blue  { background: #eff6ff; }
+}
+
+.linechart-total-label {
+  font-size: 0.68rem;
+  color: $text-muted;
+  font-weight: 500;
+}
+
+.linechart-total-value {
+  font-size: 0.95rem;
+  font-weight: 700;
+
+  .linechart-total--green & { color: #059669; }
+  .linechart-total--red   & { color: #dc2626; }
+  .linechart-total--blue  & { color: #2563eb; }
+}
+
+.linechart-svg-wrapper {
+  width: 100%;
+  overflow: hidden;
+}
+
+.linechart-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.linechart-xlabel {
+  font-size: 9px;
+  fill: $text-muted;
+  text-anchor: middle;
+  font-family: inherit;
+}
+
+.linechart-ylabel {
+  font-size: 8px;
+  fill: $text-muted;
+  text-anchor: end;
+  font-family: inherit;
+}
+
+.linechart-legend {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.78rem;
+  color: $text-muted;
+}
+
+.linechart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.linechart-legend-dot {
+  width: 10px;
+  height: 3px;
+  border-radius: 2px;
+  display: inline-block;
 }

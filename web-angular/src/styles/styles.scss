@@ -40,6 +40,13 @@ p {
     border-radius: 100%;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $primary;
+    background: #e0e7ff;
+    font-weight: bold;
+    font-size: 1.8rem;
 
     >img {
         width: 100%;
@@ -70,6 +77,13 @@ p {
       &:hover{
         filter: brightness(80%);
       }
+    }
+
+    &--mini{
+      width: 32px;
+      height: 32px;
+      font-size: 1rem;
+      box-shadow: 0;
     }
 }
 

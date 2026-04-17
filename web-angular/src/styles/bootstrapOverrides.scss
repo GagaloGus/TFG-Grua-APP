@@ -12,6 +12,10 @@
   &:active { transform: translateY(0); }
 }
 
+.row{
+    margin: 0;
+}
+
 .container,
 .container-fluid {
     height: fit-content !important;

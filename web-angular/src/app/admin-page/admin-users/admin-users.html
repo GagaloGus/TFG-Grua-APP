@@ -141,7 +141,11 @@
             <div class="card h-100 p-4">
                 <div class="card-title d-flex gap-3">
                     <figure class="user-pfp">
-                        <img class="w-100 rounded-circle" src="{{u.avatar_url ?? '/img/pfp_default.jpg'}}" alt="">
+                        @if (u.avatar_url) {
+                        <img [src]="u.avatar_url" [alt]="u.nombreCompleto">
+                        } @else {
+                        <span>{{ u.nombre.charAt(0) }}{{ u.apellido1.charAt(0) }}</span>
+                        }
                     </figure>
                     <div class="user-name">
                         <h4 class="m-0 mb-1 text-wrap">{{ u.nombreCompleto }}</h4>
