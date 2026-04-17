@@ -10,13 +10,13 @@
   </a>
 
   <ul class="nav-links">
-    <li><a href="#inicio" class="active">Inicio</a></li>
-    <li><a href="#servicios">Servicios</a></li>
-    <li><a href="#workflow">Cómo funciona</a></li>
-    <li><a href="#contacto">Contacto</a></li>
+    <li><a href="#inicio" class="active">INICIO</a></li>
+    <li><a href="#servicios">SERVICIOS</a></li>
+    <li><a href="#workflow">CÓMO FUNCIONA</a></li>
+    <li><a href="#contacto">CONTACTO</a></li>
   </ul>
 
-  <button class="btn-nav" routerLink="/login">Iniciar sesión</button>
+  <button class="btn-nav" routerLink="/login">INICIAR SESIÓN</button>
 </nav>
 
 <!-- HERO -->
@@ -26,18 +26,18 @@
   <div class="hero-content">
     <div class="hero-text">
       <h1>
-        Cada grúa, cada servicio,<br />
-        bajo control.
+        CADA GRÚA,<br />CADA SERVICIO,<br />
+        BAJO CONTROL.
       </h1>
 
       <p class="hero-sub">
         Coordina a tus operadores, asigna servicios y
-        monitoriza cada vehículo en tiempo real.
+        monitoriza cada <br /> vehículo en tiempo real.
       </p>
 
       <div class="hero-buttons">
-        <a routerLink="/login" class="btn-primary lg">Acceder al panel</a>
-        <a href="#workflow" class="btn-secondary lg">Ver cómo funciona</a>
+        <a routerLink="/login" class="btn-primary lg">ACCEDER AL PANEL</a>
+        <a href="#workflow" class="btn-secondary lg">VER CÓMO FUNCIONA</a>
       </div>
     </div>    
   </div>
@@ -48,7 +48,7 @@
 
   <!-- Título -->
   <div class="section-header">
-    <h2>¿Cómo se gestiona un servicio?</h2>
+    <h2>¿CÓMO SE GESTIONA <br/> UN SERVICIO?</h2>
     <p>Todo el proceso queda controlado desde que se registra hasta que se finaliza.</p>
   </div>
 
@@ -61,7 +61,7 @@
       <!-- Paso 1 -->
       <div class="wf-step">
         <div class="wf-step-body">
-          <h3>Alta del servicio</h3>
+          <h3>ALTA DE SERVICIO</h3>
           <p>
             Desde la web, la empresa registra el aviso con los datos más importantes:
             ubicación, destino y notas necesarias para el operador.
@@ -72,7 +72,7 @@
       <!-- Paso 2 -->
       <div class="wf-step">
         <div class="wf-step-body">
-          <h3>Asignación del operador</h3>
+          <h3>ASIGNACIÓN DEL OPERADOR</h3>
           <p>
             El sistema permite seleccionar al operario disponible junto con su vehículo,
             para que reciba el trabajo directamente en la aplicación móvil.
@@ -88,7 +88,7 @@
       <!-- Info 1 -->
       <div class="wf-stat">
         <div class="big-num">
-          <h3>Tiempo real</h3>
+          <h3>TIEMPO REAL</h3>
           <p>El panel muestra cambios de estado y seguimiento del servicio al momento.</p>
         </div>
       </div>
@@ -96,7 +96,7 @@
       <!-- Info 2 -->
       <div class="wf-stat">
         <div class="big-sub">
-          <h3>Web administrativa + app Android</h3>
+          <h3>WEB ADMINISTRATIVA + APP ANDROID</h3>
           <p>Menos llamadas, menos errores y mejor organización del trabajo diario.</p>
         </div>
       </div>
@@ -110,13 +110,13 @@
 
 <section class="profiles" id="servicios">
   <div class="section-header">
-    <h2>Diseñado para cada rol del sistema</h2>
+    <h2>DISEÑADO PARA <br/> CADA ROL</h2>
   </div>
 
   <div class="profiles-grid">
 
     <div class="profiles-card admin">
-      <h3>Administrador web</h3>
+      <h3>ADMINISTRADOR WEB</h3>
       <ul>
         <li>- Crear y asignar servicios</li>
         <li>- Ver disponibilidad de operadores</li>
@@ -127,7 +127,7 @@
     </div>
 
     <div class="profiles-card operator">
-      <h3>Operador (app Android)</h3>
+      <h3>OOPERADOR (APP ANDROID)</h3>
       <ul>
         <li>- Ver servicios asignados</li>
         <li>- Actualizar estado del servicio</li>
@@ -144,9 +144,11 @@
 
 <section class="contact" id="contacto">
   <div class="section-header">
-    <h2> Contacto</h2>
+    <h2> CONTACTA CON NOSOTROS</h2>
     <p>Si deseas más información sobre la plataforma o el desarrollo del proyecto,
-      puedes ponerte en contacto con nosotros en info@towapp.es.</p>
+      puedes ponerte en contacto con nosotros en 
+      <span>info@towapp.es.</span>
+    </p>
   </div>
   
   <div class="contact-form">
@@ -161,14 +163,34 @@
 </section>
 
 
-
 <!-- pie de pagina --> 
-<footer id="contacto">
-  <div class="footer-logo">
-    TOW<span class="app">APP</span> SYSTEMS S.L.
+<footer>
+  <div class="footer-grid">
+
+    <!--Columna marca-->
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <span class="tow">TOW</span><span class="app">APP</span>
+      <span class="systems"> SYSTEMS</span><span class="sl"> S.L.</span>
+      </div>
+      <p class="footer-desc">
+        Plataforma integral de gestión y coordinación para empresas de grúas y asistencia en carretera.
+      </p>
+    </div>
+
+    <div class="footer-contact">
+      <h4>Contacto</h4>
+      <ul>
+        <li>info@towapp.es</li>
+        <li>+34 900 000 000</li>
+        <li>España</li>
+      </ul>
+    </div>
   </div>
 
-  <p class="footer-credits">
-    Proyecto de Grado · 2026 · Gabriel Méndez, Rubén Llanes, Paula Cárdenas
-  </p>
+  <!-- Línea inferior -->
+  <div class="footer-bottom">
+    <span>© 2026 TowApp Systems S.L. — Todos los derechos reservados</span>
+    <span>Proyecto de Grado · Gabriel Méndez · Rubén Llanes · Paula Cárdenas</span>
+  </div>
 </footer>

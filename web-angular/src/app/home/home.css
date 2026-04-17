@@ -23,13 +23,14 @@
 }
 
 /* 
-   CUERPO DE LA WEB
+   Body
 */
 body{
   font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
   background: var(--blue-dark);
   color: var(--text-main);
   line-height: 1.6;
+  font-size: 15px;
 }
 
 nav{
@@ -51,7 +52,8 @@ nav{
 .logo{
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
+  text-decoration: none;
 }
 
 .logo-icon{
@@ -64,11 +66,12 @@ nav{
   justify-content: center;
   justify-content: center;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .logo-icon img{
-  width: 70%;
-  height: 70%;
+  width: 500%;
+  height: 100%;
   object-fit: contain;
 }
 
@@ -84,15 +87,18 @@ nav{
 
 .logo-text .tow {
   color: #1E63A6;
+  font-size: 2rem;
 }
 
 .logo-text .app {
   color: #F5A623;
+  font-size: 2rem;
 }
 
 .logo-text .systems {
   font-size: 12px;
   color: #9ca3af;
+  font-size: 1.5rem;
   letter-spacing: 1.5px;
   margin-left: 6px;
   font-weight: 600;
@@ -101,6 +107,7 @@ nav{
 .logo-text .sl {
   font-size: 12px;
   color:  #9ca3af;
+  font-size: 1.5rem;
   margin-left: 4px;
   font-weight: 500;
 }
@@ -114,6 +121,7 @@ nav{
 
 .nav-links a {
   color: #FFFFFF;
+  font-size: 1.3rem;
 }
 
 /* Botón */
@@ -122,6 +130,7 @@ nav{
   background: #F5A623;
   color: #FFFFFF;
   border: none;
+  font-size: 1.2rem;
   padding: 10px 20px;
   border-radius: 8px;
   cursor: pointer;
@@ -141,11 +150,10 @@ nav{
   position: relative;
   min-height: 70vh;
   height: auto;
-  padding: 120px 5% 20px;
+  padding: 120px 5% 70px;
   overflow: hidden;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  align-items: center;
 }
 
 .hero-overlay {
@@ -167,13 +175,15 @@ nav{
 }
 
 .hero-text {
-  max-width: 560px;
+  max-width: 1000px;
+  width: 100%;
 }
 
 .hero h1 {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 3.5rem;
-  white-space: nowrap;
+  font-weight: bold;
+  font-size: 5rem;
+  white-space: normal;
   color: #FFFFFF;
   margin-bottom: 20px;
 }
@@ -189,21 +199,24 @@ nav{
 .hero-buttons {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .btn-primary {
   background:#D4881A;
   color:#FFFFFF;
   font-weight: 600;
+  font-size: 1.2rem;
   padding: 12px 20px;
   border-radius: 8px;
 
 }
 
 .btn-secondary {
-  background: rgba(0,0,0,0.5);
+  background: #0a1626;
   padding: 12px 20px;
   border-radius: 8px;
+  font-size: 1.2rem;
   color: white;
   text-decoration: none;
 }
@@ -381,12 +394,24 @@ nav{
 /* contacto*/
 
 .contact{
-  padding: 90px 5%;
+  padding: 100px 5%;
   background: #0D1B2E;
+  color:#FFFFFF;
+}
+
+.contact-form {
+  margin-top: 50px;
+  background: #152540;
+  padding: 30px;
+  border-radius: 16px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
 }
 
 .contact-form h3 { 
-  color: #fff; 
+  margin-bottom: 20px; 
 }
 
 .form-row { 
@@ -400,50 +425,139 @@ nav{
   flex-direction: column; 
   gap: 6px; 
 }
+
 .form-group label { 
-  color: #6B89AA; 
-  font-size: 11px; 
+  color: #D4881A; 
+  font-size: 15px; 
   font-weight: 700; 
   letter-spacing: 0.08em; 
-  text-transform: uppercase; 
+  text-transform: uppercase;
+  margin-top: 20px;
 }
 .form-group input, .form-group textarea {
-  background: #0D1B2E;
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 8px; padding: 10px 14px; color: #FFFFFF; font-size: 14px;
+  background: #FFFFFF;
+  border: none;
+  border-radius: 8px; 
+  padding: 12px; 
+  font-size: 14px;
+  margin-top: 5px;
 }
 .form-group textarea { 
-  height: 90px; 
+  height: 100px; 
   resize: none; 
 }
 .btn-send {
-  background: #F5A623; color: #0D1B2E;
-  font-weight: 700; 
-  padding: 12px 28px; 
+  background: #F5A623; 
+  color: #0D1B2E;
+  font-weight: bold; 
+  padding: 10px 20px; 
   border: none; 
   border-radius: 8px; 
   cursor: pointer;
+  margin-top: 20px;
 }
 
-
+.hero, .workflow, .profiles {
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
 
 /* pie*/
 footer {
   background: #0a1626;
-  text-align: center;
-  padding: 40px 20px;
-  margin-top: 0;
+  padding: 70px 5% 0;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.footer-credits {
-  color: #6B89AA;
+.footer-grid{
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 60px;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding-bottom: 50px;
+  align-items: start;
 }
 
-.footer-logo {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 28px;
+.footer-brand .footer-logo{
+  font-size: 26px;
   font-weight: 800;
-  margin-bottom: 10px;
-  color: #FFFFFF;
+  margin-bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px;
 }
+
+/* Bloque izquierdo*/
+
+.footer-brand .footer-logo .tow{
+  color: #1E63A6;
+}
+
+.footer-brand .footer-logo .app {
+  color: #F5A623;
+}
+
+.footer-brand .footer-logo .systems {
+  font-size: 11px;
+  color: #9ca3af;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+}
+
+.footer-brand .footer-logo .sl {
+  font-size: 11px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.footer-desc {
+  color: #8FA9C9;
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 420px;
+}
+
+.footer-contact h4 {
+  color: #F5A623;
+  font-size: 12px;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+.footer-contact ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  
+}
+
+.footer-contact ul li {
+  color: #6B89AA;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 20px 0;
+  margin-top: 10px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  max-width: 1300px;
+  margin-left: auto;
+  margin-right: auto;
+
+  color: #6B89AA;
+  font-size: 12px;
+}
+
+.footer-bottom span {
+  display: block;
+}
+
