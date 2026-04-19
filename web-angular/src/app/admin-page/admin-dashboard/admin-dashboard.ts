@@ -28,20 +28,24 @@ export class AdminDashboard {
   contarServiciosCompletados = computed(() => this.servicios().filter(s => s.estado === 'Terminado').length);
   contarVehiculosDisponibles = computed(() => this.vehiculos().filter(v => v.disponible).length);
   totalServicios             = computed(() => this.servicios().length);
-  serviciosHoy = this.servicios().filter(s => {
+  serviciosHoy = computed(() => {
     const hoy = new Date();
+    return this.servicios().filter(s => {
       if (!s.fecha) return false;
-      const dateServ = new Date(s.fecha)
-          return dateServ.getDate() == hoy.getDate() && dateServ.getMonth() == hoy.getMonth() && dateServ.getFullYear() == hoy.getFullYear()
-    })
+      const dateServ = new Date(s.fecha);
+      return dateServ.getDate()     === hoy.getDate()     &&
+             dateServ.getMonth()    === hoy.getMonth()    &&
+             dateServ.getFullYear() === hoy.getFullYear();
+    });
+  });
 
   // ── DONUT ─────────────────────────────────────────────────────────────────────
   donutSegmentosServicios = computed(() => {
     const counts = [
-      { value: this.serviciosHoy.filter(s => s.estado === 'En curso' && s.fecha).length,    color: '#3b82f6', label: 'En curso' },
-      { value: this.serviciosHoy.filter(s => s.estado === 'Terminado').length,   color: '#10b981', label: 'Terminado' },
-      { value: this.serviciosHoy.filter(s => s.estado === 'Sin empezar').length, color: '#f59e0b', label: 'Sin empezar' },
-      { value: this.serviciosHoy.filter(s => s.estado === 'Cancelado').length,   color: '#9ca3af', label: 'Cancelado' },
+      { value: this.serviciosHoy().filter(s => s.estado === 'En curso' && s.fecha).length,    color: '#3b82f6', label: 'En curso' },
+      { value: this.serviciosHoy().filter(s => s.estado === 'Terminado').length,   color: '#10b981', label: 'Terminado' },
+      { value: this.serviciosHoy().filter(s => s.estado === 'Sin empezar').length, color: '#f59e0b', label: 'Sin empezar' },
+      { value: this.serviciosHoy().filter(s => s.estado === 'Cancelado').length,   color: '#9ca3af', label: 'Cancelado' },
     ];
     const total = counts.reduce((s, c) => s + c.value, 0) || 1;
     const circ = 2 * Math.PI * 60;
@@ -211,7 +215,18 @@ export class AdminDashboard {
   // ── HELPERS ───────────────────────────────────────────────────────────────────
   redirigir(ruta: string) { this.router.navigate([`/admin/${ruta}`]); }
 
-  ngOnInit() { this.cargarTodo(); }
+  private recargaIntervalo: ReturnType<typeof setInterval> | null = null;
+  
+  
+  async ngOnInit() {
+    this.cargarTodo()
+    this.recargaIntervalo = setInterval(() => this.cargarTodo(), 10000);
+  }
+  
+  ngOnDestroy(){
+    if(this.recargaIntervalo)
+      clearInterval(this.recargaIntervalo)
+  }
 
   async cargarTodo() {
     this.finishedLoading.set(false);

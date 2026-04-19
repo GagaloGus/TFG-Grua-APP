@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase.service';
 import { CarnetsConducir, Tablas, Usuario, Vehiculo } from '../../services/tablas.supabase';
 import { AuthService } from '@services/auth-service/auth-service';
-import { isNullOrUndefined } from 'util';
 
 @Component({
   selector: 'app-admin-users',
@@ -13,7 +12,7 @@ import { isNullOrUndefined } from 'util';
   templateUrl: './admin-users.html',
   styleUrl: './admin-users.scss',
 })
-export class AdminUsers implements OnInit {
+export class AdminUsers implements OnInit, OnDestroy {
 
   constructor(private supabaseService: SupabaseService, private authService: AuthService) { }
 
@@ -35,7 +34,7 @@ export class AdminUsers implements OnInit {
   showDetailsModal = false;
   formData = Usuario.empty();
   opcionesLicencia = Object.keys(CarnetsConducir);
-
+  
   // ── Filtros por rol
   opcionesRol = [
     { value: 'A', label: 'Admin' },
@@ -44,7 +43,7 @@ export class AdminUsers implements OnInit {
   ];
   filtrosRol = new Set<string>();
   dropdownRolAbierto = false;
-
+  
   // ── Filtros por disponibilidad
   opcionesDisp = [
     { value: 'Disponible', label: 'Disponible' },
@@ -53,22 +52,31 @@ export class AdminUsers implements OnInit {
   ];
   filtrosDisp = new Set<string>();
   dropdownDispAbierto = false;
-
+  
   // Avatar
   imagenSeleccionada: File | null = null;
   imagenPreview = signal<string | null>(null);
   modalimagen = signal(false);
   cargandoImagen = signal(false);
   avatar_path = "/img/pfp_default.jpg"
-
+  
+  // Recargar
+  private recargaIntervalo: ReturnType<typeof setInterval> | null = null;
+  
+  
+  async ngOnInit() {
+    this.cargarTodo()
+    this.recargaIntervalo = setInterval(() => this.cargarSegundoPlano(), 10000);
+  }
+  
+  ngOnDestroy(){
+    if(this.recargaIntervalo)
+      clearInterval(this.recargaIntervalo)
+  }
+  
   get rol_actual() {
     return this.authService.rol ?? "N"
   }
-
-  async ngOnInit() {
-    this.cargarTodo()
-  }
-
   // ── Cierra dropdowns al hacer click fuera
   @HostListener('document:click', ['$event'])
   onDocumentClick(e: MouseEvent) {
@@ -85,6 +93,12 @@ export class AdminUsers implements OnInit {
     await this.cargarUsuarios()
     await this.cargarVehiculos()
     this.finishedLoading.set(true);
+  }
+
+  async cargarSegundoPlano(){
+    await this.cargarUsuarios()
+    await this.cargarVehiculos()
+
   }
 
   async cargarUsuarios() {

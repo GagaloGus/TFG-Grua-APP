@@ -36,10 +36,18 @@ export class AdminServicios implements OnInit {
   formData = Servicio.empty();
   constructor(private supabaseService: SupabaseService) { }
 
-  ngOnInit() {
+    private recargaIntervalo: ReturnType<typeof setInterval> | null = null;
+  
+  
+  async ngOnInit() {
     this.cargarTodo()
+    this.recargaIntervalo = setInterval(() => this.cargarSegundoPlano(), 10000);
   }
-
+  
+  ngOnDestroy(){
+    if(this.recargaIntervalo)
+      clearInterval(this.recargaIntervalo)
+  }
 
   async cargarTodo() {
     this.finishedLoading.set(false);
@@ -49,6 +57,11 @@ export class AdminServicios implements OnInit {
     this.finishedLoading.set(true);
   }
 
+  async cargarSegundoPlano(){
+    await this.cargarUsuarios()
+    await this.cargarServicios()
+    await this.cargarVehiculos()
+  }
 
   async cargarServicios() {
     this.errorMsg.set('');
@@ -183,7 +196,6 @@ export class AdminServicios implements OnInit {
       this.errorMsg.set('Error al eliminar: ' + err.message);
     }
   }
-
 
   // ── Crear / Editar
   async abrirCrear() {

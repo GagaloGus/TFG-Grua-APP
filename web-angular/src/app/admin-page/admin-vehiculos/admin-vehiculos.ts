@@ -35,10 +35,19 @@ export class AdminVehiculos implements OnInit {
 
   constructor(private supabaseService: SupabaseService) {}
 
-  ngOnInit() {
-    this.cargarTodo();
+  private recargaIntervalo: ReturnType<typeof setInterval> | null = null;
+  
+  
+  async ngOnInit() {
+    this.cargarTodo()
+    this.recargaIntervalo = setInterval(() => this.cargarSegundoPlano(), 10000);
   }
-
+  
+  ngOnDestroy(){
+    if(this.recargaIntervalo)
+      clearInterval(this.recargaIntervalo)
+  }
+  
   async cargarTodo(){
     this.finishedLoading.set(false);
     await this.cargarVehiculos()
@@ -46,6 +55,11 @@ export class AdminVehiculos implements OnInit {
     this.finishedLoading.set(true);
   }
 
+  async cargarSegundoPlano(){
+    await this.cargarUsuarios()
+    await this.cargarVehiculos()
+  }
+  
   // ── Carga
   async cargarVehiculos() {
     this.errorMsg.set('');

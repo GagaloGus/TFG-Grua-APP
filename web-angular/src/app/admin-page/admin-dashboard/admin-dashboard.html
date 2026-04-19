@@ -5,9 +5,9 @@
             <h1>Dashboard</h1>
             <h5 class="text-secondary">Resumen general del sistema</h5>
         </div>
-        <button class="btn btn-outline-secondary btn-sm" (click)="cargarTodo()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1">
+        <button class="btn btn-outline-secondary btn-sm d-flex align-items-center" (click)="cargarTodo()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="me-1">
                 <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
                 <path d="M21 3v5h-5" />
                 <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
@@ -118,11 +118,11 @@
                         [attr.stroke-dashoffset]="-(seg.offset - (2 * 3.14159 * 60 / 4))" stroke-linecap="butt" />
                     }
                     <text x="80" y="85" text-anchor="middle" class="fs-3 fw-bold"
-                        [attr.fill]="serviciosHoy.length === 0 ? '#9ca3af' : '#111827'">
-                        {{ serviciosHoy.length }}
+                        [attr.fill]="serviciosHoy().length === 0 ? '#9ca3af' : '#111827'">
+                        {{ serviciosHoy().length }}
                     </text>
                     <text x="80" y="101" text-anchor="middle" class="small text-secondary">
-                        {{ serviciosHoy.length === 0 ? 'Sin servicios hoy' : 'Total' }}
+                        {{ serviciosHoy().length === 0 ? 'Sin servicios hoy' : 'Total' }}
                     </text>
                 </svg>
                 <div class="w-100 d-flex flex-column gap-1">
@@ -137,7 +137,7 @@
             </div>
         </div>
 
-         <!-- ── Grafico de lineas: ingresos vs gastos ────────────────────── -->
+        <!-- ── Grafico de lineas: ingresos vs gastos ────────────────────── -->
         <div class="chart-card d-flex flex-column">
             <!-- Cabecera con resumen -->
             <div class="d-flex justify-content-between flex-wrap gap-2">
@@ -163,8 +163,7 @@
 
             <!-- SVG gráfico de líneas -->
             <div class="linechart-svg-wrapper px-2 flex-grow-1 d-flex align-items-center">
-                <svg [attr.viewBox]="'0 0 ' + lineChartSvg().W + ' ' + lineChartSvg().H"
-                    class="linechart-svg">
+                <svg [attr.viewBox]="'0 0 ' + lineChartSvg().W + ' ' + lineChartSvg().H" class="linechart-svg">
                     <defs>
                         <linearGradient id="gradI" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="0%" stop-color="#10b981" stop-opacity="0.25" />
@@ -178,9 +177,10 @@
 
                     <!-- Líneas guía horizontales -->
                     @for (yl of lineChartSvg().yLabels; track yl.label) {
-                    <line x1="8" [attr.x2]="lineChartSvg().W - 8" [attr.y1]="yl.y" [attr.y2]="yl.y"
-                        stroke="#e5e7eb" stroke-width="1" stroke-dasharray="3 3" />
-                    <text [attr.x]="lineChartSvg().W - 6" [attr.y]="+yl.y - 3" class="linechart-ylabel">{{ yl.label }}</text>
+                    <line x1="8" [attr.x2]="lineChartSvg().W - 8" [attr.y1]="yl.y" [attr.y2]="yl.y" stroke="#e5e7eb"
+                        stroke-width="1" stroke-dasharray="3 3" />
+                    <text [attr.x]="lineChartSvg().W - 6" [attr.y]="+yl.y - 3" class="linechart-ylabel">{{ yl.label
+                        }}</text>
                     }
 
                     <!-- Áreas rellenas -->
@@ -195,8 +195,10 @@
 
                     <!-- Puntos + etiquetas X -->
                     @for (p of lineChartSvg().puntos; track p.label) {
-                    <circle [attr.cx]="p.x" [attr.cy]="p.yI" r="3.5" fill="#10b981" stroke="#fff" stroke-width="1.5" style="cursor: pointer;"/>
-                    <circle [attr.cx]="p.x" [attr.cy]="p.yG" r="3.5" fill="#ef4444" stroke="#fff" stroke-width="1.5" style="cursor: pointer;"/>
+                    <circle [attr.cx]="p.x" [attr.cy]="p.yI" r="3.5" fill="#10b981" stroke="#fff" stroke-width="1.5"
+                        style="cursor: pointer;" />
+                    <circle [attr.cx]="p.x" [attr.cy]="p.yG" r="3.5" fill="#ef4444" stroke="#fff" stroke-width="1.5"
+                        style="cursor: pointer;" />
                     <text [attr.x]="p.x" [attr.y]="lineChartSvg().H - 4" class="linechart-xlabel">{{ p.label }}</text>
                     }
                 </svg>
@@ -214,10 +216,14 @@
                 </div>
 
                 <div class="d-flex flex-row-reverse gap-2">
-                    <button (click)="lineChartCantidadDias.set(7)" class="btn btn-sm btn-outline-primary">7 dias</button>
-                    <button (click)="lineChartCantidadDias.set(30)" class="btn btn-sm btn-outline-primary">30 dias</button>
-                    <button (click)="lineChartCantidadDias.set(30*6)" class="btn btn-sm btn-outline-primary">6 meses</button>
-                    <button (click)="lineChartCantidadDias.set(365)" class="btn btn-sm btn-outline-primary">1 año</button>
+                    <button (click)="lineChartCantidadDias.set(7)" class="btn btn-sm btn-outline-primary">7
+                        dias</button>
+                    <button (click)="lineChartCantidadDias.set(30)" class="btn btn-sm btn-outline-primary">30
+                        dias</button>
+                    <button (click)="lineChartCantidadDias.set(30*6)" class="btn btn-sm btn-outline-primary">6
+                        meses</button>
+                    <button (click)="lineChartCantidadDias.set(365)" class="btn btn-sm btn-outline-primary">1
+                        año</button>
                 </div>
             </div>
         </div>
@@ -311,7 +317,8 @@
             <div class="top-list">
                 @for (u of topTrabajadores(); track u.id; let i = $index) {
                 <div class="top-row">
-                    <span class="top-rank" [class.top-rank--gold]="i==0" [class.top-rank--silver]="i==1" [class.top-rank--bronze]="i==2">{{ i + 1 }}</span>
+                    <span class="top-rank" [class.top-rank--gold]="i==0" [class.top-rank--silver]="i==1"
+                        [class.top-rank--bronze]="i==2">{{ i + 1 }}</span>
                     <figure class="user-pfp user-pfp--mini">
                         @if (u.avatar_url) {
                         <img [src]="u.avatar_url" [alt]="u.nombreCompleto">

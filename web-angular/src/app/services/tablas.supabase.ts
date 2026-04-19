@@ -4,6 +4,20 @@ export enum Tablas {
   SERVICIOS = 'servicios'
 }
 
+export enum Disponibilidad{
+  DISPONIBLE = 'Disponible',
+  EN_SERVICIO = 'En servicio',
+  OCUPADO = 'Ocupado',
+  INACTIVO = 'Inactivo',
+}
+
+export enum Estado{
+  SIN_EMPEZAR = 'Sin empezar',
+  EN_CURSO = 'En curso',
+  TERMINADO = 'Terminado',
+  CANCELADO = 'Cancelado',
+}
+
 export enum CarnetsConducir {
   A = 'A',
   A1 = 'A1',

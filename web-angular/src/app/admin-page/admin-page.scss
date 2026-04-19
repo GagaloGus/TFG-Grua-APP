@@ -1,4 +1,12 @@
+@use '../../styles/variables' as *;
+
+.title{
+    color: $text-light;
+}
+
+
 .sidebar {
+    background: $surface-dark;
     position: fixed;
     top: 0;
     left: 0;
@@ -8,20 +16,24 @@
 }
 
 .background {
-    background-color: var(--background-light);
+    background-color: $surface;
 }
 
 .content {
     overflow-x: hidden;
     min-width: 0;
-}
+    background: $surface;
 
-/* medida md de bootstrap */
-@media (min-width: 768px) {
-    .content {
+    @media (min-width: 768px) {
         margin-left: 250px;
     }
+
+    // El contenido de dentro
+    >div {
+        background: $surface-2;
+    }
 }
+/* medida md de bootstrap */
 
 .card-holder {
     width: 100%;

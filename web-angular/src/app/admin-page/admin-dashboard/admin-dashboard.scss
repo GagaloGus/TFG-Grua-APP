@@ -206,7 +206,7 @@
 
 .top-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #3b82f6, #1a56db);
+  background: $fill-line-gradient-1;
   border-radius: 99px;
   transition: width 0.5s ease;
 }
@@ -239,9 +239,9 @@
   min-width: 72px;
   height: fit-content;
 
-  &--green { background: #deffe8; }
-  &--red   { background: #fef2f2; }
-  &--blue  { background: #cee3ff; }
+  &--green { background: $success-bg; }
+  &--red   { background: $danger-bg; }
+  &--blue  { background: $info-bg; }
 }
 
 .linechart-total-label {
@@ -254,9 +254,9 @@
   font-size: 0.95rem;
   font-weight: 700;
 
-  .linechart-total--green & { color: #059669; }
-  .linechart-total--red   & { color: #dc2626; }
-  .linechart-total--blue  & { color: #2563eb; }
+  .linechart-total--green & { color: $success; }
+  .linechart-total--red   & { color: $danger; }
+  .linechart-total--blue  & { color: $info; }
 }
 
 .linechart-svg-wrapper {
