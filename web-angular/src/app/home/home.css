@@ -31,6 +31,7 @@ body{
   color: var(--text-main);
   line-height: 1.6;
   font-size: 15px;
+  scroll-behavior: smooth;
 }
 
 nav{
@@ -64,13 +65,12 @@ nav{
   display: flex;
   align-items: center;
   justify-content: center;
-  justify-content: center;
   overflow: hidden;
   flex-shrink: 0;
 }
 
 .logo-icon img{
-  width: 500%;
+  width: 100%;
   height: 100%;
   object-fit: contain;
 }
@@ -80,7 +80,6 @@ nav{
   display: flex;
   align-items: baseline;
   gap: 2px;
-  font-size: 22px;
   font-weight: bold;
   line-height: 1;
 }
@@ -96,7 +95,6 @@ nav{
 }
 
 .logo-text .systems {
-  font-size: 12px;
   color: #9ca3af;
   font-size: 1.5rem;
   letter-spacing: 1.5px;
@@ -105,7 +103,6 @@ nav{
 }
 
 .logo-text .sl {
-  font-size: 12px;
   color:  #9ca3af;
   font-size: 1.5rem;
   margin-left: 4px;
@@ -122,6 +119,7 @@ nav{
 .nav-links a {
   color: #FFFFFF;
   font-size: 1.3rem;
+  text-decoration: none;
 }
 
 /* Botón */
@@ -167,21 +165,22 @@ nav{
 
 .hero-content {
   position: relative;
+  width: 100%;
   z-index: 2;
+  gap: 2rem;
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
   align-items: center;
-  gap: 2rem;
 }
 
 .hero-text {
   max-width: 1000px;
-  width: 100%;
 }
 
 .hero h1 {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: bold;
+  font-weight: 800;
   font-size: 5rem;
   white-space: normal;
   color: #FFFFFF;
@@ -203,6 +202,7 @@ nav{
 }
 
 .btn-primary {
+  display: inline-block;
   background:#D4881A;
   color:#FFFFFF;
   font-weight: 600;
@@ -213,6 +213,7 @@ nav{
 }
 
 .btn-secondary {
+  display: inline-block;
   background: #0a1626;
   padding: 12px 20px;
   border-radius: 8px;
@@ -220,13 +221,14 @@ nav{
   color: white;
   text-decoration: none;
 }
+
 /* workflow */
+
 .workflow {
   background:linear-gradient(rgba(8, 22, 38, 0.70), rgba(8, 22, 38, 0.72)),
   url("/gps.jpg") center center / cover no-repeat;
   padding: 90px 5%;
   min-height: 70vh;
-  height: auto;
 }
 
 .section-header {
@@ -466,27 +468,23 @@ nav{
 /* pie*/
 footer {
   background: #0a1626;
-  padding: 70px 5% 0;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
 }
 
-.footer-grid{
+.footer-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 60px;
-  max-width: 1300px;
+  grid-template-columns: 1fr 1.5fr 1fr 1fr;
+  gap: 40px;
   margin: 0 auto;
-  padding-bottom: 50px;
-  align-items: start;
+  padding: 80px 5% 50px;
+  align-items: center;
 }
 
 .footer-brand .footer-logo{
-  font-size: 26px;
   font-weight: 800;
-  margin-bottom: 16px;
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   gap: 4px;
 }
 
@@ -494,35 +492,81 @@ footer {
 
 .footer-brand .footer-logo .tow{
   color: #1E63A6;
+  font-size: 2rem;
 }
 
 .footer-brand .footer-logo .app {
   color: #F5A623;
+  font-size: 2rem;
 }
 
 .footer-brand .footer-logo .systems {
-  font-size: 11px;
+  font-size: 1.2rem;
   color: #9ca3af;
   font-weight: 600;
   letter-spacing: 1.5px;
 }
 
 .footer-brand .footer-logo .sl {
-  font-size: 11px;
+  font-size: 1.2rem;
   color: #9ca3af;
-  font-weight: 500;
 }
 
 .footer-desc {
   color: #8FA9C9;
-  font-size: 15px;
-  line-height: 1.6;
-  max-width: 420px;
+  font-size: 1.3rem;
+  line-height: 1.7;
+}
+
+.footer-desc h4{
+  color: #F5A623;
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.footer-desc p{
+  font-size: 1.2rem;
+  text-align: justify;
+}
+
+.footer-nav{
+  margin-left: 80px;
+}
+
+.footer-nav h4 {
+  color: #F5A623;
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.footer-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-nav ul li {
+  margin-bottom: 10px;
+}
+
+.footer-nav ul li a {
+  color: #6B89AA;
+  font-size: 1.5rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-nav ul li a:hover {
+  color: #F5A623;
 }
 
 .footer-contact h4 {
   color: #F5A623;
-  font-size: 12px;
+  font-size: 1.5rem;
   letter-spacing: 2px;
   margin-bottom: 16px;
 }
@@ -536,25 +580,20 @@ footer {
 
 .footer-contact ul li {
   color: #6B89AA;
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
 }
+
+
 
 .footer-bottom {
   border-top: 1px solid rgba(255, 255, 255, 0.07);
-  padding: 20px 0;
-  margin-top: 10px;
-
+  padding: 20px 5%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  max-width: 1300px;
-  margin-left: auto;
-  margin-right: auto;
-
-  color: #6B89AA;
-  font-size: 12px;
+  color: #FFFFFF;
+  font-size: 1.2rem;
 }
 
 .footer-bottom span {
