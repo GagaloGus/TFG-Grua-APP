@@ -33,6 +33,10 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        // Saludo dinámico con el nombre del usuario logueado
+        val nombre = SesionUsuario.getNombre(this)
+        binding.tvTitle.text = if (!nombre.isNullOrBlank()) "Hola, $nombre" else "Hola"
+
         binding.btnCerrarSesion.setOnClickListener {
             // Borra la sesión guardada y vuelve al Login
             SesionUsuario.cerrarSesion(this)
@@ -41,6 +45,11 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnExit.setOnClickListener {
             finish()
+        }
+
+        // Botón "Actualizar": recarga la lista de servicios desde Supabase
+        binding.btnActualizar.setOnClickListener {
+            cargarRecogidas()
         }
 
         // Carga las recogidas desde Supabase
@@ -65,13 +74,15 @@ class MainActivity : AppCompatActivity() {
                     return@launch
                 }
 
-                // Solo las recogidas asignadas a ese empleado
+                // Recogidas asignadas a ese empleado que estén "Sin empezar" o "En curso"
+                // (las "Terminado" ya no aparecen en la lista)
                 val recogidas = SupabaseClient.client
                     .from("servicios")
                     .select {
                         filter { eq("num_empleado", numEmpleado) }
                     }
                     .decodeList<Recogida>()
+                    .filter { it.estado == "Sin empezar" || it.estado == "En curso" }
 
                 // Ordenar: urgentes primero
                 val ordenadas = recogidas.sortedByDescending { it.urgente }
@@ -108,15 +119,47 @@ class MainActivity : AppCompatActivity() {
         val tvUrgente = tarjeta.findViewById<TextView>(R.id.tvUrgente)
         tvUrgente.visibility = if (viaje.urgente) View.VISIBLE else View.GONE
 
-        // Botón navegar: lanza MapGPS con los datos del viaje
-        tarjeta.findViewById<Button>(R.id.btnNavegar).setOnClickListener {
-            val intent = Intent(this, MapGPS::class.java).apply {
-                putExtra(MapGPS.EXTRA_LAT, viaje.lat)
-                putExtra(MapGPS.EXTRA_LNG, viaje.lng)
-                putExtra(MapGPS.EXTRA_ID,  viaje.id ?: -1)   // forzamos Int no-nullable
+        // Botón navegar / continuar: cambia texto y comportamiento según el estado del servicio
+        val btnNavegar = tarjeta.findViewById<Button>(R.id.btnNavegar)
+        val enCurso = viaje.estado == "En curso"
+        btnNavegar.text = if (enCurso) "Continuar navegación" else "Navegar"
+
+        btnNavegar.setOnClickListener {
+            lifecycleScope.launch {
+                try {
+                    // Si el servicio aún no se ha iniciado, lo marcamos "En curso" en Supabase
+                    if (!enCurso && viaje.id != null) {
+                        SupabaseClient.client.from("servicios").update(
+                            { set("estado", "En curso") }
+                        ) {
+                            filter { eq("id", viaje.id) }
+                        }
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.e("MAIN", "Error actualizando estado a En curso", e)
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Error al iniciar el servicio: ${e.message ?: e.javaClass.simpleName}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } finally {
+                    // Si el vehículo ya está recogido, vamos directos al destino (fase ENTREGA);
+                    // si no, vamos al punto de recogida (fase RECOGIDA).
+                    val faseDestino = if (viaje.vehiculoRecogido)
+                        MapGPS.FASE_ENTREGA else MapGPS.FASE_RECOGIDA
+                    val latDestino  = if (viaje.vehiculoRecogido) viaje.destinoLat else viaje.lat
+                    val lngDestino  = if (viaje.vehiculoRecogido) viaje.destinoLng else viaje.lng
+
+                    val intent = Intent(this@MainActivity, MapGPS::class.java).apply {
+                        putExtra(MapGPS.EXTRA_LAT, latDestino)
+                        putExtra(MapGPS.EXTRA_LNG, lngDestino)
+                        putExtra(MapGPS.EXTRA_ID,  viaje.id ?: -1)   // forzamos Int no-nullable
+                        putExtra(MapGPS.EXTRA_FASE, faseDestino)
+                    }
+                    startActivity(intent)
+                    finish()
+                }
             }
-            startActivity(intent)
-            finish()
         }
 
         binding.listaViajes.addView(tarjeta)

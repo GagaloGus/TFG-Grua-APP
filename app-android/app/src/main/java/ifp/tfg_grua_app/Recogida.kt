@@ -19,7 +19,12 @@ data class Recogida(
     @SerialName("tel_cliente")            val telefono: String? = null,
     @SerialName("ubicacion_recogida_lat") val lat: Double = 0.0,
     @SerialName("ubicacion_recogida_lng") val lng: Double = 0.0,
-    val urgente: Boolean = false
+    @SerialName("ubicacion_destino_lat")  val destinoLat: Double = 0.0,
+    @SerialName("ubicacion_destino_lng")  val destinoLng: Double = 0.0,
+    @SerialName("num_empleado")           val numEmpleado: Int? = null,
+    val urgente: Boolean = false,
+    val estado: String? = null,
+    @SerialName("vehiculo_recogido")      val vehiculoRecogido: Boolean = false
 )
 
 /**

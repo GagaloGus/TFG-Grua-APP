@@ -40,6 +40,7 @@ import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.maps.model.RoundCap
 import ifp.tfg_grua_app.databinding.ActivityMapGpsBinding
+import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -59,13 +60,20 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
     //private var marcadorDestino: Marker? = null
     //private var rutaCalculada = false
     private var rutaPolyline: Polyline? = null // Linea de recorrido
+    private var popupLlegadaMostrado = false   // Para que el popup de llegada salga solo una vez
+    private var popupEntregaMostrado = false   // Para que el popup de entrega salga solo una vez
 
     companion object {
         const val API_KEY = "AIzaSyAxLBlpI6vtCy658BaQDMH8Mpmepl6CafM" // Credencial API Maps
         const val EXTRA_LAT = "destino_lat"
         const val EXTRA_LNG = "destino_lng"
         const val EXTRA_ID = "viaje_id"
+        const val EXTRA_FASE = "fase"          // "RECOGIDA" (default) o "ENTREGA"
+        const val FASE_RECOGIDA = "RECOGIDA"
+        const val FASE_ENTREGA  = "ENTREGA"
     }
+
+    private var fase: String = FASE_RECOGIDA
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,8 +89,9 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         val lat = intent.getDoubleExtra(EXTRA_LAT, 0.0)
         val lng = intent.getDoubleExtra(EXTRA_LNG, 0.0)
         val recogidaID = intent.getIntExtra(EXTRA_ID, -1)
+        fase = intent.getStringExtra(EXTRA_FASE) ?: FASE_RECOGIDA
         destino = LatLng(lat, lng)
-        android.util.Log.d("MAPGPS", "Extras recibidos -> id=$recogidaID, lat=$lat, lng=$lng")
+        android.util.Log.d("MAPGPS", "Extras recibidos -> id=$recogidaID, lat=$lat, lng=$lng, fase=$fase")
 
         // Mostrar datos del viaje en el panel
         val viaje = RecogidasRepo.Recogidas.find { it.id == recogidaID } // Lista global de todos los viajes
@@ -161,7 +170,6 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
                             .flat(true)
                             .icon(crearIconoUsuario())
                     )
-                    calcularRuta() // Calcula la ruta
                 } else {
                     marcadorUsuario!!.position = posicionActual!!  // Sobreescribe la posicion del marcador
                 }
@@ -169,9 +177,12 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
                 mMap.animateCamera(
                     CameraUpdateFactory.newLatLngZoom(posicionActual!!, 15f)
                 )
+                // Recalcula la ruta (y la distancia) en cada actualizacion de GPS
+                calcularRuta()
             }
         }, Looper.getMainLooper()) // Ejecuta en el hilo principal
     }
+
 
     private fun calcularRuta() { // Llama a la API, interpreta la respuesta (JSON) y actualiza la UI
 
@@ -201,11 +212,12 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
                 }
 
                 // Parsear datos
-                val ruta       = obj.getJSONArray("routes").getJSONObject(0)
-                val tramo      = ruta.getJSONArray("legs").getJSONObject(0)
-                val distancia  = tramo.getJSONObject("distance").getString("text")
-                val tiempo     = tramo.getJSONObject("duration").getString("text")
-                val segundos   = tramo.getJSONObject("duration").getInt("value")
+                val ruta           = obj.getJSONArray("routes").getJSONObject(0)
+                val tramo          = ruta.getJSONArray("legs").getJSONObject(0)
+                val distancia      = tramo.getJSONObject("distance").getString("text")
+                val distanciaMetros = tramo.getJSONObject("distance").getInt("value") // mismo dato en metros
+                val tiempo         = tramo.getJSONObject("duration").getString("text")
+                val segundos       = tramo.getJSONObject("duration").getInt("value")
                 val steps      = tramo.getJSONArray("steps")
                 val instruccion = parsearInstruccion(steps.getJSONObject(0))
                 val siguiente  = if (steps.length() > 1)
@@ -217,7 +229,22 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
 
                 withContext(Dispatchers.Main) { // Hilo principal
                     dibujarRuta(puntos) // Divuja la ruta en el mapa
-                    binding.tvInstruccion.text = instruccion
+
+                    // --- Detección de llegada ---
+                    if (distanciaMetros <= 5) {
+                        binding.tvInstruccion.text = "Ya has llegado"
+                        // El popup sale una sola vez y depende de la fase
+                        if (fase == FASE_RECOGIDA && !popupLlegadaMostrado) {
+                            popupLlegadaMostrado = true
+                            mostrarPopupLlegada()
+                        } else if (fase == FASE_ENTREGA && !popupEntregaMostrado) {
+                            popupEntregaMostrado = true
+                            mostrarPopupEntrega()
+                        }
+                    } else {
+                        binding.tvInstruccion.text = instruccion
+                    }
+
                     binding.tvDistancia.text   = distancia
                     binding.tvTiempo.text      = tiempo
 
@@ -247,6 +274,139 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         }
+    }
+
+    /**
+     * Muestra el popup de llegada con el mismo estilo de tarjeta de MainActivity.
+     * Al pulsar "Recogido" lanza una nueva navegación hacia la ubicación destino del servicio.
+     */
+    private fun mostrarPopupLlegada() {
+        // Buscamos el viaje en el cache para poder mostrar los datos y leer el destino
+        val recogidaID = intent.getIntExtra(EXTRA_ID, -1)
+        val viaje = RecogidasRepo.Recogidas.find { it.id == recogidaID }
+
+        // Inflamos el layout personalizado
+        val vista = layoutInflater.inflate(R.layout.dialog_llegada, null)
+
+        vista.findViewById<android.widget.TextView>(R.id.tvClienteLlegada).text =
+            viaje?.cliente?.let { "Cliente: $it" } ?: ""
+        vista.findViewById<android.widget.TextView>(R.id.tvMatriculaLlegada).text =
+            viaje?.matricula?.let { "Matrícula: $it" } ?: ""
+        vista.findViewById<android.widget.TextView>(R.id.tvMotivoLlegada).text =
+            viaje?.motivo?.let { "Motivo: $it" } ?: ""
+
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+            .setView(vista)
+            .setCancelable(false)
+            .create()
+
+        // Quitamos el fondo blanco por defecto del dialog para que se vea la CardView limpia
+        dialog.window?.setBackgroundDrawable(
+            android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT)
+        )
+
+        vista.findViewById<android.widget.Button>(R.id.btnRecogido).setOnClickListener {
+            dialog.dismiss()
+
+            // Coordenadas del destino final desde la tabla servicios
+            val destinoLat = viaje?.destinoLat ?: 0.0
+            val destinoLng = viaje?.destinoLng ?: 0.0
+
+            if (destinoLat == 0.0 && destinoLng == 0.0) {
+                android.widget.Toast.makeText(
+                    this,
+                    "El servicio no tiene destino definido",
+                    android.widget.Toast.LENGTH_LONG
+                ).show()
+                return@setOnClickListener
+            }
+
+            // Marcamos vehiculo_recogido=true en Supabase y relanzamos MapGPS en fase ENTREGA.
+            // Así, si el usuario sale de la app, al volver a pulsar "Continuar navegación"
+            // el MainActivity le llevará directamente al destino final en lugar de empezar de nuevo.
+            lifecycleScope.launch {
+                try {
+                    if (recogidaID != -1) {
+                        SupabaseClient.client.from("servicios").update(
+                            { set("vehiculo_recogido", true) }
+                        ) {
+                            filter { eq("id", recogidaID) }
+                        }
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.e("MAPGPS", "Error marcando vehiculo_recogido", e)
+                } finally {
+                    val i = Intent(this@MapGPS, MapGPS::class.java).apply {
+                        putExtra(EXTRA_LAT, destinoLat)
+                        putExtra(EXTRA_LNG, destinoLng)
+                        putExtra(EXTRA_ID,  recogidaID)
+                        putExtra(EXTRA_FASE, FASE_ENTREGA)
+                    }
+                    startActivity(i)
+                    finish()
+                }
+            }
+        }
+
+        dialog.show()
+    }
+
+    /**
+     * Popup que se muestra al llegar al destino final (fase ENTREGA).
+     * Al pulsar "Entregado" actualiza el estado del servicio a "Terminado"
+     * en Supabase y vuelve a MainActivity.
+     */
+    private fun mostrarPopupEntrega() {
+        val recogidaID = intent.getIntExtra(EXTRA_ID, -1)
+        val viaje = RecogidasRepo.Recogidas.find { it.id == recogidaID }
+
+        val vista = layoutInflater.inflate(R.layout.dialog_entrega, null)
+
+        vista.findViewById<android.widget.TextView>(R.id.tvClienteEntrega).text =
+            viaje?.cliente?.let { "Cliente: $it" } ?: ""
+        vista.findViewById<android.widget.TextView>(R.id.tvMatriculaEntrega).text =
+            viaje?.matricula?.let { "Matrícula: $it" } ?: ""
+        vista.findViewById<android.widget.TextView>(R.id.tvMotivoEntrega).text =
+            viaje?.motivo?.let { "Motivo: $it" } ?: ""
+
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+            .setView(vista)
+            .setCancelable(false)
+            .create()
+
+        dialog.window?.setBackgroundDrawable(
+            android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT)
+        )
+
+        vista.findViewById<android.widget.Button>(R.id.btnEntregado).setOnClickListener {
+            dialog.dismiss()
+
+            // Actualizamos en Supabase el estado del servicio a "Terminado"
+            lifecycleScope.launch {
+                try {
+                    if (recogidaID != -1) {
+                        SupabaseClient.client.from("servicios").update(
+                            { set("estado", "Terminado") }
+                        ) {
+                            filter { eq("id", recogidaID) }
+                        }
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.e("MAPGPS", "Error actualizando estado a Terminado", e)
+                    android.widget.Toast.makeText(
+                        this@MapGPS,
+                        "Error al cerrar el servicio: ${e.message ?: e.javaClass.simpleName}",
+                        android.widget.Toast.LENGTH_LONG
+                    ).show()
+                } finally {
+                    // Vuelve al MainActivity
+                    startActivity(Intent(this@MapGPS, MainActivity::class.java))
+                    finish()
+                }
+            }
+        }
+
+        dialog.show()
     }
 
     private fun parsearInstruccion(step: JSONObject): String {
