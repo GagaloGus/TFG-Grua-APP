@@ -58,6 +58,7 @@ export class Servicio {
   estado!: string;
   tel_cliente!: string | null;
   nombre_cliente!: string | null;
+  vehiculo_recogido: boolean = false;
 
   constructor(data: Partial<Servicio> = {}) {
     Object.assign(this, data);
@@ -76,7 +77,7 @@ export class Servicio {
     });
   }
 
-  get badgeClass(): string {
+  get estadoClass(): string {
     const map: Record<string, string> = {
       'Sin empezar': 'badge-estado-sin-empezar',
       'En curso': 'badge-estado-en-curso',
@@ -84,6 +85,10 @@ export class Servicio {
       'Cancelado': 'badge-estado-cancelado',
     };
     return map[this.estado] ?? '';
+  }
+
+  get recogidoClass():string{
+    return this.vehiculo_recogido ? 'badge-estado-terminado' : 'badge-estado-borrado'
   }
 
   get formatCoordRecogida(): string {

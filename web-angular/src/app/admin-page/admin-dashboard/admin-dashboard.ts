@@ -28,14 +28,20 @@ export class AdminDashboard {
   contarServiciosCompletados = computed(() => this.servicios().filter(s => s.estado === 'Terminado').length);
   contarVehiculosDisponibles = computed(() => this.vehiculos().filter(v => v.disponible).length);
   totalServicios             = computed(() => this.servicios().length);
+  serviciosHoy = this.servicios().filter(s => {
+    const hoy = new Date();
+      if (!s.fecha) return false;
+      const dateServ = new Date(s.fecha)
+          return dateServ.getDate() == hoy.getDate() && dateServ.getMonth() == hoy.getMonth() && dateServ.getFullYear() == hoy.getFullYear()
+    })
 
   // ── DONUT ─────────────────────────────────────────────────────────────────────
   donutSegmentosServicios = computed(() => {
     const counts = [
-      { value: this.servicios().filter(s => s.estado === 'En curso').length,    color: '#3b82f6', label: 'En curso' },
-      { value: this.servicios().filter(s => s.estado === 'Terminado').length,   color: '#10b981', label: 'Terminado' },
-      { value: this.servicios().filter(s => s.estado === 'Sin empezar').length, color: '#f59e0b', label: 'Sin empezar' },
-      { value: this.servicios().filter(s => s.estado === 'Cancelado').length,   color: '#9ca3af', label: 'Cancelado' },
+      { value: this.serviciosHoy.filter(s => s.estado === 'En curso' && s.fecha).length,    color: '#3b82f6', label: 'En curso' },
+      { value: this.serviciosHoy.filter(s => s.estado === 'Terminado').length,   color: '#10b981', label: 'Terminado' },
+      { value: this.serviciosHoy.filter(s => s.estado === 'Sin empezar').length, color: '#f59e0b', label: 'Sin empezar' },
+      { value: this.serviciosHoy.filter(s => s.estado === 'Cancelado').length,   color: '#9ca3af', label: 'Cancelado' },
     ];
     const total = counts.reduce((s, c) => s + c.value, 0) || 1;
     const circ = 2 * Math.PI * 60;
@@ -75,25 +81,68 @@ export class AdminDashboard {
     ];
   });
 
+  
+  // ── GRÁFICO DE LÍNEAS ── últimos X días ───────────────────────────────────────
   lineChartCantidadDias = signal(7)
 
-  // ── GRÁFICO DE LÍNEAS ── últimos 7 días ───────────────────────────────────────
+  // Step automatico segun el rango
+  lineChartStep = computed(() => {
+    const dias = this.lineChartCantidadDias();
+    if (dias <= 14) return 1;    // cada dia
+    if (dias <= 60) return 7;    // semanal
+    if (dias <= 180) return 14;  // quincenal
+    return 30;                   // mensual
+  });
+
   lineChartDias = computed(() => {
+    const totalDias = this.lineChartCantidadDias();
+    const step = this.lineChartStep();
     const hoy = new Date();
-    return Array.from({ length: this.lineChartCantidadDias() }, (_, i) => {
+
+    // Generamos solo los puntos que vamos a mostrar
+    // Siempre incluye hoy como último punto
+    const puntos: number[] = [];
+    for (let offset = totalDias - 1; offset >= 0; offset -= step) {
+      puntos.push(offset);
+    }
+
+    return puntos.map(offset => {
       const d = new Date(hoy);
-      d.setDate(hoy.getDate() - (this.lineChartCantidadDias() - 1 - i));
-      const label = d.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' });
-      const yyyy  = d.getFullYear();
-      const mm    = String(d.getMonth() + 1).padStart(2, '0');
-      const dd    = String(d.getDate()).padStart(2, '0');
-      const key   = `${yyyy}-${mm}-${dd}`;
-      const delDia  = this.servicios().filter(s => s.fecha?.startsWith(key));
-      const ingresos = delDia.reduce((sum, s) => sum + ((s as any).ingresos ?? 0), 0);
-      const gastos   = delDia.reduce((sum, s) => sum + (s.costo ?? 0), 0);
+      d.setDate(hoy.getDate() - offset);
+
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const key = `${yyyy}-${mm}-${dd}`;
+
+      // Etiqueta adaptada al step: con mes si el step es grande
+      let label = ""
+
+      if (step <= 1)
+        label = d.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' });    // cada dia
+      else if (step <= 14)
+        label = d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });    // semanal
+      else
+        label = d.toLocaleDateString('es-ES', { month: 'short', year: '2-digit' });    // anual
+
+      // Acumulamos desde este punto hasta el siguiente step
+      // (agrupa los días intermedios que no se muestran)
+      const hasta = new Date(d);
+      hasta.setDate(d.getDate() + step - 1);
+
+      const delRango = this.servicios().filter(s => {
+        if (!s.fecha) return false;
+        const f = s.fecha.substring(0, 10);
+        return f >= key && f <= `${hasta.getFullYear()}-${String(hasta.getMonth() + 1).padStart(2, '0')}-${String(hasta.getDate()).padStart(2, '0')}`;
+      });
+
+      const ingresos = delRango.reduce((sum, s) => sum + ((s as any).ingresos ?? 0), 0);
+      const gastos = delRango.reduce((sum, s) => sum + (s.costo ?? 0), 0);
+
       return { label, key, ingresos, gastos };
     });
   });
+
 
   lineChartSvg = computed(() => {
     const dias  = this.lineChartDias();
@@ -139,8 +188,8 @@ export class AdminDashboard {
   });
 
   // ── COSTOS TOTALES ────────────────────────────────────────────────────────────
-  totalIngresos = computed(() => this.servicios().reduce((s, x) => s + ((x as any).ingresos ?? 0), 0));
-  totalGastos   = computed(() => this.servicios().reduce((s, x) => s + (x.costo ?? 0), 0));
+  totalIngresos = computed(() => this.lineChartDias().reduce((s, x) => s + ((x as any).ingresos ?? 0), 0));
+  totalGastos   = computed(() => this.lineChartDias().reduce((s, x) => s + (x.gastos ?? 0), 0));
   totalBeneficios = computed(() => this.totalIngresos() - this.totalGastos());
 
   // ── TABLA & RANKING ───────────────────────────────────────────────────────────

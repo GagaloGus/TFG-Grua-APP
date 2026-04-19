@@ -135,9 +135,9 @@
         No se encontraron usuarios
     </div>
     } @else {
-    <section class="row row-cols-sm-1 row-cols-lg-2 row-cols-xl-3 g-3">
+    <section class="d-flex flex-wrap gap-3 p-3 bg-dark rounded overflow-hidden">
         @for (u of usuariosFiltrados(); track u.id) {
-        <div class="col">
+        <div class="flex-grow-1">
             <div class="card h-100 p-4">
                 <div class="card-title d-flex gap-3">
                     <figure class="user-pfp">
@@ -180,7 +180,7 @@
                     </div>
                     @if(get_vehiculoUsuario(u) != ""){
 
-                    <div class="d-flex align-items-center mb-2">
+                    <div class="d-flex flex-wrap align-items-center mb-2">
                         <svg class="text-secondary me-2" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
@@ -290,7 +290,7 @@
                             </div>
                             <div class="col-4 mt-2 mt-lg-0 d-flex flex-column justify-content-center" (click)="fileInput.click()">
                                 <label class="w-100 text-center">Foto de Perfil</label>
-                                <figure class="user-pfp user-pfp--edit mt-2 mx-auto user-avatar-edit">
+                                <figure class="user-pfp user-pfp--edit mt-2 mx-auto">
                                     <img src="{{avatar_path}}" alt="">
                                     <span class="edit-icon">
                                         <svg viewBox="0 0 24 24" fill="currentColor">
@@ -382,6 +382,96 @@
                 <div class="modal-footer border-0 gap-2">
                     <button class="btn btn-outline-secondary px-4" (click)="cerrarEditar()">Cancelar</button>
                     <button class="btn btn-primary px-4" (click)="guardarUsuario()">Guardar cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+
+    @if (showDetailsModal) {
+    <div class="modal d-block modal-overlay" (click)="cerrarDetalles()">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable"
+            (click)="$event.stopPropagation()">
+            <div class="modal-content modal-custom">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold">Detalles de usuario — EMP-{{selected?.num_empleado}} {{ selected?.nombreCompleto }}</h5>
+                    <button type="button" class="btn-close" (click)="cerrarDetalles()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <!-- Nombre -->
+                        <div class="row">
+                            <div class="col-8">
+                                <div class="w-100">
+                                    <label class="form-label fw-medium">Nombre</label>
+                                    <p>{{selected?.nombre?? '—'}}</p>
+                                </div>
+                                <div class="d-lg-flex gap-3 mt-2">
+                                    <div class="flex-grow-1">
+                                        <label class="form-label fw-medium">Primer apellido</label>
+                                        <p>{{selected?.apellido1 ?? '—'}}</p>
+                                    </div>
+                                    <div class="flex-grow-1 mt-2 mt-lg-0">
+                                        <label class="form-label fw-medium">Segundo apellido</label>
+                                        <p>{{selected?.apellido2 ?? '—'}}</p>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-4 mt-2 mt-lg-0 d-flex flex-column justify-content-center">
+                                <label class="w-100 text-center">Foto de Perfil</label>
+                                <figure class="user-pfp mt-2 mx-auto">
+                                    <img src="{{avatar_path}}" alt="">
+                                </figure>
+                            </div>
+                        </div>
+
+                        <!-- Contacto -->
+                        <div class="d-flex gap-3">
+                            <div class="flex-grow-1">
+                                <label class="form-label fw-medium">Email</label>
+                                <p>{{selected?.email ?? '—'}}</p>
+                            </div>
+                            <div class="flex-grow-1">
+                                <label class="form-label fw-medium">Teléfono</label>
+                                <p>{{selected?.telefono ?? '—'}}</p>
+                            </div>
+                        </div>
+
+                        <!-- Rol, disponibilidad y vehiculo -->
+                        <div class="d-flex gap-3">
+                            <div class="flex-grow-1">
+                                <label class="form-label fw-medium">Disponibilidad</label>
+                                <p>{{selected?.disponibilidad}}</p>
+                            </div>
+                            <div class="flex-grow-1">
+                                <label class="form-label fw-medium">Rol</label>
+                                <p>{{selected?.rolNombre}}</p>
+                            </div>
+                            @if(formData.rol == "T"){
+                            <div class="flex-grow-1">
+                                <label class="form-label fw-medium">Grua Asignada</label>
+                                <p>{{selected?.vehiculo_asignado ?? '—'}}</p>
+                            </div>
+                            }
+                        </div>
+
+                        <!-- Licencias -->
+                        <div>
+                            <label class="form-label fw-medium">Licencias de conducir</label>
+                            <div class="d-flex flex-wrap gap-4 p-2">
+                                @for (lic of opcionesLicencia; track lic) {
+                                <div class=" form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" [id]="'lic-' + lic"
+                                        [checked]="selected?.licencia_conducir?.includes(lic)"[disabled]="true">
+                                    <label class="form-check-label" [for]="'lic-' + lic">
+                                        <kbd>{{ lic }}</kbd>
+                                    </label>
+                                </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

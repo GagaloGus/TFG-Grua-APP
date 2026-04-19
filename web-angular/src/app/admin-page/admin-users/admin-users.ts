@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase.service';
 import { CarnetsConducir, Tablas, Usuario, Vehiculo } from '../../services/tablas.supabase';
 import { AuthService } from '@services/auth-service/auth-service';
+import { isNullOrUndefined } from 'util';
 
 @Component({
   selector: 'app-admin-users',
@@ -31,6 +32,7 @@ export class AdminUsers implements OnInit {
   showConfirmation = false;
   selected: Usuario | null = Usuario.empty();
   showEditModal = false;
+  showDetailsModal = false;
   formData = Usuario.empty();
   opcionesLicencia = Object.keys(CarnetsConducir);
 
@@ -133,7 +135,7 @@ export class AdminUsers implements OnInit {
           this.filtrosDisp.size === 0 || this.filtrosDisp.has(u.disponibilidad);
 
         return matchTexto && matchRol && matchDisp;
-      })
+      }).sort((a, b) => b.id - a.id)
     );
   }
 
@@ -192,7 +194,13 @@ export class AdminUsers implements OnInit {
 
   // ── Detalles
   abrirDetalles(u: Usuario) {
+    this.selected = u
+    this.showDetailsModal = true;
+  }
 
+  cerrarDetalles() {
+    this.selected = null
+    this.showDetailsModal = false;
   }
 
 

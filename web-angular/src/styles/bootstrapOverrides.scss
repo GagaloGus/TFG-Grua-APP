@@ -35,8 +35,13 @@
 }
 
 .row {
+    padding: 0;
     display: flex;
     width: 100%;
+}
+
+.col{
+    padding: 0;
 }
 
 .row-top {

@@ -108,7 +108,7 @@
         <!-- Donut de estados de servicios -->
         <div class="chart-card">
             <div class="d-flex align-items-center gap-2 mb-3">
-                <p class="chart-title mb-0">Estado de servicios</p>
+                <p class="chart-title mb-0">Estado de servicios hoy</p>
             </div>
             <div class="donut-wrapper">
                 <svg viewBox="0 0 160 160" class="donut-svg">
@@ -117,8 +117,13 @@
                         [attr.stroke-dasharray]="seg.dash + ' ' + seg.gap"
                         [attr.stroke-dashoffset]="-(seg.offset - (2 * 3.14159 * 60 / 4))" stroke-linecap="butt" />
                     }
-                    <text x="80" y="85" text-anchor="middle" class="fs-3 fw-bold">{{ totalServicios() }}</text>
-                    <text x="80" y="101" text-anchor="middle" class="small text-secondary">Total</text>
+                    <text x="80" y="85" text-anchor="middle" class="fs-3 fw-bold"
+                        [attr.fill]="serviciosHoy.length === 0 ? '#9ca3af' : '#111827'">
+                        {{ serviciosHoy.length }}
+                    </text>
+                    <text x="80" y="101" text-anchor="middle" class="small text-secondary">
+                        {{ serviciosHoy.length === 0 ? 'Sin servicios hoy' : 'Total' }}
+                    </text>
                 </svg>
                 <div class="w-100 d-flex flex-column gap-1">
                     @for (seg of donutSegmentosServicios(); track seg.label) {
@@ -133,25 +138,25 @@
         </div>
 
          <!-- ── Grafico de lineas: ingresos vs gastos ────────────────────── -->
-        <div class="chart-card linechart-card d-flex flex-column">
+        <div class="chart-card d-flex flex-column">
             <!-- Cabecera con resumen -->
-            <div class="linechart-header">
+            <div class="d-flex justify-content-between flex-wrap gap-2">
                 <div>
                     <p class="chart-title mb-0">Ingresos y gastos</p>
-                    <p class="linechart-sub">Últimos {{lineChartCantidadDias()}} días</p>
+                    <p class="chart-subtitle">Últimos {{lineChartCantidadDias()}} días</p>
                 </div>
-                <div class="linechart-totales">
+                <div class="d-flex flex-wrap gap-3">
                     <div class="linechart-total linechart-total--green">
-                        <span class="linechart-total-label">Ingresos</span>
-                        <span class="linechart-total-value">+{{ totalIngresos() }}€</span>
+                        <p class="linechart-total-label">Ingresos</p>
+                        <p class="linechart-total-value">+{{ totalIngresos() }}€</p>
                     </div>
                     <div class="linechart-total linechart-total--red">
-                        <span class="linechart-total-label">Gastos</span>
-                        <span class="linechart-total-value">-{{ totalGastos() }}€</span>
+                        <p class="linechart-total-label">Gastos</p>
+                        <p class="linechart-total-value">-{{ totalGastos() }}€</p>
                     </div>
                     <div class="linechart-total linechart-total--blue">
-                        <span class="linechart-total-label">Beneficio</span>
-                        <span class="linechart-total-value">{{ totalBeneficios() }}€</span>
+                        <p class="linechart-total-label">Beneficio</p>
+                        <p class="linechart-total-value">{{ totalBeneficios() }}€</p>
                     </div>
                 </div>
             </div>
@@ -198,13 +203,22 @@
             </div>
 
             <!-- Leyenda -->
-            <div class="linechart-legend">
-                <span class="linechart-legend-item">
-                    <span class="linechart-legend-dot" style="background:#10b981"></span>Ingresos
-                </span>
-                <span class="linechart-legend-item">
-                    <span class="linechart-legend-dot" style="background:#ef4444"></span>Gastos
-                </span>
+            <div class="d-flex justify-content-between">
+                <div class="d-flex gap-3 align-items-center small text-secondary">
+                    <p class="d-flex align-items-center gap-1">
+                        <span class="linechart-legend-dot" style="background:#10b981"></span>Ingresos
+                    </p>
+                    <p class="d-flex align-items-center gap-1">
+                        <span class="linechart-legend-dot" style="background:#ef4444"></span>Gastos
+                    </p>
+                </div>
+
+                <div class="d-flex flex-row-reverse gap-2">
+                    <button (click)="lineChartCantidadDias.set(7)" class="btn btn-sm btn-outline-primary">7 dias</button>
+                    <button (click)="lineChartCantidadDias.set(30)" class="btn btn-sm btn-outline-primary">30 dias</button>
+                    <button (click)="lineChartCantidadDias.set(30*6)" class="btn btn-sm btn-outline-primary">6 meses</button>
+                    <button (click)="lineChartCantidadDias.set(365)" class="btn btn-sm btn-outline-primary">1 año</button>
+                </div>
             </div>
         </div>
 
@@ -277,7 +291,7 @@
                                     s.direccion_ubi_recogida ?? '—' }}</abbr>
                             </td>
                             <td class="obs-cell text-secondary">{{ s.direccion_ubi_destino ?? '—' }}</td>
-                            <td><span [class]="'badge-estado ' + s.badgeClass">{{ s.estado }}</span></td>
+                            <td><span [class]="'badge-estado ' + s.estadoClass">{{ s.estado }}</span></td>
                         </tr>
                         }
                     </tbody>
