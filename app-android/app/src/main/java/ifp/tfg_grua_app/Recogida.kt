@@ -3,13 +3,8 @@ package ifp.tfg_grua_app
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/**
- * Modelo de una recogida tal y como llega de la tabla "recogidas" de Supabase.
- * Los @SerialName mapean los nombres de columna reales con los nombres internos
- * que ya usaba el resto de la app (cliente, matricula, motivo, telefono, lat, lng).
- *
- * Si alguna columna en tu Supabase tiene otro nombre, ajústalo en su @SerialName.
- */
+// Una fila de la tabla "servicios" de Supabase.
+// Los @SerialName conectan la columna real con el nombre que usamos en Kotlin.
 @Serializable
 data class Recogida(
     val id: Int? = null,
@@ -22,15 +17,12 @@ data class Recogida(
     @SerialName("ubicacion_destino_lat")  val destinoLat: Double = 0.0,
     @SerialName("ubicacion_destino_lng")  val destinoLng: Double = 0.0,
     @SerialName("num_empleado")           val numEmpleado: Int? = null,
+    @SerialName("vehiculo_recogido")      val vehiculoRecogido: Boolean = false,
     val urgente: Boolean = false,
-    val estado: String? = null,
-    @SerialName("vehiculo_recogido")      val vehiculoRecogido: Boolean = false
+    val estado: String? = null
 )
 
-/**
- * Cache global con las recogidas descargadas de Supabase.
- * Se rellena en MainActivity tras hacer login y se consulta luego desde MapGPS.
- */
+// Cache en memoria: lo llena MainActivity al cargar y lo lee MapGPS por id.
 object RecogidasRepo {
     var Recogidas: List<Recogida> = emptyList()
 }
