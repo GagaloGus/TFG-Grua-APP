@@ -178,7 +178,6 @@ nav{
 }
 
 .hero h1 {
-  font-family: 'Barlow Condensed', sans-serif;
   font-weight: bold;
   font-weight: 800;
   font-size: 5rem;
@@ -233,12 +232,11 @@ nav{
 
 .section-header {
   text-align: center;
-  margin-bottom: 50px;
+  margin-bottom: 70px;
 }
 
 .section-header h2 {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 3rem;
+  font-size: 4rem;
   font-weight: 800;
   color: #FFFFFF;
   margin-bottom: 10px;
@@ -255,7 +253,7 @@ nav{
 /* CONTENEDOR PRINCIPAL */
 .workflow-grid {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-columns: 1.1fr 1fr;
   gap: 40px;
   align-items: start;
   max-width: 1300px;
@@ -284,7 +282,6 @@ nav{
 }
 
 .wf-step-body h3 {
-  font-family: 'Barlow Condensed', sans-serif;
   font-size: 2rem;
   font-weight: 700;
   color: #FFFFFF;
@@ -313,7 +310,6 @@ nav{
 }
 
 .big-num h3{
-  font-family: 'Barlow Condensed', sans-serif;
   font-size: 2rem;
   font-weight: 800;
   color: #FFFFFF;
@@ -329,7 +325,6 @@ nav{
 
 
 .big-sub h3{
-  font-family: 'Barlow Condensed', sans-serif;
   font-size: 2rem;
   font-weight: 700;
   color: #FFFFFF;
@@ -344,53 +339,105 @@ nav{
 }
 /* perfiles */
 
+
 .profiles{
-  padding: 90px 5%;
+  padding: 100px 5%;
   background:
     linear-gradient(rgba(8, 22, 38, 0.70), rgba(8, 22, 38, 0.72)),
     url("/appauto.jpg") center center / cover no-repeat;
+  min-height: 50vh;
 }
 
 .profiles-grid{
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
-  max-width: 1100px;
-  margin: 0 auto;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 50px;
+  max-width: 1050px;
+  margin: 50px auto 0;
 }
 
-.profiles-card{
-  border-radius: 20px;
-  padding: 40px;
-  border: 1px solid #D4881A;
+.profiles .section-header h2 {
+  text-align: center;
+  font-family: sans-serif;
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
 
+.profiles-card {
+  border-radius: 20px;
+  padding: 42px 36px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  cursor: default;
 }
 
 .profiles-card.admin{
-  background: #0a1626;
-  border: 2px solid #1e3a8a;
-}
-
-.profiles-card h3{
-  font-family: sans-serif;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #FFFFFF;
-  margin-bottom: 10px;
-  line-height: 1.1;
-}
-
-.profiles-card li{
-  color: #6B89AA;
-  font-size: 1.1rem;
-  position: relative;
-  display: flex;
+  background: rgba(10, 22, 38, 0.85);
+  border: 1.5px solid rgba(59, 130, 246, 0.35);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .profiles-card.operator{
   background: #D4881A;
   border: 2px solid #854d0e;
 }
+
+.profiles-card h3{
+  font-family: sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 22px;
+  line-height: 1.15;
+}
+
+.profiles-card ul {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.profiles-card li {
+  font-size: 1.25rem;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  line-height: 1.4;
+}
+
+/* viñeta */
+.profiles-card li::before {
+  content: "";
+  flex-shrink: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.profiles-card.admin li::before {
+  background: #3b82f6;
+  box-shadow: 0 0 6px rgba(59, 130, 246, 0.7);
+}
+
+.profiles-card.operator li::before {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.profiles-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.5);
+}
+
 
 
 /* contacto*/
