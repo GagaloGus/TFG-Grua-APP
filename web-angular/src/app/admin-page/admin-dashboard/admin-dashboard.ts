@@ -205,7 +205,7 @@ export class AdminDashboard {
     [...this.usuarios()]
       .filter(u => u.rol === 'T')
       .sort((a, b) => (b.serv_completados_total ?? 0) - (a.serv_completados_total ?? 0))
-      .slice(0, 8)
+      .slice(0, 6)
   );
 
   maxServCompletados = computed(() =>

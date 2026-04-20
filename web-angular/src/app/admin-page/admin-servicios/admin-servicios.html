@@ -74,7 +74,7 @@
 
     <!-- Stats rápidas -->
     <div class="row g-3 mb-4">
-        <div class=" col-12 col-md-6 col-lg-3">
+        <div class="col-12 col-md-6 col-lg-3">
             <div (click)="btnFiltrarEstado('')" class="info-div-btn stat-card">
                 <span class="stat-number">{{ servicios().length }}</span>
                 <span class="stat-label">Total</span>
@@ -222,24 +222,24 @@
             </div>
             <div class="modal-body">
                 <div class="row g-4">
-                    <div class="col-md-4">
+                    <div class="col-4">
                         <p class="text-secondary small mb-1 fw-medium">Nombre cliente</p>
                         <p class="fw-medium">{{ selected?.nombre_cliente ?? '—' }}</p>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-4">
                         <p class="text-secondary small mb-1 fw-medium">Teléfono cliente</p>
                         <p>{{ selected?.tel_cliente ?? '—' }}</p>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-4">
                         <p class="text-secondary small mb-1 fw-medium">Fecha de creación</p>
                         <p>{{ selected?.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-6">
                         <p class="text-secondary small mb-1 fw-medium">Ubicación recogida</p>
                         <p>{{selected?.direccion_ubi_recogida}}</p>
                         <p class="coordenadas">{{ selected?.formatCoordRecogida }}</p>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-6">
                         <p class="text-secondary small mb-1 fw-medium">Ubicación destino</p>
                         <p>{{selected?.direccion_ubi_destino}}</p>
                         <p class="coordenadas">{{ selected?.formatCoordDestino }}</p>

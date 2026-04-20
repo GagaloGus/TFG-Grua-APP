@@ -103,10 +103,10 @@
     </div>
 
     <!-- ── Fila gráficos ─────────────────────────────────────────────────── -->
-    <div class="charts-row mb-4">
+    <div class="d-flex flex-wrap gap-3 justify-content-between mb-4">
 
         <!-- Donut de estados de servicios -->
-        <div class="chart-card">
+        <div class="chart-card flex-grow-1">
             <div class="d-flex align-items-center gap-2 mb-3">
                 <p class="chart-title mb-0">Estado de servicios hoy</p>
             </div>
@@ -138,7 +138,7 @@
         </div>
 
         <!-- ── Grafico de lineas: ingresos vs gastos ────────────────────── -->
-        <div class="chart-card d-flex flex-column">
+        <div class="chart-card flex-grow-1 d-flex flex-column">
             <!-- Cabecera con resumen -->
             <div class="d-flex justify-content-between flex-wrap gap-2">
                 <div>
@@ -205,8 +205,8 @@
             </div>
 
             <!-- Leyenda -->
-            <div class="d-flex justify-content-between">
-                <div class="d-flex gap-3 align-items-center small text-secondary">
+            <div class="d-flex mt-2 flex-wrap gap-2 justify-content-between">
+                <div class="d-flex flex-grow-1 gap-3 align-items-center small text-secondary">
                     <p class="d-flex align-items-center gap-1">
                         <span class="linechart-legend-dot" style="background:#10b981"></span>Ingresos
                     </p>
@@ -215,7 +215,7 @@
                     </p>
                 </div>
 
-                <div class="d-flex flex-row-reverse gap-2">
+                <div class="d-flex flex-wrap flex-row-reverse gap-2">
                     <button (click)="lineChartCantidadDias.set(7)" class="btn btn-sm btn-outline-primary">7
                         dias</button>
                     <button (click)="lineChartCantidadDias.set(30)" class="btn btn-sm btn-outline-primary">30
@@ -229,7 +229,7 @@
         </div>
 
         <!-- Barras: conductores -->
-        <div class="chart-card">
+        <div class="chart-card flex-grow-1">
             <p class="chart-title">Disponibilidad de conductores</p>
             <div class="bar-chart">
                 @for (item of disponibilidadTrabajadores(); track item.label) {
@@ -260,82 +260,103 @@
 
     </div>
 
-    <div class="d-flex flex-wrap gap-3">
+    <div class="row justify-content-between">
         <!-- ── Ultimos servicios ─────────────────────────────────────────────── -->
-        <div class="chart-card last-services-card">
-            <div class="d-flex align-items-center mb-3">
-                <p class="chart-title mb-0">Últimos servicios</p>
-                <button class="btn btn-sm btn-outline-primary ms-auto" (click)="redirigir('servicios')">Ver
-                    todos</button>
+        <div class="col-12 col-xl-8 pe-3">
+            <div class="chart-card">
+                <div class="d-flex align-items-center mb-3">
+                    <p class="chart-title mb-0">Últimos servicios</p>
+                    <button class="btn btn-sm btn-outline-primary ms-auto" (click)="redirigir('servicios')">Ver
+                        todos</button>
+                </div>
+                @if (ultimosServicios().length === 0) {
+                <p class="text-secondary small">No hay servicios registrados.</p>
+                } @else {
+                <div class="table-responsive">
+                    <table class="tabla-datos">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Recogida</th>
+                                <th>Destino</th>
+                                <th>Estado</th>
+                                <th>Vehiculo recogido?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (s of ultimosServicios(); track s.id) {
+                            <tr>
+                                <td><span class="id-badge">S-{{ s.id }}</span></td>
+                                <td>
+                                    <div>
+                                        <p class="fw-semibold small">{{ s.nombre_cliente ?? '—' }}</p>
+                                        <p class="text-secondary small">Tel: {{ s.tel_cliente ?? '' }}</p>
+                                    </div>
+                                </td>
+                                <td>
+                                    @if(s.direccion_ubi_recogida){
+                                        <p class="obs-cell small">{{s.direccion_ubi_recogida }}</p>
+                                        <p class="text-secondary small">{{ s.ubicacion_recogida_lat + ' / '+ s.ubicacion_recogida_lng }} </p>
+                                    }
+                                    @else {
+                                        <p>{{ s.ubicacion_recogida_lat + ' / '+ s.ubicacion_recogida_lng }} </p>
+                                    }
+                                </td>
+                                <td>
+                                    @if(s.direccion_ubi_destino){
+                                    <p class="obs-cell small">{{s.direccion_ubi_destino }}</p>
+                                    <p class="text-secondary small">{{ s.ubicacion_destino_lat + ' / '+ s.ubicacion_destino_lng }} </p>
+                                    }
+                                    @else {
+                                    <p>{{ s.ubicacion_destino_lat + ' / '+ s.ubicacion_destino_lng }} </p>
+                                    }
+                                </td>
+                                <td><span [class]="s.estadoClass">{{ s.estado }}</span></td>
+                                <td><span [class]="s.recogidoClass">{{ s.vehiculo_recogido ? 'Si' : 'No' }}</span></td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                }
             </div>
-            @if (ultimosServicios().length === 0) {
-            <p class="text-secondary small">No hay servicios registrados.</p>
-            } @else {
-            <div class="table-responsive">
-                <table class="tabla-datos">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Cliente</th>
-                            <th>Recogida</th>
-                            <th>Destino</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for (s of ultimosServicios(); track s.id) {
-                        <tr>
-                            <td><span class="id-badge">S-{{ s.id }}</span></td>
-                            <td>
-                                <div>
-                                    <p class="fw-semibold small">{{ s.nombre_cliente ?? '—' }}</p>
-                                    <p class="text-secondary small">Tel: {{ s.tel_cliente ?? '' }}</p>
-                                </div>
-                            </td>
-                            <td>
-                                <abbr title="{{ s.direccion_ubi_recogida ?? ''}}" class="obs-cell text-secondary">{{
-                                    s.direccion_ubi_recogida ?? '—' }}</abbr>
-                            </td>
-                            <td class="obs-cell text-secondary">{{ s.direccion_ubi_destino ?? '—' }}</td>
-                            <td><span [class]="'badge-estado ' + s.estadoClass">{{ s.estado }}</span></td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-            }
         </div>
 
         <!-- Top trabajadores -->
-        <div class="flex-grow-1 chart-card">
-            <div class="d-flex align-items-center gap-2 mb-3">
-                <p class="chart-title mb-0">Top trabajadores</p>
-            </div>
-            @if (topTrabajadores().length === 0) {
-            <p class="text-secondary small">Sin datos de trabajadores.</p>
-            }
-            <div class="top-list">
-                @for (u of topTrabajadores(); track u.id; let i = $index) {
-                <div class="top-row">
-                    <span class="top-rank" [class.top-rank--gold]="i==0" [class.top-rank--silver]="i==1"
-                        [class.top-rank--bronze]="i==2">{{ i + 1 }}</span>
-                    <figure class="user-pfp user-pfp--mini">
-                        @if (u.avatar_url) {
-                        <img [src]="u.avatar_url" [alt]="u.nombreCompleto">
-                        } @else {
-                        <p>{{ u.nombre.charAt(0) }}{{ u.apellido1.charAt(0) }}</p>
-                        }
-                    </figure>
-                    <div class="flex-grow-1">
-                        <p class="top-name">({{ u.email }}) {{ u.nombreCompleto }}</p>
-                        <div class="top-bar-track">
-                            <div class="top-bar-fill"
-                                [style.width.%]="((u.serv_completados_total) / maxServCompletados()) * 100"></div>
-                        </div>
-                    </div>
-                    <span class="top-num">{{ u.serv_completados_total }}</span>
+        <div class="col-12 col-xl-4 mt-4 mt-xl-0">
+            <div class="chart-card h-100">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <p class="chart-title mb-0">Top trabajadores</p>
                 </div>
+                @if (topTrabajadores().length === 0) {
+                <p class="text-secondary small">Sin datos de trabajadores.</p>
                 }
+                <div class="d-flex flex-column gap-2">
+                    @for (u of topTrabajadores(); track u.id; let i = $index) {
+                    <div (click)="redirigir('usuarios')" class="top-row d-flex align-items-center gap-3">
+                        <span class="top-rank" [class.top-rank--gold]="i==0" [class.top-rank--silver]="i==1" [class.top-rank--bronze]="i==2">{{ i + 1 }}</span>
+                        <figure class="user-pfp user-pfp--mini">
+                            @if (u.avatar_url) {
+                            <img [src]="u.avatar_url" [alt]="u.nombreCompleto">
+                            } @else {
+                            <p>{{ u.nombre.charAt(0) }}{{ u.apellido1.charAt(0) }}</p>
+                            }
+                        </figure>
+                        <div class="flex-grow-1">
+                            <p class="top-name obs-cell">{{ u.email }}</p>
+                            <div class="top-bar-track">
+                                <div class="top-bar-fill"
+                                    [style.width.%]="((u.serv_completados_total) / maxServCompletados()) * 100"></div>
+                            </div>
+                        </div>
+                        <span class="top-num">{{ u.serv_completados_total }}</span>
+                    </div>
+                    }
+                    <div (click)="redirigir('usuarios')" class="top-row fw-semibold small mt-2">
+                        <p class="small">Ver todos...</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

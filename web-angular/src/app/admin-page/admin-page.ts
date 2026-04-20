@@ -33,4 +33,12 @@ export class AdminPage {
     get nombre(){
       return this.authService.nombre
     }
+    
+    get apellido1(){
+      return this.authService.apellido1
+    }
+
+    get avatar(){
+      return this.authService.avatarUrl()
+    }
 }

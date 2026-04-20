@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { SupabaseService } from '../supabase.service';
 import { Tablas, Usuario } from '../tablas.supabase';
 
@@ -11,12 +11,12 @@ export class AuthService {
   private _isLoggedIn = false;
   private _isAdmin = false;
 
-  private _currentUsuario! : Usuario | null;
+  private _currentUsuario!: Usuario | null;
 
   async login(email: string, password: string): Promise<string> {
-    if(email == "")
+    if (email == "")
       return "El campo 'Correo' esta vacio!"
-    if(password == "")
+    if (password == "")
       return "El campo 'Contraseña' esta vacio!"
 
     try {
@@ -32,12 +32,13 @@ export class AuthService {
 
         //Asigna los valores que necesitamos a variables
         this._currentUsuario = new Usuario(match[0]);
+        await this.cargarAvatar()
         this._isLoggedIn = true
       }
-      else{
+      else {
         throw Error('La contraseña no coincide!')
       }
-    } catch (error : any) {
+    } catch (error: any) {
       return error.message
     }
 
@@ -59,20 +60,40 @@ export class AuthService {
   }
 
   get nombre() {
-    if(this._currentUsuario == null)
+    if (this._currentUsuario == null)
       return null
     return this._currentUsuario.nombre == "" ? null : this._currentUsuario.nombre
   }
 
+  get apellido1() {
+    if (this._currentUsuario == null)
+      return null
+    return this._currentUsuario.apellido1 == "" ? null : this._currentUsuario.apellido1
+  }
+
   get email() {
-    if(this._currentUsuario == null)
+    if (this._currentUsuario == null)
       return null
     return this._currentUsuario.email == "" ? null : this._currentUsuario.email
   }
 
-  get rol(){
-    if(this._currentUsuario == null)
+  get rol() {
+    if (this._currentUsuario == null)
       return null
     return this._currentUsuario.rol;
+  }
+
+  avatarUrl = signal<string | null>(null);
+
+  // cada vez que se cargue/actualice el usuario
+  async cargarAvatar() {
+    let url = this._currentUsuario?.avatar_url
+    if (!url) { this.avatarUrl.set(null); return; }
+    try {
+      const res = await fetch(url, { method: 'HEAD' });
+      this.avatarUrl.set(res.ok ? url : null);
+    } catch {
+      this.avatarUrl.set(null);
+    }
   }
 }

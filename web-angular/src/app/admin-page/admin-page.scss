@@ -4,6 +4,14 @@
     color: $text-light;
 }
 
+.minibar{
+    background: $surface-dark;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 60px;
+    z-index: 999;
+}
 
 .sidebar {
     background: $surface-dark;
@@ -24,19 +32,19 @@
     min-width: 0;
     background: $surface;
 
+    /* medida md de bootstrap */
     @media (min-width: 768px) {
         margin-left: 250px;
+    }
+
+    @media (max-width: 768px) {
+        margin-bottom: 50px;
     }
 
     // El contenido de dentro
     >div {
         background: $surface-2;
     }
-}
-/* medida md de bootstrap */
-
-.card-holder {
-    width: 100%;
 }
 
 .nav-button {

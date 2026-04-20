@@ -163,32 +163,32 @@
 }
 
 // ── Top trabajadores ──────────────────────────────────────────────────────────
-.top-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-}
-
-.top-row {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+.top-row{
+  transition: all 0.2s ease;
+  padding: 0.3rem 0.7rem;
+  border-radius: 8px;
+  cursor: pointer;
+    &:hover{
+    background: #e2e4e8;
+  }
 }
 
 .top-rank {
   font-size: 0.75rem;
   font-weight: 700;
-  width: 20px;
   text-align: center;
   color: $text-muted;
 
   &--gold   { color: #f59e0b; }
   &--silver { color: #9ca3af; }
   &--bronze { color: #b45309; }
+
+
 }
 
 .top-name {
   font-size: 0.8rem;
+  width: fit-content;
   font-weight: 600;
   color: $text;
   margin: 0 0 3px;

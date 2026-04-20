@@ -172,32 +172,3 @@
     border-color: #f87171;
   }
 }
-
-// ── Buscador (igual que antes) ────────────────────────────────────────────────
-.filtros-bar {
-  .search-wrapper {
-    position: relative;
-    min-width: 220px;
-
-    .search-icon {
-      position: absolute;
-      left: 0.75rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #6b7280;
-      pointer-events: none;
-    }
-
-    .search-input {
-      padding-left: 2.4rem;
-      border-radius: 8px;
-      border: 1.5px solid #e5e7eb;
-      font-size: 0.875rem;
-
-      &:focus {
-        border-color: #1a56db;
-        box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.12);
-      }
-    }
-  }
-}
