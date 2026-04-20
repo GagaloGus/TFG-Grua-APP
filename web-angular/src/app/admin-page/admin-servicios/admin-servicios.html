@@ -222,13 +222,17 @@
             </div>
             <div class="modal-body">
                 <div class="row g-4">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <p class="text-secondary small mb-1 fw-medium">Nombre cliente</p>
                         <p class="fw-medium">{{ selected?.nombre_cliente ?? '—' }}</p>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <p class="text-secondary small mb-1 fw-medium">Teléfono cliente</p>
                         <p>{{ selected?.tel_cliente ?? '—' }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="text-secondary small mb-1 fw-medium">Fecha de creación</p>
+                        <p>{{ selected?.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
                     </div>
                     <div class="col-md-6">
                         <p class="text-secondary small mb-1 fw-medium">Ubicación recogida</p>
@@ -240,13 +244,17 @@
                         <p>{{selected?.direccion_ubi_destino}}</p>
                         <p class="coordenadas">{{ selected?.formatCoordDestino }}</p>
                     </div>
-                    <div class="col-md-2">
-                        <p class="text-secondary small mb-1 fw-medium">Estado</p>
+                    <div class="col-md-5">
+                        <div class="row ">
+                            <div class="col-6 ps-0">
+                                <p class="text-secondary small mb-1 fw-medium">Estado</p>
                         <span [ngClass]="selected?.estadoClass">{{ selected?.estado ?? '—' }}</span>
-                    </div>
-                    <div class="col-md-3">
-                        <p class="text-secondary small mb-1 fw-medium">Vehiculo recogido?</p>
+                            </div>
+                            <div class="col-6 pe-0">
+                               <p class="text-secondary small mb-1 fw-medium">Vehiculo recogido?</p>
                         <span [ngClass]="selected?.recogidoClass">{{ selected?.vehiculo_recogido ? 'Si': 'No' }}</span>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-3">
                         <p class="text-secondary small mb-1 fw-medium">Vehículo</p>
@@ -258,11 +266,19 @@
                         <p>{{ selected?.num_empleado ? 'EMP-' + selected?.num_empleado + ' - ' +
                             (getUserByNumEmpleado(selected!.num_empleado!)?.nombreCompleto ?? '') : '—'}}</p>
                     </div>
-                    <div class="col-md-3">
-                        <p class="text-secondary small mb-1 fw-medium">Fecha</p>
-                        <p>{{ selected?.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
+                    <div class="col-md-4">
+                        <div class="row ">
+                            <div class="col-6 ps-0">
+                                <p class="text-secondary small mb-1 fw-medium">Gastos</p>
+                                <p>{{ selected?.costo }}€</p>
+                            </div>
+                            <div class="col-6 pe-0">
+                                <p class="text-secondary small mb-1 fw-medium">Ingresos</p>
+                                <p>{{ selected?.ingresos }}€</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-8">
                         <p class="text-secondary small mb-1 fw-medium">Observaciones</p>
                         <p class="text-secondary">{{ selected?.observaciones ?? '—' }}</p>
                     </div>

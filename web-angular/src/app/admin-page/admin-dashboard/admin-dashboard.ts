@@ -85,7 +85,7 @@ export class AdminDashboard {
     ];
   });
 
-  
+
   // ── GRÁFICO DE LÍNEAS ── últimos X días ───────────────────────────────────────
   lineChartCantidadDias = signal(7)
 
@@ -216,13 +216,13 @@ export class AdminDashboard {
   redirigir(ruta: string) { this.router.navigate([`/admin/${ruta}`]); }
 
   private recargaIntervalo: ReturnType<typeof setInterval> | null = null;
-  
-  
+
+
   async ngOnInit() {
     this.cargarTodo()
-    this.recargaIntervalo = setInterval(() => this.cargarTodo(), 10000);
+    this.recargaIntervalo = setInterval(() => this.cargarSegundoPlano(), 10000);
   }
-  
+
   ngOnDestroy(){
     if(this.recargaIntervalo)
       clearInterval(this.recargaIntervalo)
@@ -234,6 +234,12 @@ export class AdminDashboard {
     await this.cargarServicios();
     await this.cargarVehiculos();
     this.finishedLoading.set(true);
+  }
+
+  async cargarSegundoPlano() {
+    await this.cargarUsuarios();
+    await this.cargarServicios();
+    await this.cargarVehiculos();
   }
 
   async cargarServicios() {

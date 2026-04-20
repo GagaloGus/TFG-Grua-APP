@@ -37,13 +37,13 @@ export class AdminServicios implements OnInit {
   constructor(private supabaseService: SupabaseService) { }
 
     private recargaIntervalo: ReturnType<typeof setInterval> | null = null;
-  
-  
+
+
   async ngOnInit() {
     this.cargarTodo()
     this.recargaIntervalo = setInterval(() => this.cargarSegundoPlano(), 10000);
   }
-  
+
   ngOnDestroy(){
     if(this.recargaIntervalo)
       clearInterval(this.recargaIntervalo)
