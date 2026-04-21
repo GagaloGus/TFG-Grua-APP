@@ -1,38 +1,87 @@
-<section
-    class="bg-cool container-fluid p-4 min-vh-100 d-flex flex-column flex-md-row justify-content-center justify-content-md-around align-items-center">
-    <div class="w-50">
-        <h1 class="mb-5 w-100 text-center font-weight-bold">Bienvenido!</h1>
-        <figure class="w-100">
-            <img src="/img/towapp.png" alt="" class="img-logo-welcome mx-auto d-block">
-        </figure>
+<section class="login-page">
+
+  <!-- LADO IZQUIERDO -->
+<div class="login-left">
+    <div class="login-left-overlay"></div>
+
+    <div class="login-left-content">
+        <h1><span class="highlight">COORDINA</span> A TUS OPERADORES, ASIGNA SERVICIOS Y
+            <span class="highlight">MONITORIZA</span> CADA VEHÍCULO EN TIEMPO
+            <span class="highlight"> REAL</span>.
+        </h1>
     </div>
-    <div class="w-50">
-        <div class="card card-holder p-3 mx-auto">
-            <img src="https://media.tenor.com/Y10r2fAk3rUAAAAM/stray-ps5.gif" class="card-img-top" alt="imagen">
-            <div class="card-body">
-                <form>
-                    <h4 class="card-title">Iniciar Sesión</h4>
-                    <div class="form-group">
-                        <label for="loginInputUsername">Correo</label>
-                        <input [(ngModel)]="email" name="email" class="form-control" type="email"
-                            id="loginInputUsername" placeholder="Correo">
-                    </div>
-                    <div class="form-group">
-                        <label for="loginInputEmail">Contraseña</label>
-                        <input [(ngModel)]="password" name="password" class="form-control" type="password"
-                            id="loginInputPassword" placeholder="Contraseña">
-                    </div>
-                </form>
+</div>
 
-                @if (error() != ''){
-                    <p class="text-danger">{{error()}}</p>
-                }
+  <!-- LADO DERECHO -->
+  <div class="login-right">
+    <div class="login-card">
 
-                <div class="d-flex flex-column justify-content-end mt-3">
-                    <button type="button" class="btn btn-primary" [disabled]="validatingLogin()" (click)="login()">Iniciar Sesión</button>
-                </div>
-            </div>
+      <div class="login-header">
+        <h1>ADMINISTRADOR</h1>
+        <h2>INICIAR SESIÓN</h2>
+        <p>Accede a tu panel de control</p>
+      </div>
+
+      <div class="error-msg" *ngIf="error">
+        Usuario o contraseña incorrectos.
+      </div>
+
+      <form #loginForm="ngForm" (ngSubmit)="login()">
+
+        <div class="form-group">
+          <label for="loginInputUsername">Correo electrónico</label>
+          <input
+            [(ngModel)]="username"
+            name="usuario"
+            class="custom-input"
+            type="text"
+            id="loginInputUsername"
+            placeholder="usuario@towapp.es"
+            required
+            autocomplete="username">
         </div>
-    </div>
 
+        <div class="form-group">
+          <label for="loginInputPassword">Contraseña</label>
+          <div class="password-wrap">
+            <input
+              [(ngModel)]="password"
+              name="password"
+              class="custom-input"
+              type="password"
+              id="loginInputPassword"
+              placeholder="••••••••"
+              required
+              autocomplete="current-password">
+          </div>
+        </div>
+
+        <div class="login-options">
+          <label class="remember-me">
+            <input type="checkbox" name="rememberMe">
+            <span>Recordarme</span>
+          </label>
+
+          <a routerLink="/recuperar-password" class="forgot-link">
+            ¿Olvidaste tu contraseña?
+          </a>
+        </div>
+
+        <button type="submit" class="btn-login" [disabled]="validatingLogin">
+          <span *ngIf="!validatingLogin">ENTRAR</span>
+          <span *ngIf="validatingLogin">VALIDANDO...</span>
+        </button>
+
+      </form>
+
+      <div class="divider">
+        <span>o</span>
+      </div>
+
+      <div class="login-help">
+        <p>¿No tienes cuenta? <a href="mailto:info@towapp.es">Contacta con tu empresa</a></p>
+      </div>
+
+    </div>
+  </div>
 </section>

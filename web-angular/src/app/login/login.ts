@@ -6,7 +6,7 @@ import { Usuario } from '@services/tablas.supabase';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   standalone: true,
   templateUrl: './login.html',
   styleUrl: './login.css',

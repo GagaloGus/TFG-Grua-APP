@@ -1,11 +1,213 @@
-<section>
-    <h1><kbd>Soy el home</kbd></h1>
-    <h5>Usuario conectado: {{email}}</h5>
-    <ul>
-        <li><a href="" routerLink="/login">Login</a></li>
+<nav>
+  <a routerLink="/" class="logo" style="text-decoration:none;">
+    <div class="logo-icon">
+      <img src="/truck.png" alt="Logo TowApp" />
+    </div>
+    <div class="logo-text">
+      <span class="tow">TOW</span><span class="app">APP</span>
+      <span class="systems"> SYSTEMS</span><span class="sl"> S.L.</span>
+    </div>
+  </a>
 
-        @if (isLoggedIn()){
-            <li><a href="" routerLink="/admin">Admin</a></li>
-        }
-    </ul>
+  <ul class="nav-links">
+  <li><a [routerLink]="['/home']" fragment="inicio" class="active">INICIO</a></li>
+  <li><a [routerLink]="['/home']" fragment="servicios">SERVICIOS</a></li>
+  <li><a [routerLink]="['/home']" fragment="workflow">CÓMO FUNCIONA</a></li>
+  <li><a [routerLink]="['/home']" fragment="contacto">CONTACTO</a></li>
+</ul>
+
+  <button class="btn-nav" routerLink="/login">INICIAR SESIÓN</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <div class="hero-text">
+      <h1>
+        CADA GRÚA,<br />CADA SERVICIO,<br />
+        BAJO CONTROL.
+      </h1>
+
+      <p class="hero-sub">
+        Coordina a tus operadores, asigna servicios y
+        monitoriza cada <br /> vehículo en tiempo real.
+      </p>
+
+      <div class="hero-buttons">
+        <a routerLink="/login" class="btn-primary lg">ACCEDER AL PANEL</a>
+        <a href="#workflow" class="btn-secondary lg">VER CÓMO FUNCIONA</a>
+      </div>
+    </div>    
+  </div>
 </section>
+
+<!-- PROCESO DEL SERVICIO -->
+<section class="workflow" id="workflow">
+
+  <!-- Título -->
+  <div class="section-header">
+    <h2>¿CÓMO SE GESTIONA <br/> UN SERVICIO?</h2>
+    <p>Todo el proceso queda controlado desde que se registra hasta que se finaliza.</p>
+  </div>
+
+  <!-- CONTENEDOR PRINCIPAL (IMPORTANTE) -->
+  <div class="workflow-grid">
+
+    <!-- COLUMNA IZQUIERDA -->
+    <div class="wf-col wf-left">
+
+      <!-- Paso 1 -->
+      <div class="wf-step">
+        <div class="wf-step-body">
+          <h3>ALTA DE SERVICIO</h3>
+          <p>
+            Desde la web, la empresa registra el aviso con los datos más importantes:
+            ubicación, destino y notas necesarias para el operador.
+          </p>
+        </div>
+      </div>
+
+      <!-- Paso 2 -->
+      <div class="wf-step">
+        <div class="wf-step-body">
+          <h3>ASIGNACIÓN DEL OPERADOR</h3>
+          <p>
+            El sistema permite seleccionar al operario disponible junto con su vehículo,
+            para que reciba el trabajo directamente en la aplicación móvil.
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- COLUMNA DERECHA -->
+    <div class="wf-col wf-right">
+
+      <!-- Info 1 -->
+      <div class="wf-stat">
+        <div class="big-num">
+          <h3>TIEMPO REAL</h3>
+          <p>El panel muestra cambios de estado y seguimiento del servicio al momento.</p>
+        </div>
+      </div>
+
+      <!-- Info 2 -->
+      <div class="wf-stat">
+        <div class="big-sub">
+          <h3>WEB ADMINISTRATIVA + APP ANDROID</h3>
+          <p>Menos llamadas, menos errores y mejor organización del trabajo diario.</p>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- PERFILES -->
+
+<section class="profiles" id="servicios">
+  <div class="section-header">
+    <h2>DISEÑADO PARA <br/> CADA ROL</h2>
+  </div>
+
+  <div class="profiles-grid">
+
+    <div class="profiles-card admin">
+      <h3>ADMINISTRADOR WEB</h3>
+      <ul>
+        <li>Crear y asignar servicios</li>
+        <li>Ver disponibilidad de operadores</li>
+        <li>Mapa en tiempo real</li>
+        <li>Historial y estadísticas</li>
+        <li>Gestión de vehículos y usuarios</li>
+      </ul>
+    </div>
+
+    <div class="profiles-card operator">
+      <h3>OPERADOR (APP ANDROID)</h3>
+      <ul>
+        <li>Ver servicios asignados</li>
+        <li>Actualizar estado del servicio</li>
+        <li>Consultar dirección y ruta</li>
+        <li>Historial y estadísticas</li>
+        <li>Trabajo sin llamadas</li>
+      </ul>
+    </div>  
+  </div>
+
+</section>
+
+<!-- CONTACTO-->
+
+<section class="contact" id="contacto">
+  <div class="section-header">
+    <h2> CONTACTA CON NOSOTROS</h2>
+    <p>Si deseas más información sobre la plataforma o el desarrollo del proyecto,
+      puedes ponerte en contacto con nosotros en 
+      <span>info@towapp.es.</span>
+    </p>
+  </div>
+  
+  <div class="contact-form">
+    <h3>Envíanos un mensaje</h3>
+    <div class="form-row">
+      <div class="form-group"><label>Nombre</label><input type="text" placeholder="Tu nombre"/></div>
+      <div class="form-group"><label>Email</label><input type="email" placeholder="tu@email.com"/></div>
+    </div>
+    <div class="form-group"><label>Mensaje</label><textarea placeholder="Escribe tu mensaje..."></textarea></div>
+    <button class="btn-send">→ Enviar</button>
+  </div>
+</section>
+
+
+<!-- pie de pagina --> 
+<footer>
+  <div class="footer-grid">
+
+    <!--Columna marca-->
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <span class="tow">TOW</span><span class="app">APP</span>
+      <span class="systems"> SYSTEMS</span><span class="sl"> S.L.</span>
+      </div>
+    </div>
+    
+    <div class="footer-desc">
+      <h4>SOBRE NOSOTROS</h4>
+      <p>Somos una plataforma integral de gestión y coordinación para empresas  de asistencia en carretera. 
+        Nuestro objetivo es transformar la forma en la que se organizan estos servicios, sustituyendo los métodos tradicionales 
+      por una solución digital moderna, eficiente y segura.
+      </p>
+    </div>
+
+    <div class="footer-nav">
+      <h4>Navegación</h4>
+      <ul>
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#workflow">Cómo funciona</a></li>
+        <li><a href="#servicios">Servicios</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </div>
+
+    
+
+    <div class="footer-contact">
+      <h4>CONTACTO</h4>
+      <ul>
+        <li>info@towapp.es</li>
+        <li>+34 900 000 000</li>
+        <li>España</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Línea inferior -->
+  <div class="footer-bottom">
+    <span>2026 TowApp Systems S.L. — Todos los derechos reservados</span>
+    <span>Proyecto de Grado · Gabriel Méndez · Rubén Llanes · Paula Cárdenas</span>
+  </div>
+</footer>
