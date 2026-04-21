@@ -36,7 +36,7 @@ export class AdminServicios implements OnInit {
   formData = Servicio.empty();
   constructor(private supabaseService: SupabaseService) { }
 
-    private recargaIntervalo: ReturnType<typeof setInterval> | null = null;
+  private recargaIntervalo: ReturnType<typeof setInterval> | null = null;
 
 
   async ngOnInit() {
@@ -44,8 +44,8 @@ export class AdminServicios implements OnInit {
     this.recargaIntervalo = setInterval(() => this.cargarSegundoPlano(), 10000);
   }
 
-  ngOnDestroy(){
-    if(this.recargaIntervalo)
+  ngOnDestroy() {
+    if (this.recargaIntervalo)
       clearInterval(this.recargaIntervalo)
   }
 
@@ -57,7 +57,7 @@ export class AdminServicios implements OnInit {
     this.finishedLoading.set(true);
   }
 
-  async cargarSegundoPlano(){
+  async cargarSegundoPlano() {
     await this.cargarUsuarios()
     await this.cargarServicios()
     await this.cargarVehiculos()
@@ -104,6 +104,7 @@ export class AdminServicios implements OnInit {
   onVehiculoChange() {
     let u = this.usuarios().filter(u => u.rol == "T" && u.vehiculo_asignado === this.formData.vehiculo_matricula)
     this.usuarios_vehiculo = u ?? null;
+    this.calcularCostoAproxViaje();
   }
 
   // ── Filtrado
@@ -123,7 +124,7 @@ export class AdminServicios implements OnInit {
     );
   }
 
-  btnFiltrarEstado(estado: string){
+  btnFiltrarEstado(estado: string) {
     this.filtroEstado = estado
     this.filtrar()
   }
@@ -245,6 +246,28 @@ export class AdminServicios implements OnInit {
     } catch (err: any) {
       this.modalErrorMsg.set(`Error al guardar: ${err.message}`);
     }
+  }
+
+  async calcularCostoAproxViaje() {
+    // No se le ha asignado un vehiculo al servicio
+    if (!this.formData.vehiculo_matricula) {
+      this.formData.costo = 0
+      return
+    }
+
+    // El coste ya fue establecido manualmente
+    if(this.formData.costo != 0){
+      return
+    }
+
+    let v = this.getVehiculo(this.formData.vehiculo_matricula)
+    if(!v){
+      this.formData.costo = 0
+      return
+    }
+
+    console.log(this.formData.distancia_real)
+    this.formData.costo = Math.round(this.formData.distancia_real * v.litro_combustible_km * 100)/100
   }
 
   validarServicio(): string {

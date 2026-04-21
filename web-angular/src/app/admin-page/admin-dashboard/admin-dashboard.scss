@@ -81,12 +81,6 @@
 }
 
 // ── Donut ─────────────────────────────────────────────────────────────────────
-.donut-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-}
 
 .donut-svg {
   width: 160px;
@@ -290,4 +284,12 @@
   height: 3px;
   border-radius: 2px;
   display: inline-block;
+}
+
+.linechart-col-hover {
+  cursor: crosshair;
+  transition: 0.3s ease;
+  &:hover {
+    fill: rgba(107, 114, 128, 0.1);
+  }
 }

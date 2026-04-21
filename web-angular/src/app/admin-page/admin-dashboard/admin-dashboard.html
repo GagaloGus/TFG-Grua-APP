@@ -95,8 +95,8 @@
                 </svg>
             </div>
             <div>
-                <p class="kpi-label">Conductores disponibles</p>
-                <p class="kpi-value">{{ contarTrabajDisponibles() }}</p>
+                <p class="kpi-label">Conductores activos</p>
+                <p class="kpi-value">{{ contarTrabajActivos() }}</p>
             </div>
         </div>
 
@@ -106,34 +106,30 @@
     <div class="d-flex flex-wrap gap-3 justify-content-between mb-4">
 
         <!-- Donut de estados de servicios -->
-        <div class="chart-card flex-grow-1">
-            <div class="d-flex align-items-center gap-2 mb-3">
-                <p class="chart-title mb-0">Estado de servicios hoy</p>
-            </div>
-            <div class="donut-wrapper">
-                <svg viewBox="0 0 160 160" class="donut-svg">
-                    @for (seg of donutSegmentosServicios(); track seg.label) {
-                    <circle cx="80" cy="80" r="60" fill="none" [attr.stroke]="seg.color" stroke-width="22"
-                        [attr.stroke-dasharray]="seg.dash + ' ' + seg.gap"
-                        [attr.stroke-dashoffset]="-(seg.offset - (2 * 3.14159 * 60 / 4))" stroke-linecap="butt" />
-                    }
-                    <text x="80" y="85" text-anchor="middle" class="fs-3 fw-bold"
-                        [attr.fill]="serviciosHoy().length === 0 ? '#9ca3af' : '#111827'">
-                        {{ serviciosHoy().length }}
-                    </text>
-                    <text x="80" y="101" text-anchor="middle" class="small text-secondary">
-                        {{ serviciosHoy().length === 0 ? 'Sin servicios hoy' : 'Total' }}
-                    </text>
-                </svg>
-                <div class="w-100 d-flex flex-column gap-1">
-                    @for (seg of donutSegmentosServicios(); track seg.label) {
-                    <div class="legend-item">
-                        <span class="legend-dot" [style.background]="seg.color"></span>
-                        <span class="legend-text">{{ seg.label }}</span>
-                        <span class="legend-count">{{ seg.value }}</span>
-                    </div>
-                    }
+        <div class="chart-card d-flex flex-column">
+            <p class="chart-title">Estado de servicios hoy</p>
+            <svg viewBox="0 0 160 160" class="donut-svg flex-grow-1">
+                @for (seg of donutSegmentosServicios(); track seg.label) {
+                <circle cx="80" cy="80" r="60" fill="none" [attr.stroke]="seg.color" stroke-width="22"
+                    [attr.stroke-dasharray]="seg.dash + ' ' + seg.gap"
+                    [attr.stroke-dashoffset]="-(seg.offset - (2 * 3.14159 * 60 / 4))" stroke-linecap="butt" />
+                }
+                <text x="80" y="85" text-anchor="middle" class="fs-3 fw-bold"
+                    [attr.fill]="serviciosHoy().length === 0 ? '#9ca3af' : '#111827'">
+                    {{ serviciosHoy().length }}
+                </text>
+                <text x="80" y="101" text-anchor="middle" class="small text-secondary">
+                    {{ serviciosHoy().length === 0 ? 'Sin servicios hoy' : 'Total' }}
+                </text>
+            </svg>
+            <div class="w-100 d-flex flex-column gap-1">
+                @for (seg of donutSegmentosServicios(); track seg.label) {
+                <div class="legend-item">
+                    <span class="legend-dot" [style.background]="seg.color"></span>
+                    <span class="legend-text">{{ seg.label }}</span>
+                    <span class="legend-count">{{ seg.value }}</span>
                 </div>
+                }
             </div>
         </div>
 
@@ -195,11 +191,14 @@
 
                     <!-- Puntos + etiquetas X -->
                     @for (p of lineChartSvg().puntos; track p.label) {
-                    <circle [attr.cx]="p.x" [attr.cy]="p.yI" r="3.5" fill="#10b981" stroke="#fff" stroke-width="1.5"
-                        style="cursor: pointer;" />
-                    <circle [attr.cx]="p.x" [attr.cy]="p.yG" r="3.5" fill="#ef4444" stroke="#fff" stroke-width="1.5"
-                        style="cursor: pointer;" />
-                    <text [attr.x]="p.x" [attr.y]="lineChartSvg().H - 4" class="linechart-xlabel">{{ p.label }}</text>
+                        <circle [attr.cx]="p.x" [attr.cy]="p.yI" r="3.5" fill="#10b981" stroke="#fff" stroke-width="1.5"/>
+                        <circle [attr.cx]="p.x" [attr.cy]="p.yG" r="3.5" fill="#ef4444" stroke="#fff" stroke-width="1.5"/>
+                        <text [attr.x]="p.x" [attr.y]="lineChartSvg().H - 4" class="linechart-xlabel">{{ p.label }}</text>
+                        @let colW = lineChartSvg().W / lineChartSvg().puntos.length;
+                        <rect [attr.x]="p.x - colW / 2" y="0" [attr.width]="colW" [attr.height]="lineChartSvg().H - 20" fill="transparent"
+                            class="linechart-col-hover">
+                            <title>{{ p.label }} — {{ p.servicios }} servicios&#10;Ingresos: {{ p.ingresos }}€&#10;Gastos: {{ p.gastos }}€</title>
+                        </rect>
                     }
                 </svg>
             </div>
@@ -228,10 +227,10 @@
             </div>
         </div>
 
-        <!-- Barras: conductores -->
+        <!-- Barras: disponibilidad -->
         <div class="chart-card flex-grow-1">
-            <p class="chart-title">Disponibilidad de conductores</p>
             <div class="bar-chart">
+                <p class="chart-title">Disponibilidad de conductores</p>
                 @for (item of disponibilidadTrabajadores(); track item.label) {
                 <div class="bar-row">
                     <span class="bar-label">{{ item.label }}</span>
@@ -243,8 +242,8 @@
                 }
             </div>
 
-            <p class="chart-title mt-4">Disponibilidad de grúas</p>
             <div class="bar-chart">
+                <p class="chart-title mt-4">Disponibilidad de grúas</p>
                 @for (item of disponibilidadVehiculos(); track item.label) {
                 <div class="bar-row">
                     <span class="bar-label">{{ item.label }}</span>

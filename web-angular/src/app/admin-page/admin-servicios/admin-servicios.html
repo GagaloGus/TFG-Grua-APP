@@ -269,12 +269,12 @@
                     <div class="col-md-4">
                         <div class="row ">
                             <div class="col-6 ps-0">
-                                <p class="text-secondary small mb-1 fw-medium">Gastos</p>
-                                <p>{{ selected?.costo }}€</p>
+                                <p class="text-secondary small mb-1 fw-medium">Gastos (aprox)</p>
+                                <p>{{ selected?.costo | number:'1.2-2'}}€</p>
                             </div>
                             <div class="col-6 pe-0">
                                 <p class="text-secondary small mb-1 fw-medium">Ingresos</p>
-                                <p>{{ selected?.ingresos }}€</p>
+                                <p>{{ selected?.ingresos| number:'1.2-2' }}€</p>
                             </div>
                         </div>
                     </div>
@@ -403,7 +403,7 @@
                         <div class="col-lg-3 px-0">
                             <div class="row">
                                 <div class="col-6 col-lg-12">
-                                    <label class="form-label fw-medium">Coste (€)</label>
+                                    <label class="form-label fw-medium">Coste (aprox) (€)</label>
                                     <input class="form-control" [(ngModel)]="formData.costo">
                                 </div>
                                 <div class="col-6 col-lg-12 mt-lg-3">

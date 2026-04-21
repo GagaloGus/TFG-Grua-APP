@@ -18,7 +18,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 250px;
+    width: 270px;
     height: 100vh;
     justify-content: space-between;
 }
@@ -34,7 +34,7 @@
 
     /* medida md de bootstrap */
     @media (min-width: 768px) {
-        margin-left: 250px;
+        margin-left: 270px;
     }
 
     @media (max-width: 768px) {

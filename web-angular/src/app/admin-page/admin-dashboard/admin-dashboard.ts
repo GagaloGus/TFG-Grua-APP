@@ -2,7 +2,7 @@ import { Component, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SupabaseService } from '@services/supabase.service';
-import { Servicio, Vehiculo, Usuario, Tablas } from '@services/tablas.supabase';
+import { Servicio, Vehiculo, Usuario, Tablas, Disponibilidad, Estado } from '@services/tablas.supabase';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -23,9 +23,9 @@ export class AdminDashboard {
   modalErrorMsg   = signal('');
 
   // ── KPIs ──────────────────────────────────────────────────────────────────────
-  contarTrabajDisponibles    = computed(() => this.usuarios().filter(u => u.disponibilidad === 'Disponible').length);
-  contarServiciosActivos     = computed(() => this.servicios().filter(s => s.estado === 'En curso').length);
-  contarServiciosCompletados = computed(() => this.servicios().filter(s => s.estado === 'Terminado').length);
+  contarTrabajActivos        = computed(() => this.usuarios().filter(u => u.disponibilidad == Disponibilidad.EN_SERVICIO).length);
+  contarServiciosActivos     = computed(() => this.servicios().filter(s => s.estado == Estado.EN_CURSO).length);
+  contarServiciosCompletados = computed(() => this.servicios().filter(s => s.estado == Estado.TERMINADO).length);
   contarVehiculosDisponibles = computed(() => this.vehiculos().filter(v => v.disponible).length);
   totalServicios             = computed(() => this.servicios().length);
   serviciosHoy = computed(() => {
@@ -143,7 +143,7 @@ export class AdminDashboard {
       const ingresos = delRango.reduce((sum, s) => sum + ((s as any).ingresos ?? 0), 0);
       const gastos = delRango.reduce((sum, s) => sum + (s.costo ?? 0), 0);
 
-      return { label, key, ingresos, gastos };
+      return { label, key, ingresos, gastos, servicios: delRango.length };
     });
   });
 
@@ -184,6 +184,7 @@ export class AdminDashboard {
       yI: yOf(d.ingresos),
       yG: yOf(d.gastos),
       label: d.label,
+      servicios: d.servicios,
       ingresos: d.ingresos,
       gastos: d.gastos,
     }));

@@ -40,6 +40,7 @@ export class Vehiculo {
   activo!: boolean;
   marca!: string | null;
   zona_trabajo!: string | null;
+  litro_combustible_km!: number;
 
   constructor(data: Partial<Vehiculo> = {}) {
     Object.assign(this, data);
@@ -51,6 +52,7 @@ export class Vehiculo {
       activo: false,
       marca: null,
       zona_trabajo: null,
+      litro_combustible_km: 0
     });
   }
 }
@@ -69,7 +71,7 @@ export class Servicio {
   num_empleado!: number | null;
   vehiculo_matricula!: string | null;
   observaciones!: string | null;
-  estado!: string;
+  estado!: Estado;
   tel_cliente!: string | null;
   nombre_cliente!: string | null;
   vehiculo_recogido: boolean = false;
@@ -82,7 +84,7 @@ export class Servicio {
     return new Servicio({
       direccion_ubi_recogida: null,
       direccion_ubi_destino: null,
-      estado: "Sin empezar",
+      estado: Estado.SIN_EMPEZAR,
       num_empleado: null,
       vehiculo_matricula: null,
       observaciones: null,
@@ -112,6 +114,25 @@ export class Servicio {
   get formatCoordDestino(): string {
     return `${this.ubicacion_destino_lat.toFixed(4)}, ${this.ubicacion_destino_lng.toFixed(4)}`
   }
+
+  get distancia_real(){
+    return this.calcularDistanciaTierra(this.ubicacion_recogida_lat, this.ubicacion_recogida_lng, this.ubicacion_destino_lat, this.ubicacion_destino_lng)
+  }
+
+  calcularDistanciaTierra(lat1: number, lng1: number, lat2: number, lng2: number): number {
+    const deg2rad = (Math.PI / 180);
+    const R = 6371; // radio de la tierra en km
+    const dLat = (lat2 - lat1) * deg2rad;
+    const dLon = (lng2 - lng1) * deg2rad;
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * deg2rad) * Math.cos(lat2 * deg2rad) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distancia en km
+  }
 }
 
 export class Usuario {
@@ -124,7 +145,7 @@ export class Usuario {
   apellido2!: string;
   password!: string;
   rol!: string;
-  disponibilidad!: string;
+  disponibilidad!: Disponibilidad;
   serv_completados_total: number = 0;
   serv_completados_hoy: number = 0;
   licencia_conducir: string[] = [];
@@ -145,8 +166,7 @@ export class Usuario {
   }
 
   get licenciasFormateadas(): string {
-    // "B + C" o "Sin licencia"
-    return this.licencia_conducir?.join('+') ?? 'Sin licencia';
+    return this.licencia_conducir?.join('+') ?? '';
   }
 
   get disponibilidadCSSClass(): string {
