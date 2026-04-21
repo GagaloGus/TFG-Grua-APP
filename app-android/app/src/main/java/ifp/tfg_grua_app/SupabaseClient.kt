@@ -3,6 +3,7 @@ package ifp.tfg_grua_app
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.realtime.Realtime
 
 object SupabaseClient {
     val client = createSupabaseClient(
@@ -11,5 +12,6 @@ object SupabaseClient {
     ) {
         install(Auth)
         install(Postgrest)
+        install(Realtime)
     }
 }

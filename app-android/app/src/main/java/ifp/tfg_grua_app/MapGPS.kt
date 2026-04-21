@@ -13,6 +13,7 @@ import android.graphics.drawable.ColorDrawable
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Looper
+import android.speech.tts.TextToSpeech
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -47,6 +48,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 import java.util.Calendar
+import java.util.Locale
 
 class MapGPS : AppCompatActivity(), OnMapReadyCallback {
 
@@ -61,6 +63,11 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
     private var recogidaID: Int = -1
     private var fase: String = FASE_RECOGIDA
     private var popupMostrado = false   // Evita que el popup salga más de una vez
+
+    // Voz
+    private var tts: TextToSpeech? = null
+    private var ttsListo = false
+    private var ultimaInstruccionDicha: String? = null   // Evita repetir la misma indicación
 
     companion object {
         const val API_KEY = "AIzaSyAxLBlpI6vtCy658BaQDMH8Mpmepl6CafM"
@@ -103,7 +110,49 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        // Voz (TTS) en español
+        tts = TextToSpeech(this) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                tts?.language = Locale("es", "ES")
+                ttsListo = true
+            }
+        }
+
         binding.btnSalir.setOnClickListener { ChangeActivity(this, MainActivity::class.java) }
+    }
+
+    // Dice una frase por el altavoz (solo si el TTS ya está listo)
+    private fun hablar(texto: String) {
+        if (ttsListo && texto.isNotBlank()) {
+            tts?.speak(texto, TextToSpeech.QUEUE_FLUSH, null, null)
+        }
+    }
+
+    // Anuncia 'frase' solo si la clave cambió respecto a la última vez.
+    // Se usa para no repetir la misma zona/maniobra en cada tick.
+    private fun anunciar(clave: String, frase: String) {
+        if (clave != ultimaInstruccionDicha) {
+            ultimaInstruccionDicha = clave
+            hablar(frase)
+        }
+    }
+
+    // "Gira a la derecha..." → "gira a la derecha..."
+    // Lo usamos para que "En 200 metros, gira..." suene natural.
+    private fun enMinuscula(s: String): String =
+        if (s.isEmpty()) s else s[0].lowercaseChar() + s.substring(1)
+
+    // 250 → "250 m", 1500 → "1.5 km"
+    private fun formatearDistancia(metros: Int): String = when {
+        metros < 1000 -> "$metros m"
+        else          -> String.format(Locale.US, "%.1f km", metros / 1000.0)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        tts?.stop()
+        tts?.shutdown()
+        tts = null
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -190,10 +239,21 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
                 val tiempo          = tramo.getJSONObject("duration").getString("text")
                 val segundos        = tramo.getJSONObject("duration").getInt("value")
                 val steps           = tramo.getJSONArray("steps")
-                val instruccion     = parsearInstruccion(steps.getJSONObject(0))
-                val siguiente       = if (steps.length() > 1)
-                    "Después: ${parsearInstruccion(steps.getJSONObject(1))}"
+
+                // Metros que te quedan hasta la PRÓXIMA maniobra (no al destino)
+                val metrosHastaManiobra = steps.getJSONObject(0)
+                    .getJSONObject("distance").getInt("value")
+                val hayManiobraProxima  = steps.length() > 1
+                val instruccionActual   = parsearInstruccion(steps.getJSONObject(0))
+                    .substringBefore(" · ")
+                val instruccionSiguiente = if (hayManiobraProxima)
+                    parsearInstruccion(steps.getJSONObject(1)).substringBefore(" · ")
+                else ""
+                // "Después" ya muestra lo que viene tras la próxima maniobra
+                val siguiente = if (steps.length() > 2)
+                    "Después: ${parsearInstruccion(steps.getJSONObject(2)).substringBefore(" · ")}"
                 else "Después: llegarás al destino"
+
                 val puntos = decodificarPolyline(
                     obj.getJSONArray("routes").getJSONObject(0)
                         .getJSONObject("overview_polyline").getString("points")
@@ -202,16 +262,44 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
                 withContext(Dispatchers.Main) {
                     dibujarRuta(puntos)
 
-                    // Detección de llegada: cuando faltan 5m o menos
-                    if (distanciaMetros <= 5) {
-                        binding.tvInstruccion.text = "Ya has llegado"
-                        if (!popupMostrado) {
-                            popupMostrado = true
-                            if (fase == FASE_RECOGIDA) mostrarPopupRecogida()
-                            else                      mostrarPopupEntrega()
+                    when {
+                        // Detección de llegada
+                        distanciaMetros <= 5 -> {
+                            val aviso = "Ya has llegado"
+                            binding.tvInstruccion.text = aviso
+                            anunciar("llegada", aviso)
+                            if (!popupMostrado) {
+                                popupMostrado = true
+                                if (fase == FASE_RECOGIDA) mostrarPopupRecogida()
+                                else                      mostrarPopupEntrega()
+                            }
                         }
-                    } else {
-                        binding.tvInstruccion.text = instruccion
+                        // Hay una maniobra próxima: avisos por zonas
+                        hayManiobraProxima -> {
+                            val distTexto = formatearDistancia(metrosHastaManiobra)
+                            binding.tvInstruccion.text = "$distTexto · $instruccionSiguiente"
+
+                            val zona = when {
+                                metrosHastaManiobra <= 30  -> "ahora"
+                                metrosHastaManiobra <= 150 -> "150"
+                                metrosHastaManiobra <= 500 -> "500"
+                                else                        -> "lejos"
+                            }
+                            // Clave = maniobra + zona → cada zona se anuncia solo una vez
+                            val clave = "$instruccionSiguiente|$zona"
+                            val frase = when (zona) {
+                                "ahora" -> instruccionSiguiente
+                                "150"   -> "En 150 metros, ${enMinuscula(instruccionSiguiente)}"
+                                "500"   -> "En 500 metros, ${enMinuscula(instruccionSiguiente)}"
+                                else    -> instruccionActual   // "Continúa por Calle X"
+                            }
+                            anunciar(clave, frase)
+                        }
+                        // Recta final sin más maniobras antes del destino
+                        else -> {
+                            binding.tvInstruccion.text = instruccionActual
+                            anunciar(instruccionActual, instruccionActual)
+                        }
                     }
 
                     binding.tvDistancia.text = distancia
@@ -353,30 +441,48 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
             .replace(Regex("\\s+"), " ")
             .trim()
 
-        // La última etiqueta <b>...</b> suele ser el nombre de la calle
-        val calle  = Regex("<b>(.*?)</b>").findAll(html).lastOrNull()?.groupValues?.get(1) ?: ""
+        // Todas las <b>...</b>. Filtramos los puntos cardinales para quedarnos con calles.
+        val cardinales = setOf("norte","sur","este","oeste",
+            "noreste","noroeste","sureste","suroeste")
+        val bolds        = Regex("<b>(.*?)</b>").findAll(html).map { it.groupValues[1] }.toList()
+        val calle        = bolds.lastOrNull  { it.lowercase() !in cardinales } ?: ""
+        val primeraCalle = bolds.firstOrNull { it.lowercase() !in cardinales } ?: ""
         // Para rotondas, sacamos el número de salida
         val salida = if (maniobra.contains("roundabout"))
             Regex("(\\d+)").find(textoLimpio)?.value ?: "" else ""
 
         val texto = when {
-            maniobra.contains("turn-right") ->
-                if (calle.isNotEmpty()) "Gira a la derecha en $calle" else textoLimpio
-            maniobra.contains("turn-left") ->
-                if (calle.isNotEmpty()) "Gira a la izquierda en $calle" else textoLimpio
+            // uturn y arrive primero: "uturn-right" contiene "turn-right"
+            maniobra.contains("uturn")  -> "Dé la vuelta"
+            maniobra.contains("arrive") -> "Ha llegado al destino"
             maniobra.contains("roundabout") -> when {
                 salida.isNotEmpty() && calle.isNotEmpty() -> "En la rotonda toma la ${salida}ª salida hacia $calle"
                 salida.isNotEmpty()                       -> "En la rotonda toma la ${salida}ª salida"
                 else                                      -> textoLimpio
             }
+            maniobra.contains("sharp-right") ->
+                if (calle.isNotEmpty()) "Gira cerrado a la derecha en $calle" else textoLimpio
+            maniobra.contains("sharp-left") ->
+                if (calle.isNotEmpty()) "Gira cerrado a la izquierda en $calle" else textoLimpio
+            maniobra.contains("slight-right") ->
+                if (calle.isNotEmpty()) "Gira ligeramente a la derecha hacia $calle" else textoLimpio
+            maniobra.contains("slight-left") ->
+                if (calle.isNotEmpty()) "Gira ligeramente a la izquierda hacia $calle" else textoLimpio
+            maniobra.contains("turn-right") ->
+                if (calle.isNotEmpty()) "Gira a la derecha en $calle" else textoLimpio
+            maniobra.contains("turn-left") ->
+                if (calle.isNotEmpty()) "Gira a la izquierda en $calle" else textoLimpio
             maniobra.contains("keep-right") ->
                 if (calle.isNotEmpty()) "Manténgase a la derecha hacia $calle" else textoLimpio
             maniobra.contains("keep-left") ->
                 if (calle.isNotEmpty()) "Manténgase a la izquierda hacia $calle" else textoLimpio
             maniobra.contains("ramp") || maniobra.contains("fork") ->
                 if (calle.isNotEmpty()) "Coja la salida hacia $calle" else textoLimpio
-            maniobra.contains("uturn")  -> "Dé la vuelta"
-            maniobra.contains("arrive") -> "Ha llegado al destino"
+            maniobra.contains("merge") ->
+                if (calle.isNotEmpty()) "Incorpórate a $calle" else textoLimpio
+            // Sin maniobra / depart / straight → "Continúa por X" (antes salía "ve al norte...")
+            maniobra.isEmpty() || maniobra.contains("depart") || maniobra.contains("straight") ->
+                if (primeraCalle.isNotEmpty()) "Continúa por $primeraCalle" else "Sigue recto"
             else -> textoLimpio
         }
 
