@@ -20,11 +20,24 @@ export class Home {
     return this.authService.isAdmin()
   }
 
-  logout() {
-    this.authService.logout()
-  }
+    logout() {
+      console.log("bai")
+      this.authService.logout()
+    }
 
-  get email() {
-    return this.authService.email
-  }
+    get email() {
+      return this.authService.email
+    }
+
+    get nombre(){
+      return this.authService.nombre
+    }
+
+    get apellido1(){
+      return this.authService.apellido1
+    }
+
+    get avatar(){
+      return this.authService.avatarUrl()
+    }
 }

@@ -1,5 +1,5 @@
-<nav>
-  <a routerLink="/" class="logo" style="text-decoration:none;">
+<nav class="d-flex justify-content-between">
+  <a routerLink="/" class="logo">
     <div class="logo-icon">
       <img src="/truck.png" alt="Logo TowApp" />
     </div>
@@ -10,13 +10,37 @@
   </a>
 
   <ul class="nav-links">
-  <li><a [routerLink]="['/home']" fragment="inicio" class="active">INICIO</a></li>
-  <li><a [routerLink]="['/home']" fragment="servicios">SERVICIOS</a></li>
-  <li><a [routerLink]="['/home']" fragment="workflow">CÓMO FUNCIONA</a></li>
-  <li><a [routerLink]="['/home']" fragment="contacto">CONTACTO</a></li>
-</ul>
+    <li><a [routerLink]="['/home']" fragment="inicio" class="active">INICIO</a></li>
+    <li><a [routerLink]="['/home']" fragment="servicios">SERVICIOS</a></li>
+    <li><a [routerLink]="['/home']" fragment="workflow">CÓMO FUNCIONA</a></li>
+    <li><a [routerLink]="['/home']" fragment="contacto">CONTACTO</a></li>
+  </ul>
 
+  @if(isLoggedIn()){
+  <div class="d-flex gap-3">
+    <figure class="user-pfp user-pfp--login">
+      @if (avatar) {
+      <img [src]="avatar" [alt]="nombre">
+      } @else if(isLoggedIn()) {
+      <span>{{ nombre?.charAt(0) }}{{ apellido1?.charAt(0) }}</span>
+      } @else {
+
+      <img src="/img/pfp_default.jpg" alt="foto">
+      }
+    </figure>
+    <button (click)="logout()" title="Cerrar Sesion" class="nav-button btn btn-sm btn-outline-danger">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+        <polyline points="16 17 21 12 16 7" />
+        <line x1="21" x2="9" y1="12" y2="12" />
+      </svg>
+    </button>
+  </div>
+  }
+  @else {
   <button class="btn-nav" routerLink="/login">INICIAR SESIÓN</button>
+  }
 </nav>
 
 <!-- HERO -->
@@ -36,10 +60,10 @@
       </p>
 
       <div class="hero-buttons">
-        <a routerLink="/login" class="btn-primary lg">ACCEDER AL PANEL</a>
+        <a [routerLink]="isLoggedIn() ? '/admin' : '/login'" class="btn-primary lg">ACCEDER AL PANEL</a>
         <a href="#workflow" class="btn-secondary lg">VER CÓMO FUNCIONA</a>
       </div>
-    </div>    
+    </div>
   </div>
 </section>
 
@@ -48,7 +72,7 @@
 
   <!-- Título -->
   <div class="section-header">
-    <h2>¿CÓMO SE GESTIONA <br/> UN SERVICIO?</h2>
+    <h2>¿CÓMO SE GESTIONA <br /> UN SERVICIO?</h2>
     <p>Todo el proceso queda controlado desde que se registra hasta que se finaliza.</p>
   </div>
 
@@ -110,7 +134,7 @@
 
 <section class="profiles" id="servicios">
   <div class="section-header">
-    <h2>DISEÑADO PARA <br/> CADA ROL</h2>
+    <h2>DISEÑADO PARA <br /> CADA ROL</h2>
   </div>
 
   <div class="profiles-grid">
@@ -135,7 +159,7 @@
         <li>Historial y estadísticas</li>
         <li>Trabajo sin llamadas</li>
       </ul>
-    </div>  
+    </div>
   </div>
 
 </section>
@@ -146,16 +170,16 @@
   <div class="section-header">
     <h2> CONTACTA CON NOSOTROS</h2>
     <p>Si deseas más información sobre la plataforma o el desarrollo del proyecto,
-      puedes ponerte en contacto con nosotros en 
+      puedes ponerte en contacto con nosotros en
       <span>info@towapp.es.</span>
     </p>
   </div>
-  
+
   <div class="contact-form">
     <h3>Envíanos un mensaje</h3>
     <div class="form-row">
-      <div class="form-group"><label>Nombre</label><input type="text" placeholder="Tu nombre"/></div>
-      <div class="form-group"><label>Email</label><input type="email" placeholder="tu@email.com"/></div>
+      <div class="form-group"><label>Nombre</label><input type="text" placeholder="Tu nombre" /></div>
+      <div class="form-group"><label>Email</label><input type="email" placeholder="tu@email.com" /></div>
     </div>
     <div class="form-group"><label>Mensaje</label><textarea placeholder="Escribe tu mensaje..."></textarea></div>
     <button class="btn-send">→ Enviar</button>
@@ -163,7 +187,7 @@
 </section>
 
 
-<!-- pie de pagina --> 
+<!-- pie de pagina -->
 <footer>
   <div class="footer-grid">
 
@@ -171,15 +195,16 @@
     <div class="footer-brand">
       <div class="footer-logo">
         <span class="tow">TOW</span><span class="app">APP</span>
-      <span class="systems"> SYSTEMS</span><span class="sl"> S.L.</span>
+        <span class="systems"> SYSTEMS</span><span class="sl"> S.L.</span>
       </div>
     </div>
-    
+
     <div class="footer-desc">
       <h4>SOBRE NOSOTROS</h4>
-      <p>Somos una plataforma integral de gestión y coordinación para empresas  de asistencia en carretera. 
-        Nuestro objetivo es transformar la forma en la que se organizan estos servicios, sustituyendo los métodos tradicionales 
-      por una solución digital moderna, eficiente y segura.
+      <p>Somos una plataforma integral de gestión y coordinación para empresas de asistencia en carretera.
+        Nuestro objetivo es transformar la forma en la que se organizan estos servicios, sustituyendo los métodos
+        tradicionales
+        por una solución digital moderna, eficiente y segura.
       </p>
     </div>
 
@@ -193,7 +218,7 @@
       </ul>
     </div>
 
-    
+
 
     <div class="footer-contact">
       <h4>CONTACTO</h4>

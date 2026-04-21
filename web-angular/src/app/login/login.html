@@ -1,16 +1,16 @@
 <section class="login-page">
 
   <!-- LADO IZQUIERDO -->
-<div class="login-left">
+  <div class="login-left">
     <div class="login-left-overlay"></div>
 
     <div class="login-left-content">
-        <h1><span class="highlight">COORDINA</span> A TUS OPERADORES, ASIGNA SERVICIOS Y
-            <span class="highlight">MONITORIZA</span> CADA VEHÍCULO EN TIEMPO
-            <span class="highlight"> REAL</span>.
-        </h1>
+      <h1><span class="highlight">COORDINA</span> A TUS OPERADORES, ASIGNA SERVICIOS Y
+        <span class="highlight">MONITORIZA</span> CADA VEHÍCULO EN TIEMPO
+        <span class="highlight"> REAL</span>.
+      </h1>
     </div>
-</div>
+  </div>
 
   <!-- LADO DERECHO -->
   <div class="login-right">
@@ -22,37 +22,25 @@
         <p>Accede a tu panel de control</p>
       </div>
 
-      <div class="error-msg" *ngIf="error">
+      @if (error() != "") {
+      <div class="error-msg">
         Usuario o contraseña incorrectos.
       </div>
+      }
 
       <form #loginForm="ngForm" (ngSubmit)="login()">
 
         <div class="form-group">
           <label for="loginInputUsername">Correo electrónico</label>
-          <input
-            [(ngModel)]="username"
-            name="usuario"
-            class="custom-input"
-            type="text"
-            id="loginInputUsername"
-            placeholder="usuario@towapp.es"
-            required
-            autocomplete="username">
+          <input [(ngModel)]="email" name="email" class="custom-input" type="text" placeholder="usuario@towapp.com"
+            required autocomplete="username">
         </div>
 
         <div class="form-group">
           <label for="loginInputPassword">Contraseña</label>
           <div class="password-wrap">
-            <input
-              [(ngModel)]="password"
-              name="password"
-              class="custom-input"
-              type="password"
-              id="loginInputPassword"
-              placeholder="••••••••"
-              required
-              autocomplete="current-password">
+            <input [(ngModel)]="password" name="password" class="custom-input" type="password" placeholder="••••••••"
+              required autocomplete="current-password">
           </div>
         </div>
 
@@ -62,16 +50,19 @@
             <span>Recordarme</span>
           </label>
 
-          <a routerLink="/recuperar-password" class="forgot-link">
+          <!-- <a routerLink="/recuperar-password" class="forgot-link">
             ¿Olvidaste tu contraseña?
-          </a>
+          </a> -->
         </div>
 
-        <button type="submit" class="btn-login" [disabled]="validatingLogin">
-          <span *ngIf="!validatingLogin">ENTRAR</span>
-          <span *ngIf="validatingLogin">VALIDANDO...</span>
+        <button type="submit" class="btn-login" [disabled]="validatingLogin()">
+          @if (!validatingLogin()) {
+          <span>ENTRAR</span>
+          }
+          @else {
+          <span>VALIDANDO...</span>
+          }
         </button>
-
       </form>
 
       <div class="divider">

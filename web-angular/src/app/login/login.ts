@@ -3,20 +3,21 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth-service/auth-service';
 import { Usuario } from '@services/tablas.supabase';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   imports: [FormsModule, CommonModule],
   standalone: true,
   templateUrl: './login.html',
-  styleUrl: './login.css',
+  styleUrl: './login.scss',
 })
 
 
 export class Login {
   email = "";
   password = ""
-  error = signal('');
+  error = signal("");
   validatingLogin = signal(false);
   data = signal<Usuario[]>([]);
 
