@@ -3,7 +3,7 @@
     <string name="title_activity_maps">MapsActivity</string>
 
 
-
+    <!-- Login -->
     <string name="txSesion">INICIAR SESIÓN</string>
     <string name="txDescripcion">Accede a tu panel de control</string>
     <string name="txEmail">Correo electronico</string>
@@ -15,12 +15,23 @@
     <string name="txRegistro">¿No tienes cuenta? Contacta con administración</string>
 
 
+    <!-- Menú principal -->
+    <string name="txBienvenido">Bienvenido</string>
+    <string name="txNombre">Hola</string>
+    <string name="txRol">Conductor de grúa</string>
+    <string name="txInicial">CL</string>
 
-    <string name="txNombre">Hola </string>
-    <string name="btnServicios">Servicios asignados </string>
-    <string name="btnHistorial">Servicios realizados </string>
-    <string name="btnPerfil">Mi perfil </string>
-    <string name="btnCerrar">Cerrar sesión </string>
+    <string name="menuPrincipal">Menú principal</string>
+    <string name="btnServicios">Servicios asignados</string>
+    <string name="btnHistorial">Servicios realizados</string>
+    <string name="btnPerfil">Mi perfil</string>
+
+    <string name="txAyuda">¿Necesitas ayuda?</string>
+    <string name="txEmpresa">Contacta con la empresa</string>
+    <string name="btnLlamar">Llamar</string>
+    <string name="btnWhatsapp">WhatsApp</string>
+
+    <string name="btnCerrar">Cerrar sesión</string>
 
 
 
