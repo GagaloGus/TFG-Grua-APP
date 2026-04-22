@@ -23,17 +23,14 @@ import io.github.jan.supabase.realtime.RealtimeChannel
 import io.github.jan.supabase.realtime.channel
 import io.github.jan.supabase.realtime.decodeRecord
 import io.github.jan.supabase.realtime.postgresChangeFlow
-import io.github.jan.supabase.realtime.realtime
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
 
-    // Canal de Supabase Realtime: escucha INSERTs en "servicios" del empleado actual
+    // Canal Realtime que escucha INSERTs en "servicios" del empleado actual
     private var canalRecogidas: RealtimeChannel? = null
-    private var jobRealtime: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,81 +65,58 @@ class MainActivity : AppCompatActivity() {
         cargarRecogidas()
     }
 
-    // onStart: suscripción Realtime para nuevas recogidas
-    override fun onStart() {
-        super.onStart()
-        suscribirseARealtime()
-    }
-
-    // onStop: cortamos la suscripción (no queremos escuchar cuando la Activity no está visible)
-    override fun onStop() {
-        super.onStop()
-        cancelarSuscripcion()
-    }
+    // Solo escuchamos Realtime mientras la Activity está visible
+    override fun onStart() { super.onStart(); suscribirseARealtime() }
+    override fun onStop()  { super.onStop();  desuscribirRealtime() }
 
     // Pide permiso POST_NOTIFICATIONS en Android 13+
     private fun pedirPermisoNotificaciones() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val permiso = ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.POST_NOTIFICATIONS
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 2002
             )
-            if (permiso != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(
-                    this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 2002
-                )
-            }
         }
     }
 
-    // Se conecta al Realtime de Supabase y escucha INSERTs en "servicios" filtrados
-    // por num_empleado. Cuando llega un evento lanza una notificación y refresca la lista.
+    // Escucha INSERTs en "servicios" filtrados por num_empleado.
+    // Al llegar uno, lanza notificación y refresca la lista.
     private fun suscribirseARealtime() {
         val numEmpleado = SesionUsuario.getNumEmpleado(this) ?: return
         if (canalRecogidas != null) return   // ya suscritos
 
-        jobRealtime = lifecycleScope.launch {
+        lifecycleScope.launch {
             try {
                 val canal = SupabaseClient.client.channel("recogidas-emp-$numEmpleado")
+                canalRecogidas = canal
 
                 val flow = canal.postgresChangeFlow<PostgresAction.Insert>(schema = "public") {
                     table = "servicios"
                     filter = "num_empleado=eq.$numEmpleado"
                 }
-
-                SupabaseClient.client.realtime.connect()
-                canal.subscribe()
-                canalRecogidas = canal
+                canal.subscribe()   // abre la conexión por dentro si hace falta
 
                 flow.collect { insert ->
-                    val recogida = insert.decodeRecord<Recogida>()
-                    val titulo = "Nueva recogida asignada"
-                    val texto  = listOfNotNull(recogida.cliente, recogida.matricula)
+                    val r = insert.decodeRecord<Recogida>()
+                    val texto = listOfNotNull(r.cliente, r.matricula)
                         .joinToString(" · ")
                         .ifBlank { "Tienes una recogida nueva" }
-
                     NotificacionesHelper.mostrar(
-                        this@MainActivity, titulo, texto, recogida.id ?: 0
+                        this@MainActivity, "Nueva recogida asignada", texto, r.id ?: 0
                     )
                     cargarRecogidas()
                 }
             } catch (e: Exception) {
-                android.util.Log.e("MAIN", "Error suscribiéndose a Realtime", e)
+                android.util.Log.e("MAIN", "Error Realtime", e)
             }
         }
     }
 
-    private fun cancelarSuscripcion() {
-        jobRealtime?.cancel()
-        jobRealtime = null
+    private fun desuscribirRealtime() {
         val canal = canalRecogidas ?: return
         canalRecogidas = null
-        lifecycleScope.launch {
-            try {
-                canal.unsubscribe()
-            } catch (e: Exception) {
-                android.util.Log.e("MAIN", "Error al desuscribirse", e)
-            }
-        }
+        lifecycleScope.launch { runCatching { canal.unsubscribe() } }
     }
 
     // Descarga los servicios del empleado logueado y pinta una tarjeta por cada uno
