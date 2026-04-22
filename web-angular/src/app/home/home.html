@@ -1,35 +1,35 @@
-<nav class="tow-nav d-flex justify-content-between align-items-center px-3 px-md-4 py-3">
+<nav class="tow-nav ">
 
-  <a routerLink="/" class="tow-nav--logo d-flex align-items-center gap-2 text-decoration-none">
-    <div class="tow-nav--logo-icon">
-      <img src="/truck.png" alt="Logo TowApp" />
-    </div>
-    <div class="tow-nav--logo-text d-flex align-items-baseline gap-1 fw-bold">
-      <span class="tow">TOW</span><span class="app">APP</span>
-      <span class="systems d-none d-sm-inline"> SYSTEMS</span>
-      <span class="sl d-none d-sm-inline"> S.L.</span>
-    </div>
-  </a>
-
-  <!-- Links ocultos en móvil, visibles desde lg -->
-  <ul class="tow-nav--links d-none d-lg-flex list-unstyled mb-0 gap-3 gap-lg-4">
-    <li><a [routerLink]="['/home']" fragment="inicio" class="active">INICIO</a></li>
-    <li><a [routerLink]="['/home']" fragment="servicios">SERVICIOS</a></li>
-    <li><a [routerLink]="['/home']" fragment="workflow">CÓMO FUNCIONA</a></li>
-    <li><a [routerLink]="['/home']" fragment="contacto">CONTACTO</a></li>
-  </ul>
-
-  @if(isLoggedIn()) {
-    <div class="d-flex align-items-center gap-2">
-      <figure class="tow-nav--pfp mb-0">
-        @if (avatar) {
-          <img [src]="avatar" [alt]="nombre">
-        } @else {
-          <span>{{ nombre?.charAt(0) }}{{ apellido1?.charAt(0) }}</span>
-        }
-      </figure>
-      <button (click)="logout()" title="Cerrar Sesión"
-              class="btn btn-sm btn-outline-danger d-flex align-items-center">
+  <div class="d-flex justify-content-between align-items-center px-3 px-md-4 py-3">
+    <a routerLink="/" class="tow-nav--logo d-flex align-items-center gap-2 text-decoration-none">
+      <div class="tow-nav--logo-icon">
+        <img src="/truck.png" alt="Logo TowApp" />
+      </div>
+      <div class="tow-nav--logo-text d-flex align-items-baseline gap-1 fw-bold">
+        <span class="tow">TOW</span><span class="app">APP</span>
+        <span class="systems d-none d-sm-inline"> SYSTEMS</span>
+        <span class="sl d-none d-sm-inline"> S.L.</span>
+      </div>
+    </a>
+    <!-- Links ocultos en móvil, visibles desde lg -->
+    <ul class="tow-nav--links d-none d-lg-flex list-unstyled mb-0 gap-3 gap-lg-4">
+      <li><a [routerLink]="['/home']" fragment="inicio" class="active">INICIO</a></li>
+      <li><a [routerLink]="['/home']" fragment="servicios">SERVICIOS</a></li>
+      <li><a [routerLink]="['/home']" fragment="workflow">CÓMO FUNCIONA</a></li>
+      <li><a [routerLink]="['/home']" fragment="contacto">CONTACTO</a></li>
+    </ul>
+    @if(isLoggedIn()) {
+      <div class="d-flex align-items-center gap-3">
+        <figure class="user-pfp user-pfp--login mb-0">
+          @if (avatar) {
+            <img [src]="avatar" [alt]="nombre">
+          } @else {
+            <span>{{ nombre?.charAt(0) }}{{ apellido1?.charAt(0) }}</span>
+          }
+        </figure>
+        <button (click)="logout()" title="Cerrar Sesión"
+              class="btn btn-outline-danger d-flex gap-2 align-items-center p-2">
+              <p class="d-none d-md-block">Cerrar Sesion</p>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -37,11 +37,20 @@
           <line x1="21" x2="9" y1="12" y2="12"/>
         </svg>
       </button>
-    </div>
-  } @else {
-    <button class="tow-nav--btn-login" routerLink="/login">INICIAR SESIÓN</button>
-  }
+      </div>
+    } @else {
+      <button class="tow-nav--btn-login" routerLink="/login">INICIAR SESIÓN</button>
 
+    }
+  </div>
+  <div class="d-flex d-lg-none d-flex align-items-center px-2 pb-2">
+    <ul class="tow-nav--links  list-unstyled mb-0 gap-3 gap-lg-4">
+    <li><a [routerLink]="['/home']" fragment="inicio" class="active">INICIO</a></li>
+    <li><a [routerLink]="['/home']" fragment="servicios">SERVICIOS</a></li>
+    <li><a [routerLink]="['/home']" fragment="workflow">CÓMO FUNCIONA</a></li>
+    <li><a [routerLink]="['/home']" fragment="contacto">CONTACTO</a></li>
+  </ul>
+  </div>
 </nav>
 
 
@@ -156,7 +165,7 @@
     </p>
   </div>
 
-  <div class="tow-contact--form container mx-auto px-3 px-sm-4">
+  <div class="tow-contact--form container mx-auto px-4">
     <h3 class="mb-3">Envíanos un mensaje</h3>
     <div class="row g-4">
 

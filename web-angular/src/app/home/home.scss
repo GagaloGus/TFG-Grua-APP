@@ -208,17 +208,20 @@ body {
     }
   }
 
-  &--links a {
-    color: $text-main;
-    font-size: clamp(1rem, 1.5vw, 1.3rem);
-    text-decoration: none;
-    transition: color 0.2s;
+    &--links {
+        display: flex;
+      a {
+        color: $text-main;
+        font-size: clamp(1rem, 1.5vw, 1.3rem);
+        text-decoration: none;
+        transition: color 0.2s;
 
-    &:hover,
-    &.active {
-      color: $orange;
+        &:hover,
+        &.active {
+          color: $orange;
+        }
+      }
     }
-  }
 
   &--btn-login {
     @include cta-btn($orange);
