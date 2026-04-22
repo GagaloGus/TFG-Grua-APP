@@ -25,7 +25,7 @@ class Login : AppCompatActivity() {
 
         // Si marcó "Recuérdame" antes, saltamos directo al Main
         if (SesionUsuario.haySesionPersistente(this)) {
-            ChangeActivity(this, MainActivity::class.java)
+            ChangeActivity(this, MenuActivity::class.java)
             return
         }
 
@@ -80,7 +80,7 @@ class Login : AppCompatActivity() {
                     val usuario = resultado.first()
                     SesionUsuario.guardar(this@Login, usuario, binding.txRecuerdame.isChecked)
                     Toast.makeText(this@Login, "Bienvenido, ${usuario.nombre ?: usuario.mail}", Toast.LENGTH_SHORT).show()
-                    ChangeActivity(this@Login, MainActivity::class.java)
+                    ChangeActivity(this@Login, MenuActivity::class.java)
                 }
             } catch (e: Exception) {
                 android.util.Log.e("LOGIN", "Fallo consultando Supabase", e)
