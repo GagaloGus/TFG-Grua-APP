@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">TFG_Grua_APP</string>
+    <string name="title_activity_maps">MapsActivity</string>
+
+    <string name="txSesion">INICIAR SESIÓN</string>
+    <string name="txDescripcion">Accede a tu panel de control</string>
+    <string name="txEmail">Correo electronico</string>
+    <string name="email">Introduce tu correo</string>
+    <string name="txPassword">Contraseña</string>
+    <string name="Password">Introduce tu contraseña</string>
+    <string name="txRecuerdame">Recordar</string>
+    <string name="btnEntrar">Entrar</string>
+    <string name="txRegistro">¿No tienes cuenta? Contacta con administración</string>
+
+
+</resources>
