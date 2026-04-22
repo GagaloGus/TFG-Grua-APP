@@ -1,145 +1,122 @@
-<nav class="d-flex justify-content-between">
-  <a routerLink="/" class="logo">
-    <div class="logo-icon">
+<nav class="tow-nav d-flex justify-content-between align-items-center px-3 px-md-4 py-3">
+
+  <a routerLink="/" class="tow-nav--logo d-flex align-items-center gap-2 text-decoration-none">
+    <div class="tow-nav--logo-icon">
       <img src="/truck.png" alt="Logo TowApp" />
     </div>
-    <div class="logo-text">
+    <div class="tow-nav--logo-text d-flex align-items-baseline gap-1 fw-bold">
       <span class="tow">TOW</span><span class="app">APP</span>
-      <span class="systems"> SYSTEMS</span><span class="sl"> S.L.</span>
+      <span class="systems d-none d-sm-inline"> SYSTEMS</span>
+      <span class="sl d-none d-sm-inline"> S.L.</span>
     </div>
   </a>
 
-  <ul class="nav-links">
+  <!-- Links ocultos en móvil, visibles desde lg -->
+  <ul class="tow-nav--links d-none d-lg-flex list-unstyled mb-0 gap-3 gap-lg-4">
     <li><a [routerLink]="['/home']" fragment="inicio" class="active">INICIO</a></li>
     <li><a [routerLink]="['/home']" fragment="servicios">SERVICIOS</a></li>
     <li><a [routerLink]="['/home']" fragment="workflow">CÓMO FUNCIONA</a></li>
     <li><a [routerLink]="['/home']" fragment="contacto">CONTACTO</a></li>
   </ul>
 
-  @if(isLoggedIn()){
-  <div class="d-flex gap-3">
-    <figure class="user-pfp user-pfp--login">
-      @if (avatar) {
-      <img [src]="avatar" [alt]="nombre">
-      } @else if(isLoggedIn()) {
-      <span>{{ nombre?.charAt(0) }}{{ apellido1?.charAt(0) }}</span>
-      } @else {
+  @if(isLoggedIn()) {
+    <div class="d-flex align-items-center gap-2">
+      <figure class="tow-nav--pfp mb-0">
+        @if (avatar) {
+          <img [src]="avatar" [alt]="nombre">
+        } @else {
+          <span>{{ nombre?.charAt(0) }}{{ apellido1?.charAt(0) }}</span>
+        }
+      </figure>
+      <button (click)="logout()" title="Cerrar Sesión"
+              class="btn btn-sm btn-outline-danger d-flex align-items-center">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" x2="9" y1="12" y2="12"/>
+        </svg>
+      </button>
+    </div>
+  } @else {
+    <button class="tow-nav--btn-login" routerLink="/login">INICIAR SESIÓN</button>
+  }
 
-      <img src="/img/pfp_default.jpg" alt="foto">
-      }
-    </figure>
-    <button (click)="logout()" title="Cerrar Sesion" class="nav-button btn btn-sm btn-outline-danger">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-        stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-        <polyline points="16 17 21 12 16 7" />
-        <line x1="21" x2="9" y1="12" y2="12" />
-      </svg>
-    </button>
-  </div>
-  }
-  @else {
-  <button class="btn-nav" routerLink="/login">INICIAR SESIÓN</button>
-  }
 </nav>
 
-<!-- HERO -->
-<section class="hero" id="inicio">
-  <div class="hero-overlay"></div>
 
-  <div class="hero-content">
-    <div class="hero-text">
-      <h1>
-        CADA GRÚA,<br />CADA SERVICIO,<br />
-        BAJO CONTROL.
-      </h1>
+<!-- ═══════════════════  HERO  ═══════════════════ -->
+<section class="tow-hero" id="inicio">
+  <div class="tow-hero--overlay"></div>
 
-      <p class="hero-sub">
-        Coordina a tus operadores, asigna servicios y
-        monitoriza cada <br /> vehículo en tiempo real.
-      </p>
-
-      <div class="hero-buttons">
-        <a [routerLink]="isLoggedIn() ? '/admin' : '/login'" class="btn-primary lg">ACCEDER AL PANEL</a>
-        <a href="#workflow" class="btn-secondary lg">VER CÓMO FUNCIONA</a>
+  <div class="tow-hero--content container-fluid px-4 px-lg-5">
+    <div class="row">
+      <div class="col-12 col-lg-8">
+        <h1 class="tow-hero--title">
+          CADA GRÚA,<br />CADA SERVICIO,<br />BAJO CONTROL.
+        </h1>
+        <p class="tow-hero--sub">
+          Coordina a tus operadores, asigna servicios y monitoriza
+          cada vehículo en tiempo real.
+        </p>
+        <div class="d-flex flex-wrap gap-3">
+          <a [routerLink]="isLoggedIn() ? '/admin' : '/login'" class="tow-btn tow-btn--primary">
+            ACCEDER AL PANEL
+          </a>
+          <a href="#workflow" class="tow-btn tow-btn--secondary">VER CÓMO FUNCIONA</a>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- PROCESO DEL SERVICIO -->
-<section class="workflow" id="workflow">
 
-  <!-- Título -->
-  <div class="section-header">
-    <h2>¿CÓMO SE GESTIONA <br /> UN SERVICIO?</h2>
+<!-- ═══════════════════  WORKFLOW  ═══════════════════ -->
+<section class="tow-workflow" id="workflow">
+
+  <div class="tow-section-header text-center mb-5 px-3">
+    <h2>¿CÓMO SE GESTIONA<br class="d-none d-sm-block"> UN SERVICIO?</h2>
     <p>Todo el proceso queda controlado desde que se registra hasta que se finaliza.</p>
   </div>
 
-  <!-- CONTENEDOR PRINCIPAL (IMPORTANTE) -->
-  <div class="workflow-grid">
-
-    <!-- COLUMNA IZQUIERDA -->
-    <div class="wf-col wf-left">
-
-      <!-- Paso 1 -->
-      <div class="wf-step">
-        <div class="wf-step-body">
-          <h3>ALTA DE SERVICIO</h3>
-          <p>
-            Desde la web, la empresa registra el aviso con los datos más importantes:
-            ubicación, destino y notas necesarias para el operador.
-          </p>
-        </div>
+  <div class="tow-workflow-grid px-3 px-md-5">
+      <div class="tow-wf-card">
+        <h3>ALTA DE SERVICIO</h3>
+        <p>
+          Desde la web, la empresa registra el aviso con los datos más importantes:
+          ubicación, destino y notas necesarias para el operador.
+        </p>
       </div>
-
-      <!-- Paso 2 -->
-      <div class="wf-step">
-        <div class="wf-step-body">
-          <h3>ASIGNACIÓN DEL OPERADOR</h3>
-          <p>
-            El sistema permite seleccionar al operario disponible junto con su vehículo,
-            para que reciba el trabajo directamente en la aplicación móvil.
-          </p>
-        </div>
+      <div class="tow-wf-card">
+        <h3>ASIGNACIÓN DEL OPERADOR</h3>
+        <p>
+          El sistema permite seleccionar al operario disponible junto con su vehículo,
+          para que reciba el trabajo directamente en la aplicación móvil.
+        </p>
       </div>
-
+      <div class="tow-wf-card">
+        <h3>TIEMPO REAL</h3>
+        <p>El panel muestra cambios de estado y seguimiento del servicio al momento.</p>
+      </div>
+      <div class="tow-wf-card">
+        <h3>WEB ADMINISTRATIVA + APP ANDROID</h3>
+        <p>Menos llamadas, menos errores y mejor organización del trabajo diario.</p>
+      </div>
     </div>
-
-    <!-- COLUMNA DERECHA -->
-    <div class="wf-col wf-right">
-
-      <!-- Info 1 -->
-      <div class="wf-stat">
-        <div class="big-num">
-          <h3>TIEMPO REAL</h3>
-          <p>El panel muestra cambios de estado y seguimiento del servicio al momento.</p>
-        </div>
-      </div>
-
-      <!-- Info 2 -->
-      <div class="wf-stat">
-        <div class="big-sub">
-          <h3>WEB ADMINISTRATIVA + APP ANDROID</h3>
-          <p>Menos llamadas, menos errores y mejor organización del trabajo diario.</p>
-        </div>
-      </div>
-
-    </div>
-
-  </div>
 </section>
 
-<!-- PERFILES -->
 
-<section class="profiles" id="servicios">
-  <div class="section-header">
-    <h2>DISEÑADO PARA <br /> CADA ROL</h2>
+<!-- ═══════════════════  PERFILES  ═══════════════════ -->
+<section class="tow-profiles" id="servicios">
+
+  <div class="tow-section-header text-center mb-5 px-3">
+    <h2>DISEÑADO PARA<br class="d-none d-sm-block"> CADA ROL</h2>
   </div>
 
-  <div class="profiles-grid">
+  <div class="tow-profiles--grid px-3 px-md-5">
+    <!-- 1 columna en móvil · 2 columnas en md+ -->
 
-    <div class="profiles-card admin">
+    <div class="tow-profiles--card tow-profiles--card--admin h-100 ms-auto">
       <h3>ADMINISTRADOR WEB</h3>
       <ul>
         <li>Crear y asignar servicios</li>
@@ -150,7 +127,7 @@
       </ul>
     </div>
 
-    <div class="profiles-card operator">
+    <div class="tow-profiles--card tow-profiles--card--operator h-100 me-auto">
       <h3>OPERADOR (APP ANDROID)</h3>
       <ul>
         <li>Ver servicios asignados</li>
@@ -159,79 +136,112 @@
         <li>Historial y estadísticas</li>
         <li>Trabajo sin llamadas</li>
       </ul>
+
+
+
     </div>
   </div>
-
 </section>
 
-<!-- CONTACTO-->
 
-<section class="contact" id="contacto">
-  <div class="section-header">
-    <h2> CONTACTA CON NOSOTROS</h2>
-    <p>Si deseas más información sobre la plataforma o el desarrollo del proyecto,
+<!-- ═══════════════════  CONTACTO  ═══════════════════ -->
+<section class="tow-contact" id="contacto">
+
+  <div class="tow-section-header text-center mb-4 px-3">
+    <h2>CONTACTA CON NOSOTROS</h2>
+    <p>
+      Si deseas más información sobre la plataforma o el desarrollo del proyecto,
       puedes ponerte en contacto con nosotros en
-      <span>info@towapp.es.</span>
+      <span class="tow-contact--email">info&#64;towapp.es.</span>
     </p>
   </div>
 
-  <div class="contact-form">
-    <h3>Envíanos un mensaje</h3>
-    <div class="form-row">
-      <div class="form-group"><label>Nombre</label><input type="text" placeholder="Tu nombre" /></div>
-      <div class="form-group"><label>Email</label><input type="email" placeholder="tu@email.com" /></div>
+  <div class="tow-contact--form container mx-auto px-3 px-sm-4">
+    <h3 class="mb-3">Envíanos un mensaje</h3>
+    <div class="row g-4">
+
+      <!-- En móvil: apilados · En sm+: lado a lado -->
+      <div class="col-12 col-sm-6 pe-sm-2">
+        <label class="tow-contact--label d-block">Nombre</label>
+        <input type="text" class="tow-contact--input w-100" placeholder="Tu nombre" />
+      </div>
+      <div class="col-12 col-sm-6 ps-sm-2">
+        <label class="tow-contact--label d-block">Email</label>
+        <input type="email" class="tow-contact--input w-100" placeholder="tu@email.com" />
+      </div>
+      <div class="col-12">
+        <label class="tow-contact--label d-block">Mensaje</label>
+        <textarea class="tow-contact--input w-100" placeholder="Escribe tu mensaje..."></textarea>
+      </div>
+      <div class="col-12 mt-3 ">
+        <button class="tow-contact--btn-send ms-auto d-flex justify-content-between align-items-center gap-2">
+          <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M3.75 5.25L3 6V18L3.75 18.75H20.25L21 18V6L20.25 5.25H3.75ZM4.5 7.6955V17.25H19.5V7.69525L11.9999 14.5136L4.5 7.6955ZM18.3099 6.75H5.68986L11.9999 12.4864L18.3099 6.75Z"
+              fill="#080341" />
+          </svg>
+          <p>Enviar</p>
+        </button>
+      </div>
+
     </div>
-    <div class="form-group"><label>Mensaje</label><textarea placeholder="Escribe tu mensaje..."></textarea></div>
-    <button class="btn-send">→ Enviar</button>
   </div>
+
 </section>
 
 
-<!-- pie de pagina -->
-<footer>
-  <div class="footer-grid">
+<!-- ═══════════════════  FOOTER  ═══════════════════ -->
+<footer class="tow-footer">
+  <div class="container-fluid px-4 px-md-5 pt-5 pb-4">
 
-    <!--Columna marca-->
-    <div class="footer-brand">
-      <div class="footer-logo">
-        <span class="tow">TOW</span><span class="app">APP</span>
-        <span class="systems"> SYSTEMS</span><span class="sl"> S.L.</span>
+    <!-- 1 col móvil · 2 col sm · 4 col lg -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4">
+
+      <div class="col pe-lg-3 mb-3 mb-lg-0">
+        <div class="tow-footer--logo d-flex flex-wrap align-items-baseline gap-1 fw-bold">
+          <span class="tow">TOW <span class="app">APP</span></span>
+
+          <span class="systems"> SYSTEMS <span class="sl"> S.L.</span></span>
+
+        </div>
       </div>
-    </div>
 
-    <div class="footer-desc">
-      <h4>SOBRE NOSOTROS</h4>
-      <p>Somos una plataforma integral de gestión y coordinación para empresas de asistencia en carretera.
-        Nuestro objetivo es transformar la forma en la que se organizan estos servicios, sustituyendo los métodos
-        tradicionales
-        por una solución digital moderna, eficiente y segura.
-      </p>
-    </div>
+      <div class="col px-lg-3 mb-3 mb-lg-0">
+        <h4 class="tow-footer--heading">SOBRE NOSOTROS</h4>
+        <p class="tow-footer--text">
+          Somos una plataforma integral de gestión y coordinación para empresas de
+          asistencia en carretera. Nuestro objetivo es transformar la forma en la que
+          se organizan estos servicios, sustituyendo los métodos tradicionales por una
+          solución digital moderna, eficiente y segura.
+        </p>
+      </div>
 
-    <div class="footer-nav">
-      <h4>Navegación</h4>
-      <ul>
-        <li><a href="#inicio">Inicio</a></li>
-        <li><a href="#workflow">Cómo funciona</a></li>
-        <li><a href="#servicios">Servicios</a></li>
-        <li><a href="#contacto">Contacto</a></li>
-      </ul>
-    </div>
+      <div class="col px-lg-3 mb-3 mb-lg-0">
+        <h4 class="tow-footer--heading">Navegación</h4>
+        <ul class="tow-footer--nav list-unstyled mb-0">
+          <li><a href="#inicio">Inicio</a></li>
+          <li><a href="#workflow">Cómo funciona</a></li>
+          <li><a href="#servicios">Servicios</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+        </ul>
+      </div>
 
+      <div class="col ps-lg-3">
+        <h4 class="tow-footer--heading">CONTACTO</h4>
+        <ul class="tow-footer--contact-list list-unstyled mb-0">
+          <li>info&#64;towapp.es</li>
+          <li>+34 900 000 000</li>
+          <li>España</li>
+        </ul>
+      </div>
 
-
-    <div class="footer-contact">
-      <h4>CONTACTO</h4>
-      <ul>
-        <li>info@towapp.es</li>
-        <li>+34 900 000 000</li>
-        <li>España</li>
-      </ul>
     </div>
   </div>
 
-  <!-- Línea inferior -->
-  <div class="footer-bottom">
+  <div class="tow-footer--bottom
+              d-flex flex-column flex-sm-row
+              justify-content-between align-items-center
+              gap-2 px-4 px-md-5 py-3">
     <span>2026 TowApp Systems S.L. — Todos los derechos reservados</span>
     <span>Proyecto de Grado · Gabriel Méndez · Rubén Llanes · Paula Cárdenas</span>
   </div>
