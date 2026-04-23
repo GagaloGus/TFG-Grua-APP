@@ -83,12 +83,10 @@ class MenuActivity : AppCompatActivity() {
         }
 
         cardHistorial.setOnClickListener {
-            Toast.makeText(this, "Servicios realizados", Toast.LENGTH_SHORT).show()
-            // ChangeActivity(this, HistorialActivity::class.java)
+            ChangeActivity(this, HistorialActivity::class.java)
         }
 
         cardPerfil.setOnClickListener {
-            //Toast.makeText(this, "Mi perfil", Toast.LENGTH_SHORT).show()
             ChangeActivity(this, PerfilActivity::class.java)
         }
 

@@ -53,7 +53,11 @@ class MainActivity : AppCompatActivity() {
             ChangeActivity(this, Login::class.java)
         }
 
-        binding.btnExit.setOnClickListener { finish() }
+        binding.btnVolver.setOnClickListener {
+            ChangeActivity(this, MenuActivity::class.java)
+        }
+
+
 
         // Botón actualizar: recarga los servicios desde Supabase
         binding.btnActualizar.setOnClickListener { cargarRecogidas() }
