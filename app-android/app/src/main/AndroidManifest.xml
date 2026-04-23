@@ -5,7 +5,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- Necesario en Android 13+ para mostrar notificaciones -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
@@ -27,12 +26,6 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".LocationService"
-            android:exported="false"
-            android:foregroundServiceType="location"
-            tools:ignore="ForegroundServicePermission" />
-
         <activity
             android:name=".MapGPS"
             android:exported="false" />
@@ -51,10 +44,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAxLBlpI6vtCy658BaQDMH8Mpmepl6CafM" />
 
-        <activity
-            android:name=".MapsActivity"
-            android:exported="true"
-            android:label="@string/title_activity_maps" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
