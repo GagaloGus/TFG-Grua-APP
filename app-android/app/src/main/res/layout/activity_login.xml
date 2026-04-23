@@ -11,21 +11,21 @@
 
     <ImageView
         android:id="@+id/ivLogo"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
-        android:layout_marginTop="48dp"
+        android:layout_width="225dp"
+        android:layout_height="89dp"
+        android:layout_marginTop="50dp"
         android:contentDescription="@null"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/ic_launcher_round" />
+        app:srcCompat="@drawable/logoapp" />
 
     <TextView
         android:id="@+id/txSesion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="40dp"
         android:text="@string/txSesion"
         android:textColor="@color/white"
         android:textSize="24sp"
@@ -52,7 +52,7 @@
         android:layout_width="384dp"
         android:layout_height="171dp"
         android:orientation="vertical"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txDescripcion">

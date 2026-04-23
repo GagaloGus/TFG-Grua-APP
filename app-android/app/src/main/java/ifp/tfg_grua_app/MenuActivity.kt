@@ -78,8 +78,8 @@ class MenuActivity : AppCompatActivity() {
 
     private fun eventos() {
         cardServicios.setOnClickListener {
-            Toast.makeText(this, "Servicios asignados", Toast.LENGTH_SHORT).show()
-            // ChangeActivity(this, ServiciosActivity::class.java)
+            //Toast.makeText(this, "Servicios asignados", Toast.LENGTH_SHORT).show()
+            ChangeActivity(this, MainActivity::class.java)
         }
 
         cardHistorial.setOnClickListener {
@@ -88,8 +88,8 @@ class MenuActivity : AppCompatActivity() {
         }
 
         cardPerfil.setOnClickListener {
-            Toast.makeText(this, "Mi perfil", Toast.LENGTH_SHORT).show()
-            // ChangeActivity(this, PerfilActivity::class.java)
+            //Toast.makeText(this, "Mi perfil", Toast.LENGTH_SHORT).show()
+            ChangeActivity(this, PerfilActivity::class.java)
         }
 
         btnLlamar.setOnClickListener {

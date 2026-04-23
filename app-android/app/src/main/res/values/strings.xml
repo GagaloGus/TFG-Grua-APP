@@ -33,7 +33,23 @@
 
     <string name="btnCerrar">Cerrar sesión</string>
 
+    <!-- Historial -->
+    <string name="srTitulo">Servicios realizados</string>
+    <string name="srSubtitulo">Historial</string>
+    <string name="srVacio">No hay servicios realizados todavía.</string>
+    <string name="srActualizar">Actualizar</string>
+    <string name="srVolver">Volver</string>
 
+    <!-- MPerfil -->
+    <string name="txPerfil">Mi perfil</string>
+    <string name="txInfo">INFORMACIÓN PERSONAL</string>
+    <string name="perfilNombre">Nombre</string>
+    <string name="perfilNum_empleado">Número de empleado</string>
+    <string name="perfilRol">Rol</string>
+    <string name="perfilTelefono">Nº Telefono</string>
+    <string name="perfilCorreo">Correo electrónico</string>
+    <string name="txAviso">Para modificar tus datos, contacta con administración</string>
+    <string name="btnVolver">Volver</string>
 
 
 </resources>

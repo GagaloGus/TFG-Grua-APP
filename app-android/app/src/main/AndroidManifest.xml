@@ -18,6 +18,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TFG_Grua_APP">
         <activity
+            android:name=".HistorialActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PerfilActivity"
+            android:exported="false" />
+        <activity
             android:name=".MenuActivity"
             android:exported="false" />
         <activity
