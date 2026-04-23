@@ -33,6 +33,15 @@
 
     <string name="btnCerrar">Cerrar sesión</string>
 
+
+    <!-- Main -->
+    <string name="mainTitulo">Servicios asignados</string>
+    <string name="mainSubtitulo">Tus ordenes</string>
+    <string name="mainVacio">No hay servicios asignados.</string>
+    <string name="mainActualizar">Actualizar</string>
+    <string name="mainVover">Volver</string>
+    <string name="mainSalir">Salir</string>
+
     <!-- Historial -->
     <string name="srTitulo">Servicios realizados</string>
     <string name="srSubtitulo">Historial</string>
