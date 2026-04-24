@@ -22,9 +22,9 @@
                     d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.099zm-5.242 1.156a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11" />
             </svg>
             <input class="form-control search-input" type="text" placeholder="Buscar por ID, cliente u observaciones..."
-                [(ngModel)]="searchQuery" (input)="filtrar()" />
+                [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" />
         </div>
-        <select class="form-select estado-select" [(ngModel)]="filtroEstado" (change)="filtrar()">
+        <select class="form-select estado-select" [value]="filtroEstado()" (input)="searchQuery.set($any($event.target).value)" >
             <option value="">Todos los estados</option>
             <option value="Sin empezar">Sin empezar</option>
             <option value="En curso">En curso</option>
@@ -106,14 +106,29 @@
             <table class="table tabla-datos mb-0">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Cliente</th>
-                        <th>Teléfono</th>
+                        <th class="th-sortable" (click)="toggleSort('id')" [class.th-active]="sortCol()==='id'">
+                            ID <span class="sort-icon">{{ sortCol()==='id' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
+                        </th>
+                        <th class="th-sortable" (click)="toggleSort('nombre_cliente')"
+                            [class.th-active]="sortCol()==='nombre_cliente'">
+                            Cliente <span class="sort-icon">{{ sortCol()==='nombre_cliente' ? (sortAsc() ? '▲' : '▼') : '↕'
+                                }}</span>
+                        </th>
+                        <th class="th-sortable" (click)="toggleSort('tel_cliente')" [class.th-active]="sortCol()==='tel_cliente'">
+                            Teléfono <span class="sort-icon">{{ sortCol()==='tel_cliente' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
+                        </th>
                         <th>Recogida</th>
                         <th>Destino</th>
-                        <th>Fecha</th>
-                        <th>Estado</th>
-                        <th>Vehiculo recogido?</th>
+                        <th class="th-sortable" (click)="toggleSort('fecha')" [class.th-active]="sortCol()==='fecha'">
+                            Fecha <span class="sort-icon">{{ sortCol()==='fecha' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
+                        </th>
+                        <th class="th-sortable" (click)="toggleSort('estado')" [class.th-active]="sortCol()==='estado'">
+                            Estado <span class="sort-icon">{{ sortCol()==='estado' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
+                        </th>
+                        <th class="th-sortable" (click)="toggleSort('vehiculo_recogido')"
+                            [class.th-active]="sortCol()==='vehiculo_recogido'">
+                            Vehiculo recogido? <span class="sort-icon">{{ sortCol()==='vehiculo_recogido' ? (sortAsc() ? '▲' : '▼'): '↕' }}</span>
+                        </th>
                         <th>Trabajador asignado</th>
                         <th>Vehículo</th>
                         <th class="text-center">Acciones</th>
@@ -248,11 +263,12 @@
                         <div class="row ">
                             <div class="col-6 ps-0">
                                 <p class="text-secondary small mb-1 fw-medium">Estado</p>
-                        <span [ngClass]="selected?.estadoClass">{{ selected?.estado ?? '—' }}</span>
+                                <span [ngClass]="selected?.estadoClass">{{ selected?.estado ?? '—' }}</span>
                             </div>
                             <div class="col-6 pe-0">
-                               <p class="text-secondary small mb-1 fw-medium">Vehiculo recogido?</p>
-                        <span [ngClass]="selected?.recogidoClass">{{ selected?.vehiculo_recogido ? 'Si': 'No' }}</span>
+                                <p class="text-secondary small mb-1 fw-medium">Vehiculo recogido?</p>
+                                <span [ngClass]="selected?.recogidoClass">{{ selected?.vehiculo_recogido ? 'Si': 'No'
+                                    }}</span>
                             </div>
                         </div>
                     </div>
@@ -412,6 +428,7 @@
                                 </div>
                             </div>
                         </div>
+                        @if (modoEdicion){
                         <div class="col-lg-3 px-0">
                             <div class="row">
                                 <div class="col-6 col-lg-12">
@@ -432,9 +449,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-6 d-flex flex-column">
+
+                        }
+                        <div class="d-flex flex-column" [ngClass]="{'col-lg-6':modoEdicion, 'col-lg-9':!modoEdicion}">
                             <label class="form-label fw-medium">Observaciones</label>
-                            <textarea class="form-control flex-grow-1"  [(ngModel)]="formData.observaciones"
+                            <textarea class="form-control flex-grow-1" [(ngModel)]="formData.observaciones"
                                 placeholder="Notas adicionales..."></textarea>
                         </div>
                     </div>

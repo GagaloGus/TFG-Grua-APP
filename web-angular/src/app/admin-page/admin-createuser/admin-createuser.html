@@ -67,10 +67,10 @@
                     <label>Rol del usuario</label>
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button"
-                            data-bs-toggle="dropdown">{{chosenRol.display}}</button>
+                            data-bs-toggle="dropdown">{{chosenRol}}</button>
                         <div class="dropdown-menu">
                             @for (rol of roles; track rol){
-                            <button class="dropdown-item" (click)="setRol(rol[0], rol[1])">{{rol[1]}}</button>
+                            <button class="dropdown-item" (click)="setRol(rol[0])">{{rol[1]}}</button>
                             }
                         </div>
                     </div>

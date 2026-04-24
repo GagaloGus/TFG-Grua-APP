@@ -34,7 +34,7 @@ export class AdminUsers implements OnInit, OnDestroy {
   showDetailsModal = false;
   formData = Usuario.empty();
   opcionesLicencia = Object.keys(CarnetsConducir);
-  
+
   // ── Filtros por rol
   opcionesRol = [
     { value: 'A', label: 'Admin' },
@@ -43,7 +43,7 @@ export class AdminUsers implements OnInit, OnDestroy {
   ];
   filtrosRol = new Set<string>();
   dropdownRolAbierto = false;
-  
+
   // ── Filtros por disponibilidad
   opcionesDisp = [
     { value: 'Disponible', label: 'Disponible' },
@@ -52,28 +52,28 @@ export class AdminUsers implements OnInit, OnDestroy {
   ];
   filtrosDisp = new Set<string>();
   dropdownDispAbierto = false;
-  
+
   // Avatar
   imagenSeleccionada: File | null = null;
   imagenPreview = signal<string | null>(null);
   modalimagen = signal(false);
   cargandoImagen = signal(false);
   avatar_path = "/img/pfp_default.jpg"
-  
+
   // Recargar
   private recargaIntervalo: ReturnType<typeof setInterval> | null = null;
-  
-  
+
+
   async ngOnInit() {
     this.cargarTodo()
     this.recargaIntervalo = setInterval(() => this.cargarSegundoPlano(), 10000);
   }
-  
+
   ngOnDestroy(){
     if(this.recargaIntervalo)
       clearInterval(this.recargaIntervalo)
   }
-  
+
   get rol_actual() {
     return this.authService.rol ?? "N"
   }
@@ -244,7 +244,9 @@ export class AdminUsers implements OnInit, OnDestroy {
   abrirEditar(u: Usuario) {
     this.formData = new Usuario({ ...u });
     this.modalErrorMsg.set('');
+    this.avatar_path = this.formData.avatar_url ?? "/img/pfp_default.jpg"
     this.showEditModal = true;
+
   }
 
   cerrarEditar() {
@@ -270,7 +272,7 @@ export class AdminUsers implements OnInit, OnDestroy {
       await this.supabaseService.update(Tablas.USUARIOS, 'id', this.formData.id.toString(), this.formData);
 
       if (this.imagenSeleccionada) {
-        
+
         //Otro try catch para que si falla la imagen el resto se pueda guardar
         try {
           this.cargandoImagen.set(true);

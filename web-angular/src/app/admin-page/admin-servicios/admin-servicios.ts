@@ -1,8 +1,8 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, computed, OnInit, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { Servicio, Tablas, Usuario, Vehiculo } from '../../services/tablas.supabase';
+import { Roles, Servicio, Tablas, Usuario, Vehiculo } from '../../services/tablas.supabase';
 import { SupabaseService } from '../../services/supabase.service';
 
 @Component({
@@ -17,7 +17,6 @@ export class AdminServicios implements OnInit {
   // ── Signals — se actualizan solos sin Zone.js
   finishedLoading = signal(false);
   servicios = signal<Servicio[]>([]);
-  serviciosFiltrados = signal<Servicio[]>([]);
   vehiculos = signal<Vehiculo[]>([]);
   usuarios = signal<Usuario[]>([]);
   successMsg = signal('');
@@ -25,8 +24,6 @@ export class AdminServicios implements OnInit {
   modalErrorMsg = signal('')
 
   // ── Local
-  searchQuery = '';
-  filtroEstado = '';
   showDetalles = false;
   showConfirmacion = false;
   showFormModal = false;
@@ -68,7 +65,6 @@ export class AdminServicios implements OnInit {
     try {
       const data = await this.supabaseService.getAll(Tablas.SERVICIOS);
       this.servicios.set(data.map((u: any) => new Servicio(u)));
-      this.filtrar();
     } catch (err: any) {
       this.errorMsg.set(err.message ?? 'Error al cargar servicios');
     }
@@ -102,31 +98,61 @@ export class AdminServicios implements OnInit {
   }
 
   onVehiculoChange() {
-    let u = this.usuarios().filter(u => u.rol == "T" && u.vehiculo_asignado === this.formData.vehiculo_matricula)
+    let u = this.usuarios().filter(u => u.rol == Roles.T && u.vehiculo_asignado === this.formData.vehiculo_matricula)
     this.usuarios_vehiculo = u ?? null;
     this.calcularCostoAproxViaje();
   }
 
-  // ── Filtrado
-  filtrar() {
-    const q = this.searchQuery.toLowerCase().trim();
-    this.serviciosFiltrados.set(
-      this.servicios().filter(s => {
-        const matchQuery =
-          !q ||
-          String(s.id).includes(q) ||
-          (s.nombre_cliente ?? '').toLowerCase().includes(q) ||
-          (s.observaciones ?? '').toLowerCase().includes(q) ||
-          (s.tel_cliente ?? '').includes(q);
-        const matchEstado = !this.filtroEstado || s.estado === this.filtroEstado;
-        return matchQuery && matchEstado;
-      })
-    );
+  // ── Ordenar
+  sortCol = signal<string | null>(null);
+  sortAsc = signal(true);
+
+  toggleSort(col: string) {
+    if (this.sortCol() === col) {
+      this.sortAsc.update(v => !v);
+    } else {
+      this.sortCol.set(col);
+      this.sortAsc.set(true);
+    }
   }
 
+
+  // ── Filtrado
+  searchQuery = signal('');
+  filtroEstado = signal('');
+
+  serviciosFiltrados = computed(() => {
+    const q = this.searchQuery().toLowerCase().trim();
+
+    //filtrado
+    let result = this.servicios().filter(s => {
+      const matchQuery =
+        !q ||
+        String(s.id).includes(q) ||
+        (s.nombre_cliente ?? '').toLowerCase().includes(q) ||
+        (s.observaciones ?? '').toLowerCase().includes(q) ||
+        (s.tel_cliente ?? '').includes(q);
+      const matchEstado = !this.filtroEstado() || s.estado === this.filtroEstado();
+      return matchQuery && matchEstado;
+    });
+
+    const col = this.sortCol(); //ordenar
+    if (col) {
+      const asc = this.sortAsc() ? 1 : -1;
+      result = [...result].sort((a, b) => {
+        const va = (a as any)[col] ?? '';
+        const vb = (b as any)[col] ?? '';
+        if (va < vb) return -1 * asc;
+        if (va > vb) return 1 * asc;
+        return 0;
+      });
+    }
+
+    return result;
+  });
+
   btnFiltrarEstado(estado: string) {
-    this.filtroEstado = estado
-    this.filtrar()
+    this.filtroEstado.set(estado == this.filtroEstado() ? '' : estado)
   }
 
   contarEstado(estado: string): number {

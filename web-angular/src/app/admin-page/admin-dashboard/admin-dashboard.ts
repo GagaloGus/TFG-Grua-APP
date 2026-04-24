@@ -2,7 +2,7 @@ import { Component, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SupabaseService } from '@services/supabase.service';
-import { Servicio, Vehiculo, Usuario, Tablas, Disponibilidad, Estado } from '@services/tablas.supabase';
+import { Servicio, Vehiculo, Usuario, Tablas, Disponibilidad, Estado, Roles } from '@services/tablas.supabase';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -204,7 +204,7 @@ export class AdminDashboard {
 
   topTrabajadores = computed(() =>
     [...this.usuarios()]
-      .filter(u => u.rol === 'T')
+      .filter(u => u.rol == "T")
       .sort((a, b) => (b.serv_completados_total ?? 0) - (a.serv_completados_total ?? 0))
       .slice(0, 6)
   );

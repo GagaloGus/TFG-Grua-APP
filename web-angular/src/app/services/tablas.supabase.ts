@@ -4,6 +4,13 @@ export enum Tablas {
   SERVICIOS = 'servicios'
 }
 
+export enum Roles{
+  A = 'ADMIN',
+  T = 'Trabajador',
+  U = 'Usuario',
+  N = 'Sin rol'
+}
+
 export enum Disponibilidad{
   DISPONIBLE = 'Disponible',
   EN_SERVICIO = 'En servicio',
@@ -176,13 +183,14 @@ export class Usuario {
     return "chip-text"
   }
 
-  get rolNombre(): string {
-    if (this.rol == "N") return "Sin rol"
-    else if (this.rol == "A") return "ADMIN"
-    else if (this.rol == "U") return "Usuario"
-    else if (this.rol == "T") return "Trabajador"
-    return "Rol indefinido"
+
+get rolNombre(): string {
+  if (Object.keys(Roles).includes(this.rol)) {
+    return (Roles as any)[this.rol];
   }
+  console.log(`Rol indefinido (${this.id}): ${this.rol}`)
+  return `Rol indefinido`;
+}
 
   get rolCSSClass(): string {
     if (this.rol == "N") return "chip-text-grey"

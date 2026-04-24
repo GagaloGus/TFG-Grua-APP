@@ -2,7 +2,7 @@ import { Component, ElementRef, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase.service';
 import { CommonModule } from '@angular/common';
-import { CarnetsConducir, Tablas, Usuario } from '../../services/tablas.supabase';
+import { CarnetsConducir, Roles, Tablas, Usuario } from '../../services/tablas.supabase';
 import { RouterLink } from "@angular/router";
 
 @Component({
@@ -25,8 +25,8 @@ export class AdminCreateuser {
   avatar_path: string = "/img/pfp_default.jpg"
 
   // Rol
-  chosenRol = { key: "N", display: "- Sin Rol -" };
-  readonly roles = Object.entries({ N: '- Sin Rol -', A: 'Admin', U: 'Usuario', T: 'Trabajador' });
+  chosenRol = Roles.N
+  readonly roles = Object.values(Roles)
 
   // Carnet
   chosenCarnet: Record<string, boolean> = {
@@ -54,8 +54,8 @@ export class AdminCreateuser {
   modalimagen = signal(false);
   cargandoImagen = signal(false);
 
-  setRol(key: string, display: string) {
-    this.chosenRol = { key, display }
+  setRol(key: string) {
+    this.chosenRol = (Roles as any)[key]
   }
 
   setCarnet(letra: string) {
@@ -68,7 +68,7 @@ export class AdminCreateuser {
     if (!this.password) return 'La contraseña no puede estar en blanco!';
     if (!this.tel) return 'El telefono no puede estar en blanco!';
     if (!this.mail) return 'El correo no puede estar en blanco!';
-    if (this.chosenRol.key == 'N') return 'Elige un rol para el usuario!';
+    if (this.chosenRol == Roles.N) return 'Elige un rol para el usuario!';
     if (this.password != this.password2) return 'Las contraseñas no coinciden!';
     return '';
   }
@@ -96,7 +96,7 @@ export class AdminCreateuser {
         apellido1: this.apellido1,
         apellido2: this.apellido2,
         password: this.password,
-        rol: this.chosenRol.key,
+        rol: this.chosenRol,
         telefono: this.tel,
         email: this.mail,
         licencia_conducir: Object.keys(this.chosenCarnet).filter(key => this.chosenCarnet[key])

@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, computed, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -17,15 +17,12 @@ export class AdminVehiculos implements OnInit {
   // ── Signals
   finishedLoading = signal(false);
   vehiculos       = signal<Vehiculo[]>([]);
-  vehiculosFiltrados = signal<Vehiculo[]>([]);
   usuarios        = signal<Usuario[]>([]);
   errorMsg        = signal('');
   successMsg      = signal('');
   modalErrorMsg   = signal('');
 
   // ── Local
-  searchQuery   = '';
-  filtroDisp    = '';
   showConfirmacion = false;
   showFormModal    = false;
   showAsignarTrabajador = false;
@@ -36,18 +33,18 @@ export class AdminVehiculos implements OnInit {
   constructor(private supabaseService: SupabaseService) {}
 
   private recargaIntervalo: ReturnType<typeof setInterval> | null = null;
-  
-  
+
+
   async ngOnInit() {
     this.cargarTodo()
     this.recargaIntervalo = setInterval(() => this.cargarSegundoPlano(), 10000);
   }
-  
+
   ngOnDestroy(){
     if(this.recargaIntervalo)
       clearInterval(this.recargaIntervalo)
   }
-  
+
   async cargarTodo(){
     this.finishedLoading.set(false);
     await this.cargarVehiculos()
@@ -59,14 +56,13 @@ export class AdminVehiculos implements OnInit {
     await this.cargarUsuarios()
     await this.cargarVehiculos()
   }
-  
+
   // ── Carga
   async cargarVehiculos() {
     this.errorMsg.set('');
     try {
       const data = await this.supabaseService.getAll(Tablas.VEHICULOS);
       this.vehiculos.set(data.map((v: any) => new Vehiculo(v)));
-      this.filtrar();
     } catch (err: any) {
       this.errorMsg.set('Error al cargar vehiculos:' + err.message);
       console.log('Error al cargar vehiculos:' + err.message);
@@ -88,31 +84,61 @@ export class AdminVehiculos implements OnInit {
     return u ?? []
   }
 
-  // ── Filtrado
-  filtrar() {
-    const q = this.searchQuery.toLowerCase().trim();
-    this.vehiculosFiltrados.set(
-      this.vehiculos().filter(v => {
-        const matchQuery =
-          !q ||
-          String(v.id).includes(q) ||
-          (v.matricula ?? '').toLowerCase().includes(q) ||
-          (v.marca ?? '').toLowerCase().includes(q) ||
-          (v.zona_trabajo ?? '').toLowerCase().includes(q);
-        const matchDisp =
-          !this.filtroDisp ||
-          (this.filtroDisp === 'disponible' && v.disponible) ||
-          (this.filtroDisp === 'no-disponible' && !v.disponible) ||
-          (this.filtroDisp === 'activo' && v.activo) ||
-          (this.filtroDisp === 'inactivo' && !v.activo);
-        return matchQuery && matchDisp;
-      })
-    );
+    // ── Ordenar
+  sortCol = signal<string | null>(null);
+  sortAsc = signal(true);
+
+  toggleSort(col: string) {
+    if (this.sortCol() === col) {
+      this.sortAsc.update(v => !v);
+    } else {
+      this.sortCol.set(col);
+      this.sortAsc.set(true);
+    }
   }
 
-  btnFiltrarEstado(estado: string){
-    this.filtroDisp = estado
-    this.filtrar()
+  // ── Filtrado
+  searchQuery   = signal('');
+  filtroDisp    = signal('');
+
+  vehiculosFiltrados = computed(() => {
+    const q = this.searchQuery().toLowerCase().trim();
+    const disp = this.filtroDisp();
+
+    //filtrado
+    let result = this.vehiculos().filter(v => {
+      const matchQuery =
+        !q ||
+        String(v.id).includes(q) ||
+        (v.matricula ?? '').toLowerCase().includes(q) ||
+        (v.marca ?? '').toLowerCase().includes(q) ||
+        (v.zona_trabajo ?? '').toLowerCase().includes(q);
+      const matchDisp =
+        !disp ||
+        (disp === 'disponible' && v.disponible) ||
+        (disp === 'no-disponible' && !v.disponible) ||
+        (disp === 'activo' && v.activo) ||
+        (disp === 'inactivo' && !v.activo);
+      return matchQuery && matchDisp;
+    })
+
+    const col = this.sortCol(); //ordenar
+    if (col) {
+      const asc = this.sortAsc() ? 1 : -1;
+      result = [...result].sort((a, b) => {
+        const va = (a as any)[col] ?? '';
+        const vb = (b as any)[col] ?? '';
+        if (va < vb) return -1 * asc;
+        if (va > vb) return 1 * asc;
+        return 0;
+      });
+    }
+
+    return result;
+  });
+
+  btnFiltrarEstado(estado: string) {
+    this.filtroDisp.set(estado == this.filtroDisp() ? '' : estado)
   }
 
   contarDisponibles(): number {
