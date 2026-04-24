@@ -17,6 +17,7 @@ export class AdminUsers implements OnInit, OnDestroy {
   constructor(private supabaseService: SupabaseService, private authService: AuthService) { }
 
   // ── Signals
+  vistaTabla = signal(true)
   finishedLoading = signal(false);
   usuarios = signal<Usuario[]>([]);
   usuariosFiltrados = signal<Usuario[]>([]);
@@ -62,7 +63,6 @@ export class AdminUsers implements OnInit, OnDestroy {
 
   // Recargar
   private recargaIntervalo: ReturnType<typeof setInterval> | null = null;
-
 
   async ngOnInit() {
     this.cargarTodo()

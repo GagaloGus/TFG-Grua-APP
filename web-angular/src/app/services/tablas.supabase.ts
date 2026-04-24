@@ -168,8 +168,14 @@ export class Usuario {
     return new Usuario({});
   }
 
-  get nombreCompleto(): string {
-    return `${this.nombre ?? ""} ${this.apellido1 ?? ""} ${this.apellido2 ?? ""}`.trim();
+  get apellidos(): string|null{
+    const res = `${this.apellido1??""} ${this.apellido2??""}`.trim()
+    return res == "" ? null : res
+  }
+
+  get nombreCompleto(): string|null {
+    const res = `${this.nombre ?? ""} ${this.apellido1 ?? ""} ${this.apellido2 ?? ""}`.trim();
+    return res == "" ? null : res
   }
 
   get licenciasFormateadas(): string {
@@ -177,10 +183,10 @@ export class Usuario {
   }
 
   get disponibilidadCSSClass(): string {
-    if (this.disponibilidad == "En servicio") return "chip-text-blue"
-    else if (this.disponibilidad == "Disponible") return "chip-text-green"
-    else if (this.disponibilidad == "Inactivo") return "chip-text-grey"
-    return "chip-text"
+    if (this.disponibilidad == "En servicio") return "badge-estado-blue"
+    else if (this.disponibilidad == "Disponible") return "badge-estado-green"
+    else if (this.disponibilidad == "Inactivo") return "badge-estado-grey"
+    return "badge-estado"
   }
 
 
@@ -193,10 +199,10 @@ get rolNombre(): string {
 }
 
   get rolCSSClass(): string {
-    if (this.rol == "N") return "chip-text-grey"
-    else if (this.rol == "A") return "chip-text-purple"
-    else if (this.rol == "U") return "chip-text-blue"
-    else if (this.rol == "T") return "chip-text-red"
-    return "chip-text"
+    if (this.rol == "N") return "badge-estado-grey"
+    else if (this.rol == "A") return "badge-estado-purple"
+    else if (this.rol == "U") return "badge-estado-blue"
+    else if (this.rol == "T") return "badge-estado-red"
+    return "badge-estado"
   }
 }

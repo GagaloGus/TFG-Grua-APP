@@ -111,8 +111,7 @@
                         </th>
                         <th class="th-sortable" (click)="toggleSort('nombre_cliente')"
                             [class.th-active]="sortCol()==='nombre_cliente'">
-                            Cliente <span class="sort-icon">{{ sortCol()==='nombre_cliente' ? (sortAsc() ? '▲' : '▼') : '↕'
-                                }}</span>
+                            Cliente <span class="sort-icon">{{ sortCol()==='nombre_cliente' ? (sortAsc() ? '▲' : '▼') : '↕'}}</span>
                         </th>
                         <th class="th-sortable" (click)="toggleSort('tel_cliente')" [class.th-active]="sortCol()==='tel_cliente'">
                             Teléfono <span class="sort-icon">{{ sortCol()==='tel_cliente' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
@@ -162,7 +161,7 @@
                     </tr>
                     } @else {
                     @for (s of serviciosFiltrados(); track s.id) {
-                    <tr class="fila-servicio">
+                    <tr>
                         <td><span class="coordenadas">S-{{ s.id }}</span></td>
                         <td class="fw-medium">{{ s.nombre_cliente ?? '—' }}</td>
                         <td>{{ s.tel_cliente ?? '—' }}</td>
@@ -174,10 +173,9 @@
                         <td class="obs-cell">{{ s.num_empleado == null ? '—' : `${s.num_empleado} -
                             ${getUserByNumEmpleado(s.num_empleado)?.nombre}` }}</td>
                         <td>{{ s.vehiculo_matricula ?? '—' }}</td>
-                        <td class="text-center text-nowrap d-flex gap-2 justify-content-center">
+                        <td class="btn-accion-col">
                             <button class="btn btn-sm btn-accion-white" (click)="abrirDetalles(s)" title="Ver detalles">
-                                <svg width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"
-                                    fill="currentColor" class="bi bi-eye">
+                                <svg width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
                                     <path
                                         d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
                                     <path
@@ -228,7 +226,7 @@
 
 <!-- ===== MODAL DETALLES ===== -->
 @if (showDetalles) {
-<div class="modal d-block modal-overlay" (click)="cerrarDetalles()">
+<div class="tabla-detalles modal d-block modal-overlay" (click)="cerrarDetalles()">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" (click)="$event.stopPropagation()">
         <div class="modal-content modal-custom">
             <div class="modal-header border-0">
@@ -238,64 +236,64 @@
             <div class="modal-body">
                 <div class="row g-4">
                     <div class="col-4">
-                        <p class="text-secondary small mb-1 fw-medium">Nombre cliente</p>
+                        <p class="text-secondary small mb-1">Nombre cliente</p>
                         <p class="fw-medium">{{ selected?.nombre_cliente ?? '—' }}</p>
                     </div>
                     <div class="col-4">
-                        <p class="text-secondary small mb-1 fw-medium">Teléfono cliente</p>
+                        <p class="text-secondary small mb-1">Teléfono cliente</p>
                         <p>{{ selected?.tel_cliente ?? '—' }}</p>
                     </div>
                     <div class="col-4">
-                        <p class="text-secondary small mb-1 fw-medium">Fecha de creación</p>
+                        <p class="text-secondary small mb-1">Fecha de creación</p>
                         <p>{{ selected?.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
                     </div>
                     <div class="col-6">
-                        <p class="text-secondary small mb-1 fw-medium">Ubicación recogida</p>
+                        <p class="text-secondary small mb-1">Ubicación recogida</p>
                         <p>{{selected?.direccion_ubi_recogida}}</p>
                         <p class="coordenadas">{{ selected?.formatCoordRecogida }}</p>
                     </div>
                     <div class="col-6">
-                        <p class="text-secondary small mb-1 fw-medium">Ubicación destino</p>
+                        <p class="text-secondary small mb-1 ">Ubicación destino</p>
                         <p>{{selected?.direccion_ubi_destino}}</p>
                         <p class="coordenadas">{{ selected?.formatCoordDestino }}</p>
                     </div>
                     <div class="col-md-5">
                         <div class="row ">
                             <div class="col-6 ps-0">
-                                <p class="text-secondary small mb-1 fw-medium">Estado</p>
+                                <p class="text-secondary small mb-1 ">Estado</p>
                                 <span [ngClass]="selected?.estadoClass">{{ selected?.estado ?? '—' }}</span>
                             </div>
                             <div class="col-6 pe-0">
-                                <p class="text-secondary small mb-1 fw-medium">Vehiculo recogido?</p>
+                                <p class="text-secondary small mb-1 ">Vehiculo recogido?</p>
                                 <span [ngClass]="selected?.recogidoClass">{{ selected?.vehiculo_recogido ? 'Si': 'No'
                                     }}</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <p class="text-secondary small mb-1 fw-medium">Vehículo</p>
+                        <p class="text-secondary small mb-1 ">Vehículo</p>
                         <p>{{ selected?.vehiculo_matricula != null ? selected?.vehiculo_matricula +' - '+
                             getVehiculo(selected!.vehiculo_matricula!)?.marca : '—' }}</p>
                     </div>
                     <div class="col-md-3">
-                        <p class="text-secondary small mb-1 fw-medium">Trabajador asignado</p>
+                        <p class="text-secondary small mb-1 ">Trabajador asignado</p>
                         <p>{{ selected?.num_empleado ? 'EMP-' + selected?.num_empleado + ' - ' +
                             (getUserByNumEmpleado(selected!.num_empleado!)?.nombreCompleto ?? '') : '—'}}</p>
                     </div>
                     <div class="col-md-4">
                         <div class="row ">
                             <div class="col-6 ps-0">
-                                <p class="text-secondary small mb-1 fw-medium">Gastos (aprox)</p>
+                                <p class="text-secondary small mb-1 ">Gastos (aprox)</p>
                                 <p>{{ selected?.costo | number:'1.2-2'}}€</p>
                             </div>
                             <div class="col-6 pe-0">
-                                <p class="text-secondary small mb-1 fw-medium">Ingresos</p>
+                                <p class="text-secondary small mb-1 ">Ingresos</p>
                                 <p>{{ selected?.ingresos| number:'1.2-2' }}€</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-8">
-                        <p class="text-secondary small mb-1 fw-medium">Observaciones</p>
+                        <p class="text-secondary small mb-1 ">Observaciones</p>
                         <p class="text-secondary">{{ selected?.observaciones ?? '—' }}</p>
                     </div>
                 </div>

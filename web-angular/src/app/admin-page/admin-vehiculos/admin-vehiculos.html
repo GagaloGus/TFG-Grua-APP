@@ -157,7 +157,7 @@
                     </tr>
                     } @else {
                     @for (v of vehiculosFiltrados(); track v.id) {
-                    <tr class="fila-servicio">
+                    <tr>
                         <td><span class="coordenadas">{{ v.id }}</span></td>
                         <td class="coordenadas fw-medium">{{ v.matricula }}</td>
                         <td>{{ v.marca ?? '—' }}</td>
@@ -176,7 +176,7 @@
                             </span>
                         </td>
                         <td>{{v.litro_combustible_km}} L/km</td>
-                        <td class="d-flex gap-2 justify-content-center">
+                        <td class="btn-accion-col">
                             <button class="btn btn-sm btn-accion-edit" (click)="abrirEditar(v)" title="Editar">
                                 <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
                                     <path

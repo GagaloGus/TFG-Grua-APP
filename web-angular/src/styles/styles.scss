@@ -1,7 +1,8 @@
 @use 'variables' as *;
 
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   background: #0D1B2E;
@@ -9,24 +10,24 @@ html, body {
 }
 
 p {
-    margin: 0;
+  margin: 0;
 }
 
 .page-container {
-    height: fit-content;
-    min-height: 100vh;
+  height: fit-content;
+  min-height: 100vh;
 }
 
 .bg-light {
-    background: $surface;
+  background: $surface;
 }
 
 .bg-cool {
-    background: $gradient-main;
+  background: $gradient-main;
 }
 
 .bg-gray {
-    background-color: $gray-blue;
+  background-color: $gray-blue;
 }
 
 .info-div-btn {
@@ -39,307 +40,295 @@ p {
   }
 }
 
-.user-pfp{
-    margin: 0;
-    padding: 0;
+.user-pfp {
+  margin: 0;
+  padding: 0;
+  aspect-ratio: 1/1;
+  border: 0.15rem solid #e5eaf1;
+  border-radius: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $primary;
+  background: #e0e7ff;
+  font-weight: bold;
+  font-size: 1.8rem;
+
+  >img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
     aspect-ratio: 1/1;
-    border: 0.15rem solid #e5eaf1;
+    margin: 0;
     border-radius: 100%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: $primary;
-    background: #e0e7ff;
-    font-weight: bold;
-    font-size: 1.8rem;
+  }
+
+  &--square {
+    border-radius: 5% !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
 
     >img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-        display: block;
-        aspect-ratio: 1/1;
-        margin: 0;
-        border-radius: 100%;
-    }
-
-    &--square{
       border-radius: 5% !important;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
-      >img{
-        border-radius: 5% !important;
-      }
     }
+  }
 
-    &--edit{
-      min-width: 4.5rem;
-      max-width: (min(100%, 90px));
-      position: relative;
-      overflow: visible;
-      cursor: pointer;
+  &--edit {
+    min-width: 4.5rem;
+    max-width: (min(100%, 90px));
+    position: relative;
+    overflow: visible;
+    cursor: pointer;
 
-      &:hover{
-        filter: brightness(80%);
-      }
+    &:hover {
+      filter: brightness(80%);
     }
+  }
 
-    &--mini{
-      width: 32px;
-      height: 32px;
-      font-size: 1rem;
-      box-shadow: 0;
-    }
+  &--mini {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+    box-shadow: 0;
+  }
 
-    &--login{
-      width: 46px;
-    }
+  &--login {
+    width: 46px;
+  }
 }
 
 .edit-icon {
-    position: absolute;
-    bottom: 0%;
-    right: 0%;
-    background: $primary;
-    color: $surface;
-    width: 30%;
-    height: 30%;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid $surface;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s ease-in-out;
+  position: absolute;
+  bottom: 0%;
+  right: 0%;
+  background: $primary;
+  color: $surface;
+  width: 30%;
+  height: 30%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid $surface;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in-out;
 
-    svg {
-        width: 70%;
-        height: 70%;
-    }
-}
-
-@mixin chip-text($bg, $color) {
-    border: 1.5px;
-    border-color: $color;
-    font-size: 0.9rem;
-    letter-spacing: 1px;
-    font-weight: bold;
-    border-radius: 50px;
-    padding: 2px 8px;
-    background-color: $bg;
-
-    >p {
-        color: $color;
-    }
-}
-
-.chip-text-orange {
-    @include chip-text(#fcead7, #c76e01);
-}
-
-.chip-text-green {
-    @include chip-text(#d7fce8, #009940);
-}
-
-.chip-text-blue {
-    @include chip-text(#d7d8fc, #0104c7);
-}
-
-.chip-text-red {
-    @include chip-text(#fcded7, #9b1200);
-}
-
-.chip-text-purple {
-    @include chip-text(#f2dbfa, #9f01c7);
-}
-
-.chip-text-grey {
-    @include chip-text(#e2e2e2, #474747);
-}
-
-.chip-text {
-    @include chip-text(#e2e2e2, #474747)
+  svg {
+    width: 70%;
+    height: 70%;
+  }
 }
 
 @mixin mini-icon($bg, $color) {
-    height: auto;
-    padding: 10px;
-    margin-left: auto;
+  height: auto;
+  padding: 10px;
+  margin-left: auto;
 
-    >figure {
-        width: 50px;
-        height: 50px;
-        margin: 0;
-        padding: 12px;
-        border-radius: 100%;
-        display: flex;
-        justify-content: center;
-        background-color: $bg;
+  >figure {
+    width: 50px;
+    height: 50px;
+    margin: 0;
+    padding: 12px;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    background-color: $bg;
 
-        >svg {
-            color: $color;
-        }
+    >svg {
+      color: $color;
     }
+  }
 }
 
 .mini-icon-purple {
-    @include mini-icon(#F3E8FF, #9810FA)
+  @include mini-icon(#F3E8FF, #9810FA)
 }
 
 .mini-icon-green {
-    @include mini-icon(#E6F8F0, #0ABF53);
+  @include mini-icon(#E6F8F0, #0ABF53);
 }
 
 .mini-icon-orange {
-    @include mini-icon(#FFF3E6, #FF8C00);
+  @include mini-icon(#FFF3E6, #FF8C00);
 }
 
 .mini-icon-blue {
-    @include mini-icon(#e6f2ff, #0066ff)
+  @include mini-icon(#e6f2ff, #0066ff)
 }
 
 @mixin stat-card($border-col) {
-    background: $surface;
-    border: 1.5px solid $border;
-    border-radius: 10px;
-    padding: 1rem 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-    border-left: 4px solid #d1d5db;
-    border-left-color: $border-col;
+  background: $surface;
+  border: 1.5px solid $border;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  border-left: 4px solid #d1d5db;
+  border-left-color: $border-col;
 
-    .stat-number {
-        font-size: 1.6rem;
-        font-weight: 700;
-        color: $text;
-        line-height: 1;
-    }
+  .stat-number {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: $text;
+    line-height: 1;
+  }
 
-    .stat-label {
-        font-size: 0.78rem;
-        text-wrap: nowrap;
-        color: $text-muted;
-        font-weight: 500;
-    }
+  .stat-label {
+    font-size: 0.78rem;
+    text-wrap: nowrap;
+    color: $text-muted;
+    font-weight: 500;
+  }
 }
 
 .stat-card {
-    @include stat-card(#8d8d8d)
+  @include stat-card(#8d8d8d)
 }
 
 .stat-card-orange {
-    @include stat-card(#f59e0b)
+  @include stat-card(#f59e0b)
 }
 
 .stat-card-blue {
-    @include stat-card(#3b82f6)
+  @include stat-card(#3b82f6)
 }
 
 .stat-card-green {
-    @include stat-card(#10b981)
+  @include stat-card(#10b981)
 }
 
 .stat-card-purple {
-    @include stat-card(#7b10b9)
+  @include stat-card(#7b10b9)
 }
 
 // ─── Badges de estado ─────────────────────────────────────────────────────────
 @mixin badge-estado($bg, $color) {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.28rem 0.7rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    white-space: nowrap;
-    background: $bg;
-    color: $color;
-  }
+  display: inline-flex;
+  align-items: center;
+  padding: 0.28rem 0.7rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  background: $bg;
+  color: $color;
+}
 
-  .badge-estado-sin-empezar {
-    @include badge-estado(#fef3c7, #92400e)
-  }
+.badge-estadot-orange {
+  @include badge-estado(#fcead7, #c76e01);
+}
 
-  .badge-estado-en-curso {
-    @include badge-estado(#dbeafe, #1e40af)
-  }
+.badge-estado-green {
+  @include badge-estado(#d7fce8, #009940);
+}
 
-  .badge-estado-terminado {
-    @include badge-estado(#d1fae5, #065f46)
-  }
+.badge-estado-blue {
+  @include badge-estado(#d7d8fc, #0104c7);
+}
 
-  .badge-estado-cancelado {
-    @include badge-estado(#e2e2e2, #3d3d3d)
-  }
+.badge-estado-red {
+  @include badge-estado(#fcded7, #9b1200);
+}
 
-  .badge-estado-borrado {
-    @include badge-estado(#ffe5e5, #db1717)
-  }
+.badge-estado-purple {
+  @include badge-estado(#f2dbfa, #9f01c7);
+}
+
+.badge-estado-grey {
+  @include badge-estado(#e2e2e2, #474747);
+}
+
+.badge-estado-sin-empezar {
+  @include badge-estado(#fef3c7, #92400e)
+}
+
+.badge-estado-en-curso {
+  @include badge-estado(#dbeafe, #1e40af)
+}
+
+.badge-estado-terminado {
+  @include badge-estado(#d1fae5, #065f46)
+}
+
+.badge-estado-cancelado {
+  @include badge-estado(#e2e2e2, #3d3d3d)
+}
+
+.badge-estado-borrado {
+  @include badge-estado(#ffe5e5, #db1717)
+}
+
+.badge-estado {
+  @include badge-estado(#e2e2e2, #474747)
+}
+
+
 
 // ─── Filtros ─────────────────────────────────────────────────────────────────
 .filtros-bar {
-    .search-wrapper {
-        position: relative;
-        min-width: 220px;
+  .search-wrapper {
+    position: relative;
+    min-width: 220px;
 
-        .search-icon {
-            position: absolute;
-            left: 0.75rem;
-            top: 25%;
-            color: $text-muted;
-            pointer-events: none;
-        }
-
-        .search-input {
-            padding-left: 2.4rem;
-            border: 1.5px solid $border;
-            font-size: 0.875rem;
-
-            &:focus {
-                border-color: $primary;
-                box-shadow: 0 0 0 3px rgba($primary, 0.12);
-            }
-        }
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 25%;
+      color: $text-muted;
+      pointer-events: none;
     }
 
-    .estado-select {
-        max-width: 200px;
-        border-radius: 10px;
-        border: 1.5px solid $border;
-        font-size: 0.875rem;
+    .search-input {
+      padding-left: 2.4rem;
+      border: 1.5px solid $border;
+      font-size: 0.875rem;
 
-        &:focus {
-            border-color: $primary;
-            box-shadow: 0 0 0 3px rgba($primary, 0.12);
-        }
+      &:focus {
+        border-color: $primary;
+        box-shadow: 0 0 0 3px rgba($primary, 0.12);
+      }
     }
+  }
+
+  .estado-select {
+    max-width: 200px;
+    border-radius: 10px;
+    border: 1.5px solid $border;
+    font-size: 0.875rem;
+
+    &:focus {
+      border-color: $primary;
+      box-shadow: 0 0 0 3px rgba($primary, 0.12);
+    }
+  }
 }
 
 .loading-icono {
-    text-align: center;
-    padding: 2.5rem 0;
+  text-align: center;
+  padding: 2.5rem 0;
 
-    @keyframes spin {
-        from {
-            transform: rotate(0deg);
-        }
-
-        to {
-            transform: rotate(360deg);
-        }
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
     }
 
-    g {
-        transform-origin: 30px 30px;
-        animation: spin 1.1s linear infinite;
+    to {
+      transform: rotate(360deg);
     }
+  }
 
-    p{
-        color: $secondary;
-    }
+  g {
+    transform-origin: 30px 30px;
+    animation: spin 1.1s linear infinite;
+  }
+
+  p {
+    color: $secondary;
+  }
 }
 
 .tabla-datos {
@@ -382,6 +371,14 @@ p {
     color: $text;
     text-wrap: nowrap;
   }
+
+  .btn-accion-col{
+    display: flex;
+    gap: 0.4rem;
+    justify-content: center;
+    text-wrap: nowrap;
+    text-align: center;
+  }
 }
 
 .th-sortable {
@@ -390,8 +387,14 @@ p {
   white-space: nowrap;
   transition: all 0.15s;
 
-  &:hover    { background: rgba(0, 0, 0, 0.04); }
-  &.th-active { background: rgba(13, 110, 253, 0.08); color: #0d6efd; }
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  &.th-active {
+    background: rgba(13, 110, 253, 0.08);
+    color: #0d6efd;
+  }
 }
 
 .sort-icon {
@@ -399,7 +402,16 @@ p {
   opacity: 0.45;
   margin-left: 4px;
 
-  .th-active & { opacity: 1; }
+  .th-active & {
+    opacity: 1;
+  }
+}
+
+.tabla-detalles{
+  label{
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
 }
 
 // ─── Botones de acción ────────────────────────────────────────────────────────
@@ -414,25 +426,31 @@ p {
   background: $bg;
   color: $col_selected;
   border-color: $border_col;
+
   &:hover {
     background: $col_selected;
     color: #fff;
     border-color: $col_selected;
   }
 }
-.btn-accion-edit{
+
+.btn-accion-edit {
   @include btn-accion(#eff6ff, #a3cdff, $primary)
 }
-.btn-accion-delete{
+
+.btn-accion-delete {
   @include btn-accion(#fff1f2, #ffa0a0, $danger)
 }
-.btn-accion-asignar{
+
+.btn-accion-asignar {
   @include btn-accion(#f3fff1, #63c979, $success)
 }
-.btn-accion-duplicar{
+
+.btn-accion-duplicar {
   @include btn-accion(#fff8ef, #ffcb7c, #ff9900)
 }
-.btn-accion-white{
+
+.btn-accion-white {
   @include btn-accion(#fafcff, #212529, #212529)
 }
 
@@ -460,10 +478,11 @@ p {
   color: $col;
 }
 
-.modal-icon-red{
+.modal-icon-red {
   @include modal-icon(#fee2e2, $danger)
 }
-.modal-icon-green{
+
+.modal-icon-green {
   @include modal-icon(#fee2e2, $danger)
 }
 
@@ -479,22 +498,27 @@ p {
   background: $bg;
   color: $col_selected;
   border-color: $border_col;
+
   &:hover {
     background: $col_selected;
     color: #fff;
     border-color: $col_selected;
   }
 }
-.btn-accion-edit{
+
+.btn-accion-edit {
   @include btn-accion(#eff6ff, #a3cdff, $primary)
 }
-.btn-accion-delete{
+
+.btn-accion-delete {
   @include btn-accion(#fff1f2, #ffa0a0, $danger)
 }
-.btn-accion-asignar{
+
+.btn-accion-asignar {
   @include btn-accion(#f3fff1, #63c979, $success)
 }
-.btn-accion-duplicar{
+
+.btn-accion-duplicar {
   @include btn-accion(#fff8ef, #ffcb7c, #ff9900)
 }
 

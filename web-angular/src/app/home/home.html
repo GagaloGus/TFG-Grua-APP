@@ -69,9 +69,11 @@
           cada vehículo en tiempo real.
         </p>
         <div class="d-flex flex-wrap gap-3">
-          <a [routerLink]="isLoggedIn() ? '/admin' : '/login'" class="tow-btn tow-btn--primary">
-            ACCEDER AL PANEL
-          </a>
+          @if (rol != 'T'){
+            <a [routerLink]="isLoggedIn() ? '/admin' : '/login'" class="tow-btn tow-btn--primary text-uppercase">
+              {{isLoggedIn() ? 'accede al panel de control' : 'inicia sesion'}}
+            </a>
+          }
           <a href="#workflow" class="tow-btn tow-btn--secondary">VER CÓMO FUNCIONA</a>
         </div>
       </div>

@@ -10,7 +10,7 @@ import { AuthService } from '../services/auth-service/auth-service';
 })
 export class Home {
 
-  constructor(private authService:AuthService){}
+  constructor(private authService: AuthService) { }
 
   isLoggedIn(): boolean {
     return this.authService.isLoggedIn()
@@ -20,24 +20,28 @@ export class Home {
     return this.authService.isAdmin()
   }
 
-    logout() {
-      console.log("bai")
-      this.authService.logout()
-    }
+  logout() {
+    console.log("bai")
+    this.authService.logout()
+  }
 
-    get email() {
-      return this.authService.email
-    }
+  get rol(){
+    return this.authService.rol
+  }
 
-    get nombre(){
-      return this.authService.nombre
-    }
+  get email() {
+    return this.authService.email
+  }
 
-    get apellido1(){
-      return this.authService.apellido1
-    }
+  get nombre() {
+    return this.authService.nombre
+  }
 
-    get avatar(){
-      return this.authService.avatarUrl()
-    }
+  get apellido1() {
+    return this.authService.apellido1
+  }
+
+  get avatar() {
+    return this.authService.avatarUrl()
+  }
 }
