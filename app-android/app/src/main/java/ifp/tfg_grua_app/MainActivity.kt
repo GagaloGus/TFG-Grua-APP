@@ -23,14 +23,22 @@ import io.github.jan.supabase.realtime.RealtimeChannel
 import io.github.jan.supabase.realtime.channel
 import io.github.jan.supabase.realtime.decodeRecord
 import io.github.jan.supabase.realtime.postgresChangeFlow
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
 
-    // Canal Realtime que escucha INSERTs en "servicios" del empleado actual
+    // Canal Realtime que escucha cambios en "servicios" del empleado actual
     private var canalRecogidas: RealtimeChannel? = null
+
+    // Refresco automático cada 20s mientras la Activity está visible
+    private var jobRefresco: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,19 +63,38 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnExit.setOnClickListener { finish() }
 
-        // Botón actualizar: recarga los servicios desde Supabase
         binding.btnActualizar.setOnClickListener { cargarRecogidas() }
 
-        // Prepara el canal de notificaciones y pide permiso (Android 13+)
         NotificacionesHelper.crearCanal(this)
         pedirPermisoNotificaciones()
 
         cargarRecogidas()
     }
 
-    // Solo escuchamos Realtime mientras la Activity está visible
-    override fun onStart() { super.onStart(); suscribirseARealtime() }
-    override fun onStop()  { super.onStop();  desuscribirRealtime() }
+    // Solo escuchamos Realtime y refrescamos mientras la Activity está visible
+    override fun onStart() {
+        super.onStart()
+        suscribirseARealtime()
+        iniciarRefrescoAutomatico()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        desuscribirRealtime()
+        jobRefresco?.cancel()
+        jobRefresco = null
+    }
+
+    // Cada 20s recarga la lista desde Supabase (además del botón manual)
+    private fun iniciarRefrescoAutomatico() {
+        if (jobRefresco?.isActive == true) return
+        jobRefresco = lifecycleScope.launch {
+            while (isActive) {
+                delay(20_000)
+                cargarRecogidas()
+            }
+        }
+    }
 
     // Pide permiso POST_NOTIFICATIONS en Android 13+
     private fun pedirPermisoNotificaciones() {
@@ -80,8 +107,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Escucha INSERTs en "servicios" filtrados por num_empleado.
-    // Al llegar uno, lanza notificación y refresca la lista.
+    // Escucha INSERTs y UPDATEs en "servicios" del empleado actual.
+    // Solo notifica cuando:
+    //   - INSERT con estado = "Sin empezar"
+    //   - UPDATE donde la columna "estado" cambia y el nuevo valor es "Sin empezar"
     private fun suscribirseARealtime() {
         val numEmpleado = SesionUsuario.getNumEmpleado(this) ?: return
         if (canalRecogidas != null) return   // ya suscritos
@@ -91,21 +120,41 @@ class MainActivity : AppCompatActivity() {
                 val canal = SupabaseClient.client.channel("recogidas-emp-$numEmpleado")
                 canalRecogidas = canal
 
-                val flow = canal.postgresChangeFlow<PostgresAction.Insert>(schema = "public") {
+                val flow = canal.postgresChangeFlow<PostgresAction>(schema = "public") {
                     table = "servicios"
                     filter = "num_empleado=eq.$numEmpleado"
                 }
-                canal.subscribe()   // abre la conexión por dentro si hace falta
+                canal.subscribe()
 
-                flow.collect { insert ->
-                    val r = insert.decodeRecord<Recogida>()
-                    val texto = listOfNotNull(r.cliente, r.matricula)
-                        .joinToString(" · ")
-                        .ifBlank { "Tienes una recogida nueva" }
-                    NotificacionesHelper.mostrar(
-                        this@MainActivity, "Nueva recogida asignada", texto, r.id ?: 0
-                    )
-                    cargarRecogidas()
+                flow.collect { action ->
+                    val (notificar, r) = when (action) {
+                        is PostgresAction.Insert -> {
+                            val nuevo = action.decodeRecord<Recogida>()
+                            // Insert: avisamos si viene como "Sin empezar"
+                            Pair(nuevo.estado == "Sin empezar", nuevo)
+                        }
+                        is PostgresAction.Update -> {
+                            val nuevo = action.decodeRecord<Recogida>()
+                            val estadoAnterior =
+                                (action.oldRecord["estado"] as? JsonPrimitive)?.contentOrNull
+                            // Update: avisamos solo si la columna estado cambió a "Sin empezar"
+                            val pasaASinEmpezar = nuevo.estado == "Sin empezar"
+                                    && estadoAnterior != "Sin empezar"
+                            Pair(pasaASinEmpezar, nuevo)
+                        }
+                        else -> return@collect
+                    }
+
+                    val id = r.id ?: return@collect
+                    if (notificar) {
+                        val texto = listOfNotNull(r.cliente, r.matricula)
+                            .joinToString(" · ")
+                            .ifBlank { "Tienes una recogida nueva" }
+                        NotificacionesHelper.mostrar(
+                            this@MainActivity, "Nueva recogida asignada", texto, id
+                        )
+                    }
+                    cargarRecogidas()   // refresca la lista en pantalla aunque no haya noti
                 }
             } catch (e: Exception) {
                 android.util.Log.e("MAIN", "Error Realtime", e)
@@ -131,15 +180,14 @@ class MainActivity : AppCompatActivity() {
                     return@launch
                 }
 
-                // Solo "Sin empezar" o "En curso" (los "Terminado" no se muestran)
                 val recogidas = SupabaseClient.client
                     .from("servicios")
                     .select { filter { eq("num_empleado", numEmpleado) } }
                     .decodeList<Recogida>()
                     .filter { it.estado == "Sin empezar" || it.estado == "En curso" }
-                    .sortedByDescending { it.urgente }    // urgentes arriba
+                    .sortedByDescending { it.urgente }
 
-                RecogidasRepo.Recogidas = recogidas       // lo usa MapGPS para buscar por id
+                RecogidasRepo.Recogidas = recogidas
 
                 binding.listaViajes.removeAllViews()
                 for (viaje in recogidas) añadirTarjeta(viaje)
@@ -163,7 +211,6 @@ class MainActivity : AppCompatActivity() {
 
         tarjeta.tvUrgente.visibility = if (viaje.urgente) View.VISIBLE else View.GONE
 
-        // El texto del botón cambia si el servicio ya está empezado
         val enCurso = viaje.estado == "En curso"
         tarjeta.btnNavegar.text = if (enCurso) "Continuar navegación" else "Navegar"
 
@@ -177,7 +224,6 @@ class MainActivity : AppCompatActivity() {
         binding.listaViajes.addView(tarjeta.root)
     }
 
-    // Cambia el estado del servicio en Supabase (ej: "En curso")
     private suspend fun cambiarEstado(id: Int?, estado: String) {
         if (id == null) return
         try {
@@ -192,7 +238,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Lanza MapGPS en la fase correcta: si el vehículo ya está recogido → ENTREGA
     private fun abrirMapGPS(viaje: Recogida) {
         val fase: String
         val lat: Double

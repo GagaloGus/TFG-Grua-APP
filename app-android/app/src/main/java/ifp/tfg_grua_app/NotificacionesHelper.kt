@@ -11,6 +11,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 
 // Lanza notificaciones locales cuando llega una nueva recogida.
 object NotificacionesHelper {
@@ -37,8 +38,13 @@ object NotificacionesHelper {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
+        // Icono grande (redondo, a color) usando el launcher de la app
+        val iconoGrande = ContextCompat.getDrawable(context, R.mipmap.ic_launcher_round)
+            ?.toBitmap()
+
         val notif = NotificationCompat.Builder(context, CANAL_ID)
-            .setSmallIcon(R.mipmap.ic_launcher_round)
+            .setSmallIcon(R.mipmap.ic_launcher_monochrome)   // silueta blanca en la barra de estado
+            .setLargeIcon(iconoGrande)                        // icono a color en la notif
             .setContentTitle(titulo)
             .setContentText(texto)
             .setAutoCancel(true)

@@ -23,7 +23,7 @@ class Login : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Si marcó "Recuérdame" antes, saltamos directo al Main
+        // Si marcó "Recuérdame" antes, omite esta activity
         if (SesionUsuario.haySesionPersistente(this)) {
             ChangeActivity(this, MainActivity::class.java)
             return
