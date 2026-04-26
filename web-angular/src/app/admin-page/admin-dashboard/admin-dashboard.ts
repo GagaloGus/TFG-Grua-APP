@@ -140,7 +140,7 @@ export class AdminDashboard {
         return f >= key && f <= `${hasta.getFullYear()}-${String(hasta.getMonth() + 1).padStart(2, '0')}-${String(hasta.getDate()).padStart(2, '0')}`;
       });
 
-      const ingresos = delRango.reduce((sum, s) => sum + ((s as any).ingresos ?? 0), 0);
+      const ingresos = delRango.reduce((sum, s) => sum + (s.ingresos ?? 0), 0);
       const gastos = delRango.reduce((sum, s) => sum + (s.costo ?? 0), 0);
 
       return { label, key, ingresos, gastos, servicios: delRango.length };
@@ -193,9 +193,15 @@ export class AdminDashboard {
   });
 
   // ── COSTOS TOTALES ────────────────────────────────────────────────────────────
-  totalIngresos = computed(() => this.lineChartDias().reduce((s, x) => s + ((x as any).ingresos ?? 0), 0));
-  totalGastos   = computed(() => this.lineChartDias().reduce((s, x) => s + (x.gastos ?? 0), 0));
-  totalBeneficios = computed(() => this.totalIngresos() - this.totalGastos());
+  totalIngresos = computed(() =>{
+    let data = this.lineChartDias().reduce((s, x) => s + (x.ingresos ?? 0), 0)
+    return Math.round(data*100)/100
+  });
+  totalGastos   = computed(() => {
+    let data = this.lineChartDias().reduce((s, x) => s + (x.gastos ?? 0), 0)
+    return Math.round(data*100)/100
+  });
+  totalBeneficios = computed(() => Math.round((this.totalIngresos() - this.totalGastos())*100)/100);
 
   // ── TABLA & RANKING ───────────────────────────────────────────────────────────
   ultimosServicios = computed(() =>
