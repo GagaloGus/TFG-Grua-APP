@@ -361,13 +361,18 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-medium">Ubicación recogida</label>
-                        <input class="form-control mb-2" type="text" [(ngModel)]="formData.direccion_ubi_recogida"
-                            placeholder="Ej: C/ Cabeza Mesada Nº5...">
+                        <div class="d-flex gap-2 mb-2">
+                            <input class="form-control" type="text" [(ngModel)]="formData.direccion_ubi_recogida"
+                                placeholder="Ej: C/ Cabeza Mesada Nº5...">
+                            <button type="button" class="btn btn-outline-danger" style="white-space:nowrap"
+                                (click)="abrirMapa('recogida')" title="Abrir mapa">
+                                📍
+                            </button>
+                        </div>
                         <div class="d-flex gap-3">
                             <div>
                                 <label class="form-label text-secondary">Latitud</label>
-                                <input class="form-control" type="text" [(ngModel)]="formData.ubicacion_recogida_lat"
-                                    placeholder="Latitud">
+                                <input class="form-control" type="text" [(ngModel)]="formData.ubicacion_recogida_lat" placeholder="Latitud">
                             </div>
                             <div>
                                 <label class="form-label text-secondary">Longitud</label>
@@ -378,8 +383,14 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-medium">Ubicación destino</label>
-                        <input class="form-control mb-2" type="text" [(ngModel)]="formData.direccion_ubi_destino"
-                            placeholder="Ej: C/ Alcalá Nº8...">
+                        <div class="d-flex gap-2 mb-2">
+                            <input class="form-control" type="text" [(ngModel)]="formData.direccion_ubi_destino"
+                                placeholder="Ej: C/ Alcalá Nº8...">
+                            <button type="button" class="btn btn-outline-danger" style="white-space:nowrap"
+                                (click)="abrirMapa('destino')" title="Abrir mapa">
+                                📍
+                            </button>
+                        </div>
                         <div class="d-flex gap-3">
                             <div>
                                 <label class="form-label text-secondary">Latitud</label>
@@ -469,4 +480,14 @@
         </div>
     </div>
 </div>
+}
+
+<!-- ===== MODAL MAPA ===== -->
+@if (showMapPicker) {
+  <app-map-picker
+    [lat]="mapPickerLat"
+    [lng]="mapPickerLng"
+    (cerrar)="showMapPicker = false"
+    (ubicacionSeleccionada)="onUbicacionSeleccionada($event)">
+  </app-map-picker>
 }

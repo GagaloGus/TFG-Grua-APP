@@ -39,18 +39,6 @@ export enum CarnetsConducir {
   'C+E' = 'C+E',
   'D+E' = 'D+E',
 }
-
-export class Ubicacion{
-  id!: number;
-  nombre!:string;
-  lat!:number;
-  lng!:number;
-
-  constructor(data: Partial<Ubicacion> = {}) {
-    Object.assign(this, data);
-  }
-}
-
 export class Vehiculo {
   id!: number;
   matricula!: string;

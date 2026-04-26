@@ -4,15 +4,17 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Roles, Servicio, Tablas, Usuario, Vehiculo } from '../../services/tablas.supabase';
 import { SupabaseService } from '../../services/supabase.service';
+import { MapPickerComponent } from '../../shared/map-picker/map-picker';
 
 @Component({
   selector: 'app-servicios',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, DatePipe],
+  imports: [CommonModule, FormsModule, RouterModule, DatePipe, MapPickerComponent],
   templateUrl: './admin-servicios.html',
   styleUrl: './admin-servicios.scss',
 })
 export class AdminServicios implements OnInit {
+  constructor(private supabaseService: SupabaseService) { }
 
   // ── Signals — se actualizan solos sin Zone.js
   finishedLoading = signal(false);
@@ -31,10 +33,8 @@ export class AdminServicios implements OnInit {
   selected: Servicio | null = null;
   usuarios_vehiculo: Usuario[] | null = [];
   formData = Servicio.empty();
-  constructor(private supabaseService: SupabaseService) { }
 
   private recargaIntervalo: ReturnType<typeof setInterval> | null = null;
-
 
   async ngOnInit() {
     this.cargarTodo()
@@ -304,4 +304,40 @@ export class AdminServicios implements OnInit {
 
     return '';
   }
+
+    // ── Mapa
+  showMapPicker = false;
+  mapPickerTarget: 'recogida' | 'destino' | null = null;
+  mapPickerLat = 0;
+  mapPickerLng = 0;
+
+  abrirMapa(target: 'recogida' | 'destino') {
+  this.mapPickerTarget = target;
+  if (target === 'recogida') {
+    this.mapPickerLat = this.formData.ubicacion_recogida_lat ?? 40.4168;
+    this.mapPickerLng = this.formData.ubicacion_recogida_lng ?? -3.7038;
+  } else {
+    this.mapPickerLat = this.formData.ubicacion_destino_lat ?? 40.4168;
+    this.mapPickerLng = this.formData.ubicacion_destino_lng ?? -3.7038;
+  }
+  this.showMapPicker = true;
+}
+
+onUbicacionSeleccionada(data: { lat: number; lng: number; direccion: string }) {
+  if (this.mapPickerTarget === 'recogida') {
+    this.formData.ubicacion_recogida_lat = data.lat;
+    this.formData.ubicacion_recogida_lng = data.lng;
+    if (!this.formData.direccion_ubi_recogida) {
+      this.formData.direccion_ubi_recogida = data.direccion;
+    }
+  } else if (this.mapPickerTarget === 'destino') {
+    this.formData.ubicacion_destino_lat = data.lat;
+    this.formData.ubicacion_destino_lng = data.lng;
+    if (!this.formData.direccion_ubi_destino) {
+      this.formData.direccion_ubi_destino = data.direccion;
+    }
+  }
+  this.showMapPicker = false;
+  this.mapPickerTarget = null;
+}
 }
