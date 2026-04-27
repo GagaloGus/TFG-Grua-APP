@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">TFG_Grua_APP</string>
 
+
+    <!-- Login -->
     <string name="txSesion">INICIAR SESIÓN</string>
     <string name="txDescripcion">Accede a tu panel de control</string>
     <string name="txEmail">Correo electronico</string>
@@ -10,6 +12,52 @@
     <string name="txRecuerdame">Recordar</string>
     <string name="btnEntrar">Entrar</string>
     <string name="txRegistro">¿No tienes cuenta? Contacta con administración</string>
+
+
+    <!-- Menú principal -->
+    <string name="txBienvenido">Bienvenido</string>
+    <string name="txNombre">Hola</string>
+    <string name="txRol">Conductor de grúa</string>
+    <string name="txInicial">CL</string>
+
+    <string name="menuPrincipal">Menú principal</string>
+    <string name="btnServicios">Servicios asignados</string>
+    <string name="btnHistorial">Servicios realizados</string>
+    <string name="btnPerfil">Mi perfil</string>
+
+    <string name="txAyuda">¿Necesitas ayuda?</string>
+    <string name="txEmpresa">Contacta con la empresa</string>
+    <string name="btnLlamar">Llamar</string>
+    <string name="btnWhatsapp">WhatsApp</string>
+
+    <string name="btnCerrar">Cerrar sesión</string>
+
+
+    <!-- Main -->
+    <string name="mainTitulo">Servicios asignados</string>
+    <string name="mainSubtitulo">Tus ordenes</string>
+    <string name="mainVacio">No hay servicios asignados.</string>
+    <string name="mainActualizar">Actualizar</string>
+    <string name="mainVover">Volver</string>
+    <string name="btnCerrarSesion">Cerrar sesión</string>
+
+    <!-- Historial -->
+    <string name="srTitulo">Servicios realizados</string>
+    <string name="srSubtitulo">Historial</string>
+    <string name="srVacio">No hay servicios realizados todavía.</string>
+    <string name="srActualizar">Actualizar</string>
+    <string name="srVolver">Volver</string>
+
+    <!-- MPerfil -->
+    <string name="txPerfil">Mi perfil</string>
+    <string name="txInfo">INFORMACIÓN PERSONAL</string>
+    <string name="perfilNombre">Nombre</string>
+    <string name="perfilNum_empleado">Número de empleado</string>
+    <string name="perfilRol">Rol</string>
+    <string name="perfilTelefono">Nº Telefono</string>
+    <string name="perfilCorreo">Correo electrónico</string>
+    <string name="txAviso">Para modificar tus datos, contacta con administración</string>
+    <string name="btnVolver">Volver</string>
 
 
 </resources>

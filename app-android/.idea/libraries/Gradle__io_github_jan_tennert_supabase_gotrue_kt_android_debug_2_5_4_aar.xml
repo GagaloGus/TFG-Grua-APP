@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: io.github.jan-tennert.supabase:gotrue-kt-android-debug:2.5.4@aar" external-system-id="GRADLE">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/8.13/transforms/87c320a474450a7999796cffb47d47dd/transformed/gotrue-kt-debug/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/8.13/transforms/87c320a474450a7999796cffb47d47dd/transformed/gotrue-kt-debug/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.jan-tennert.supabase/gotrue-kt-android-debug/2.5.4/9b39c38907fc45694a5ceea5b5e6b154062b9b49/gotrue-kt-android-debug-2.5.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
