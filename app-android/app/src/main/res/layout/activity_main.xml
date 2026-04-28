@@ -77,17 +77,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:id="@+id/tvVacio"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:gravity="center"
-            android:text="@string/mainVacio"
-            android:textColor="@color/text_hint"
-            android:textSize="14sp"
-            android:visibility="gone" />
-
         <ScrollView
             android:id="@+id/svRecogidas"
             android:layout_width="match_parent"
@@ -121,26 +110,14 @@
 
         <Button
             android:id="@+id/btn_Volver"
-            android:layout_width="0dp"
+            android:layout_width="369dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginEnd="8dp"
+            android:layout_weight="1"
             android:backgroundTint="@color/blue_light"
             android:text="@string/btnVolver"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/btnCerrarSesion"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/orange_dark"
-            android:text="@string/btnCerrarSesion"
-            android:textAllCaps="false"
-            android:textColor="@color/blue_dark"
             android:textStyle="bold" />
 
     </LinearLayout>

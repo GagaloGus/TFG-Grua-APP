@@ -70,7 +70,14 @@ class PerfilActivity : AppCompatActivity() {
 
         tvNumeroEmpleado.text = numeroEmpleado?.toString() ?: "-"
         tvNombre.text = nombre ?: "-"
-        tvRol.text = rol ?: "-"
+
+        // Traduce el código de rol (T / A) al texto que ve el usuario
+        tvRol.text = when (rol?.uppercase()) {
+            "T" -> "Conductor"
+            "A" -> "Admin"
+            else -> "-"
+        }
+
         tvCorreo.text = correo ?: "-"
     }
 

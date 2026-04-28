@@ -5,58 +5,32 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import ifp.tfg_grua_app.databinding.ActivityMenuBinding
 
 class MenuActivity : AppCompatActivity() {
 
-    private lateinit var txNombre: TextView
-    private lateinit var txInicial: TextView
-    private lateinit var txRol: TextView
-
-    private lateinit var cardServicios: CardView
-    private lateinit var cardHistorial: CardView
-    private lateinit var cardPerfil: CardView
-
-    private lateinit var btnLlamar: Button
-    private lateinit var btnWhatsapp: Button
-    private lateinit var btnCerrar: Button
+    private lateinit var binding: ActivityMenuBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
-        setContentView(R.layout.activity_menu)
+        binding = ActivityMenuBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        initViews()
         cargarDatosUsuario()
         eventos()
-    }
-
-    private fun initViews() {
-        txNombre = findViewById(R.id.txNombre)
-        txInicial = findViewById(R.id.txInicial)
-        txRol = findViewById(R.id.txRol)
-
-        cardServicios = findViewById(R.id.cardServicios)
-        cardHistorial = findViewById(R.id.cardHistorial)
-        cardPerfil = findViewById(R.id.cardPerfil)
-
-        btnLlamar = findViewById(R.id.btnLlamar)
-        btnWhatsapp = findViewById(R.id.btnWhatsapp)
-        btnCerrar = findViewById(R.id.btnCerrar)
     }
 
     private fun cargarDatosUsuario() {
@@ -64,45 +38,49 @@ class MenuActivity : AppCompatActivity() {
         val rol = SesionUsuario.getRol(this)
 
         if (!nombre.isNullOrEmpty()) {
-            txNombre.text = "Hola, $nombre"
-            txInicial.text = obtenerIniciales(nombre)
+            binding.tvNombre.text = "Hola, $nombre"
+            binding.tvInicial.text = obtenerIniciales(nombre)
         } else {
-            txNombre.text = "Hola"
-            txInicial.text = ""
+            binding.tvNombre.text = "Hola"
+            binding.tvInicial.text = ""
         }
 
-        if (!rol.isNullOrEmpty()) {
-            txRol.text = rol
+        // Traduce el código de rol (T / A) al texto que ve el usuario
+        if(rol?.uppercase() == "T"){
+            binding.tvRol.text = "Conductor"
+        }
+        else{
+            binding.tvRol.text = "Admin"
         }
     }
 
     private fun eventos() {
-        cardServicios.setOnClickListener {
-            //Toast.makeText(this, "Servicios asignados", Toast.LENGTH_SHORT).show()
+        binding.cardServicios.setOnClickListener {
             ChangeActivity(this, MainActivity::class.java)
         }
 
-        cardHistorial.setOnClickListener {
+        binding.cardHistorial.setOnClickListener {
             ChangeActivity(this, HistorialActivity::class.java)
         }
 
-        cardPerfil.setOnClickListener {
+        binding.cardPerfil.setOnClickListener {
             ChangeActivity(this, PerfilActivity::class.java)
         }
 
-        btnLlamar.setOnClickListener {
+        binding.btnLlamar.setOnClickListener {
             llamarEmpresa()
         }
 
-        btnWhatsapp.setOnClickListener {
+        binding.btnWhatsApp.setOnClickListener {
             abrirWhatsapp()
         }
 
-        btnCerrar.setOnClickListener {
+        binding.btnLogOut.setOnClickListener {
             cerrarSesion()
         }
     }
 
+    //Funcion para sacar las iniciales de un nombre
     private fun obtenerIniciales(nombreCompleto: String): String {
         val partes = nombreCompleto.trim().split(" ").filter { it.isNotEmpty() }
 

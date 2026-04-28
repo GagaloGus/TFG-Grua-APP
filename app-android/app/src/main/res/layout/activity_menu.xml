@@ -39,7 +39,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/txBienvenido"
+                        android:id="@+id/tv_Bienvenido"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/txBienvenido"
@@ -47,7 +47,7 @@
                         android:textColor="#A8BEDB" />
 
                     <TextView
-                        android:id="@+id/txNombre"
+                        android:id="@+id/tv_Nombre"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
@@ -57,7 +57,7 @@
                         android:textColor="@android:color/white" />
 
                     <TextView
-                        android:id="@+id/txRol"
+                        android:id="@+id/tv_Rol"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
@@ -67,7 +67,7 @@
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/txInicial"
+                    android:id="@+id/tv_Inicial"
                     android:layout_width="54dp"
                     android:layout_height="54dp"
                     android:gravity="center"
@@ -79,7 +79,7 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/menuPrincipal"
+                android:id="@+id/tv_MenuPrincipal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
@@ -109,7 +109,7 @@
                     android:padding="14dp">
 
                     <ImageView
-                        android:id="@+id/lista"
+                        android:id="@+id/iv_Lista"
                         android:layout_width="34dp"
                         android:layout_height="34dp"
                         android:layout_marginEnd="12dp"
@@ -124,7 +124,7 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/btnServicios"
+                            android:id="@+id/btn_Servicios"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/btnServicios"
@@ -158,7 +158,7 @@
                     android:padding="14dp">
 
                     <ImageView
-                        android:id="@+id/check"
+                        android:id="@+id/iv_Check"
                         android:layout_width="34dp"
                         android:layout_height="34dp"
                         android:layout_marginEnd="12dp"
@@ -173,7 +173,7 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/btnHistorial"
+                            android:id="@+id/btn_Historial"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/btnHistorial"
@@ -210,7 +210,7 @@
                     android:padding="14dp">
 
                     <ImageView
-                        android:id="@+id/perfil"
+                        android:id="@+id/iv_Perfil"
                         android:layout_width="34dp"
                         android:layout_height="34dp"
                         android:layout_marginEnd="12dp"
@@ -225,7 +225,7 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/btnPerfil"
+                            android:id="@+id/btn_Perfil"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/btnPerfil"
@@ -257,7 +257,7 @@
                     android:padding="14dp">
 
                     <TextView
-                        android:id="@+id/txAyuda"
+                        android:id="@+id/tv_Ayuda"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -267,7 +267,7 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/txEmpresa"
+                        android:id="@+id/tv_Empresa"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -284,7 +284,7 @@
                         android:weightSum="2">
 
                         <Button
-                            android:id="@+id/btnLlamar"
+                            android:id="@+id/btn_Llamar"
                             android:layout_width="0dp"
                             android:layout_height="40dp"
                             android:layout_weight="1"
@@ -296,7 +296,7 @@
                             android:textSize="16sp" />
 
                         <Button
-                            android:id="@+id/btnWhatsapp"
+                            android:id="@+id/btn_WhatsApp"
                             android:layout_width="0dp"
                             android:layout_height="40dp"
                             android:layout_weight="1"
@@ -313,7 +313,7 @@
             </androidx.cardview.widget.CardView>
 
             <Button
-                android:id="@+id/btnCerrar"
+                android:id="@+id/btn_LogOut"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginStart="70dp"

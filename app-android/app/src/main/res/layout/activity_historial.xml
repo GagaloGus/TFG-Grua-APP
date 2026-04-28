@@ -57,20 +57,28 @@
             android:id="@+id/tvVacio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/srVacio"
-            android:textColor="@color/text_hint"
-            android:textSize="14sp"
+            android:layout_marginTop="32dp"
             android:gravity="center"
-            android:visibility="gone"
-            android:layout_marginTop="30dp"/>
+            android:text="@string/srVacio"
+            android:textColor="@color/text_dim"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="gone"/>
 
         <!-- LISTA -->
-        <LinearLayout
-            android:id="@+id/listaHistorial"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="vertical"/>
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:id="@+id/listaHistorial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+
+        </ScrollView>
 
     </LinearLayout>
     <LinearLayout

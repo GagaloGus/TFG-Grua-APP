@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Patterns
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -12,20 +14,18 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import ifp.tfg_grua_app.databinding.ActivityLoginBinding
 import io.github.jan.supabase.postgrest.from
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class Login : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-    private var loginJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Si marcó "Recuérdame" antes, omite esta activity
+        // Si marcó "Recuérdame" antes, salta directo al menú
         if (SesionUsuario.haySesionPersistente(this)) {
-            ChangeActivity(this, MenuActivity::class.java)
+            ChangeActivity(this,MenuActivity::class.java)
             return
         }
 
@@ -34,67 +34,68 @@ class Login : AppCompatActivity() {
         setContentView(binding.root)
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            val sb = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(sb.left, sb.top, sb.right, sb.bottom)
             insets
         }
 
-        binding.btnEntrar.setOnClickListener { validarLogin() }
+        binding.btnLogin.setOnClickListener { validarLogin() }
     }
 
     private fun validarLogin() {
-        val correo = binding.email.text.toString().trim()
-        val clave  = binding.Password.text.toString().trim()
+        val correo = binding.etvMail.text.toString().trim()
+        val clave  = binding.etvPassword.text.toString().trim()
 
-        // Validaciones simples
-        if (correo.isEmpty()) {
-            binding.email.error = "Introduce tu correo"; binding.email.requestFocus(); return
+        //Si los campos no son validos en el EditText no comprueba en Supa
+        if (!camposValidos(correo, clave)){
+            return
         }
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(correo).matches()) {
-            binding.email.error = "Correo no valido"; binding.email.requestFocus(); return
-        }
-        if (clave.isEmpty()) {
-            binding.Password.error = "Introduce tu contraseña"; binding.Password.requestFocus(); return
-        }
-        if (clave.length < 6) {
-            binding.Password.error = "La contraseña debe tener almenos 6 caracteres"
-            binding.Password.requestFocus(); return
-        }
+        else{
+            lifecycleScope.launch {
+                val usuario = SupabaseClient.client.from("usuarios")
+                    .select { filter { eq("email", correo); eq("password", clave) } }
+                    .decodeList<Usuario>().firstOrNull()
 
-        // Busca en la tabla "usuarios" un registro con ese email + password
-        loginJob = lifecycleScope.launch {
-            try {
-                val resultado = SupabaseClient.client
-                    .from("usuarios")
-                    .select {
-                        filter {
-                            eq("email", correo)
-                            eq("password", clave)
-                        }
-                    }
-                    .decodeList<Usuario>()
-
-                if (resultado.isEmpty()) {
-                    Toast.makeText(this@Login, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show()
-                } else {
-                    val usuario = resultado.first()
-                    SesionUsuario.guardar(this@Login, usuario, binding.txRecuerdame.isChecked)
-                    Toast.makeText(this@Login, "Bienvenido, ${usuario.nombre ?: usuario.mail}", Toast.LENGTH_SHORT).show()
+                if(usuario == null ){
+                    toast("Usuario o contraseña incorrectos")
+                }
+                else if (usuario.rol?.uppercase() !in listOf("T", "A")){
+                    toast("Tu cuenta no tiene permisos para acceder a la aplicación")
+                }
+                else{
+                    SesionUsuario.guardar(this@Login, usuario, binding.btnRemind.isChecked)
+                    toast("Bienvenido, ${usuario.nombre ?: usuario.mail}")
                     ChangeActivity(this@Login, MenuActivity::class.java)
                 }
-            } catch (e: Exception) {
-                android.util.Log.e("LOGIN", "Fallo consultando Supabase", e)
-                Toast.makeText(this@Login, "Error: ${e.message ?: e.javaClass.simpleName}", Toast.LENGTH_LONG).show()
             }
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        loginJob?.cancel()
+    //Comprueba si son validos los valores en los EditTexts
+    private fun camposValidos(correo: String, clave: String): Boolean = when {
+        correo.isEmpty() ->
+            error(binding.etvMail, "Introduce tu correo")
+        !Patterns.EMAIL_ADDRESS.matcher(correo).matches() ->
+            error(binding.etvMail, "Correo no válido")
+        clave.isEmpty() ->
+            error(binding.etvPassword, "Introduce tu contraseña")
+        clave.length < 6 ->
+            error(binding.etvPassword, "La contraseña debe tener al menos 6 caracteres")
+        else -> true
     }
 
-    private fun <T> ChangeActivity(context: Context, cls: Class<T>){
+    //Funcion para generar error en EditText
+    private fun error(campo: EditText, mensaje: String): Boolean {
+        campo.error = mensaje
+        campo.requestFocus()
+        return false
+    }
+
+    //Funciones utiles
+    private fun toast(texto: String) =
+        Toast.makeText(this, texto, Toast.LENGTH_SHORT).show()
+
+    private fun <T> ChangeActivity(context: Context, cls: Class<T>) {
         context.startActivity(Intent(context, cls))
         if (context is Activity) context.finish()
     }
