@@ -98,8 +98,10 @@ export class AdminServicios implements OnInit {
   }
 
   onVehiculoChange() {
-    let u = this.usuarios().filter(u => u.rol == Roles.T && u.vehiculo_asignado === this.formData.vehiculo_matricula)
-    this.usuarios_vehiculo = u ?? null;
+    const u = this.usuarios().filter(u =>
+      u.rol == 'T' && u.vehiculo_asignado == this.formData.vehiculo_matricula
+    );
+    this.usuarios_vehiculo = u.length > 0 ? u : null;
     this.calcularCostoAproxViaje();
   }
 

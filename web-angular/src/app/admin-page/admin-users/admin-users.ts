@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, signal, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, HostListener, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -20,7 +20,6 @@ export class AdminUsers implements OnInit, OnDestroy {
   vistaTabla = signal(true)
   finishedLoading = signal(false);
   usuarios = signal<Usuario[]>([]);
-  usuariosFiltrados = signal<Usuario[]>([]);
   vehiculos = signal<Vehiculo[]>([]);
   errorMsg = signal('');
   successMsg = signal('');
@@ -28,7 +27,6 @@ export class AdminUsers implements OnInit, OnDestroy {
   modalSuccessMsg = signal('');
 
   // ── Local
-  searchQuery = '';
   showConfirmation = false;
   selected: Usuario | null = Usuario.empty();
   showEditModal = false;
@@ -69,8 +67,8 @@ export class AdminUsers implements OnInit, OnDestroy {
     this.recargaIntervalo = setInterval(() => this.cargarSegundoPlano(), 10000);
   }
 
-  ngOnDestroy(){
-    if(this.recargaIntervalo)
+  ngOnDestroy() {
+    if (this.recargaIntervalo)
       clearInterval(this.recargaIntervalo)
   }
 
@@ -95,7 +93,7 @@ export class AdminUsers implements OnInit, OnDestroy {
     this.finishedLoading.set(true);
   }
 
-  async cargarSegundoPlano(){
+  async cargarSegundoPlano() {
     await this.cargarUsuarios()
     await this.cargarVehiculos()
 
@@ -105,7 +103,6 @@ export class AdminUsers implements OnInit, OnDestroy {
     try {
       const data = await this.supabaseService.getAll(Tablas.USUARIOS);
       this.usuarios.set(data.map((v: any) => new Usuario(v)));
-      this.filtrar();
     } catch (err: any) {
       this.errorMsg.set('Error al cargar usuarios: ' + err.message);
       console.error('Error al cargar usuarios:', err.message);
@@ -128,33 +125,60 @@ export class AdminUsers implements OnInit, OnDestroy {
     return v ? `Grúa ${v.marca} — ${v.matricula}` : ""
   }
 
-  // ── Filtrado
-  filtrar() {
-    const t = this.searchQuery.trim().toLowerCase();
+  // ── Ordenar
+  sortCol = signal<string | null>(null);
+  sortAsc = signal(true);
 
-    this.usuariosFiltrados.set(
-      this.usuarios().filter(u => {
-        // Busqueda por texto
-        const matchTexto =
-          !t ||
-          (u.num_empleado?.toString() ?? '').includes(t) ||
-          (u.nombreCompleto ?? '').toLowerCase().includes(t);
-
-        // Filtro por rol (si no hay ninguno marcado, pasan todos)
-        const matchRol =
-          this.filtrosRol.size === 0 || this.filtrosRol.has(u.rol);
-
-        // Filtro por disponibilidad
-        const matchDisp =
-          this.filtrosDisp.size === 0 || this.filtrosDisp.has(u.disponibilidad);
-
-        return matchTexto && matchRol && matchDisp;
-      }).sort((a, b) => b.id - a.id)
-    );
+  toggleSort(col: string) {
+    if (this.sortCol() === col) {
+      this.sortAsc.update(v => !v);
+    } else {
+      this.sortCol.set(col);
+      this.sortAsc.set(true);
+    }
   }
 
+  // ── Filtrado
+  searchQuery = signal('');
+
+  usuariosFiltrados = computed(() => {
+    const q = this.searchQuery().toLowerCase().trim();
+
+    let result = this.usuarios().filter(u => {
+      // Busqueda por texto
+      const matchTexto =
+        !q ||
+        (u.num_empleado?.toString() ?? '').includes(q) ||
+        (u.nombreCompleto ?? '').toLowerCase().includes(q);
+
+      // Filtro por rol (si no hay ninguno marcado, pasan todos)
+      const matchRol =
+        this.filtrosRol.size === 0 || this.filtrosRol.has(u.rol);
+
+      // Filtro por disponibilidad
+      const matchDisp =
+        this.filtrosDisp.size === 0 || this.filtrosDisp.has(u.disponibilidad);
+
+      return matchTexto && matchRol && matchDisp;
+    }).sort((a, b) => b.id - a.id)
+
+    const col = this.sortCol(); //ordenar
+    if (col) {
+      const asc = this.sortAsc() ? 1 : -1;
+      result = [...result].sort((a, b) => {
+        const va = (a as any)[col] ?? '';
+        const vb = (b as any)[col] ?? '';
+        if (va < vb) return -1 * asc;
+        if (va > vb) return 1 * asc;
+        return 0;
+      });
+    }
+
+    return result
+  });
+
   hayFiltrosActivos(): boolean {
-    return this.filtrosRol.size > 0 || this.filtrosDisp.size > 0 || this.searchQuery.trim() !== '';
+    return this.filtrosRol.size > 0 || this.filtrosDisp.size > 0 || this.searchQuery().trim() !== '';
   }
 
   // ── Dropdown Rol
@@ -170,12 +194,10 @@ export class AdminUsers implements OnInit, OnDestroy {
       this.filtrosRol.add(value);
     }
     this.filtrosRol = new Set(this.filtrosRol); // fuerza deteccion de cambio
-    this.filtrar();
   }
 
   limpiarRol() {
     this.filtrosRol = new Set();
-    this.filtrar();
   }
 
   // ── Dropdown Disponibilidad
@@ -191,19 +213,16 @@ export class AdminUsers implements OnInit, OnDestroy {
       this.filtrosDisp.add(value);
     }
     this.filtrosDisp = new Set(this.filtrosDisp);
-    this.filtrar();
   }
 
   limpiarDisp() {
     this.filtrosDisp = new Set();
-    this.filtrar();
   }
 
   limpiarTodo() {
     this.filtrosRol = new Set();
     this.filtrosDisp = new Set();
-    this.searchQuery = '';
-    this.filtrar();
+    this.searchQuery.set('');
   }
 
   // ── Detalles
@@ -217,6 +236,7 @@ export class AdminUsers implements OnInit, OnDestroy {
     this.showDetailsModal = false;
   }
 
+  mostrarPassword = signal(false);
 
   // ── Eliminar
   abrirEliminar(u: Usuario) {
@@ -281,19 +301,19 @@ export class AdminUsers implements OnInit, OnDestroy {
         } catch (e: any) {
           console.error("Error al subir avatar:", e);
           this.successMsg.set("Usuario editado con exito");
-          this.errorMsg.set("Hubo un problema editando el avatar: "+e.message)
+          this.errorMsg.set("Hubo un problema editando el avatar: " + e.message)
         } finally {
           this.cargandoImagen.set(false);
         }
       }
-      else{
+      else {
         this.successMsg.set("Usuario editado con exito");
       }
 
       this.cerrarEditar();
       await this.cargarTodo();
     } catch (err: any) {
-      this.modalErrorMsg.set('Error al guardar: '+err.message);
+      this.modalErrorMsg.set('Error al guardar: ' + err.message);
     }
   }
 

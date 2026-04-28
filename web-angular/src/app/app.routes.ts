@@ -7,10 +7,11 @@ import { AdminServicios } from './admin-page/admin-servicios/admin-servicios';
 import { AdminCreateuser } from './admin-page/admin-createuser/admin-createuser';
 import { AdminUsers } from './admin-page/admin-users/admin-users';
 import { AdminVehiculos } from './admin-page/admin-vehiculos/admin-vehiculos';
+import { authGuard } from '@services/auth-guard/auth-guard';
 
 export const routes: Routes = [
 
-    {path: "admin", component:AdminPage,
+    {path: "admin", component:AdminPage, canActivate: [authGuard],
         children:[
             {path: "dashboard", component:AdminDashboard},
             {path: "servicios", component:AdminServicios},

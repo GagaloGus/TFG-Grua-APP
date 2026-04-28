@@ -39,4 +39,6 @@ export class Login {
     }
     this.validatingLogin.set(false)
   }
+
+  mostrarPassword = signal(false)
 }

@@ -116,8 +116,6 @@
                         <th class="th-sortable" (click)="toggleSort('tel_cliente')" [class.th-active]="sortCol()==='tel_cliente'">
                             Teléfono <span class="sort-icon">{{ sortCol()==='tel_cliente' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
                         </th>
-                        <th>Recogida</th>
-                        <th>Destino</th>
                         <th class="th-sortable" (click)="toggleSort('fecha')" [class.th-active]="sortCol()==='fecha'">
                             Fecha <span class="sort-icon">{{ sortCol()==='fecha' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
                         </th>
@@ -165,8 +163,6 @@
                         <td><span class="coordenadas">S-{{ s.id }}</span></td>
                         <td class="fw-medium">{{ s.nombre_cliente ?? '—' }}</td>
                         <td>{{ s.tel_cliente ?? '—' }}</td>
-                        <td class="coordenadas">{{ s.formatCoordRecogida }}</td>
-                        <td class="coordenadas">{{ s.formatCoordDestino }}</td>
                         <td class="text-nowrap">{{ s.fecha | date:'dd/MM/yy HH:mm' }}</td>
                         <td><span [ngClass]="s.estadoClass">{{ s.estado }}</span></td>
                         <td><span [ngClass]="s.recogidoClass">{{ s.vehiculo_recogido ? 'Si' : 'No' }}</span></td>
