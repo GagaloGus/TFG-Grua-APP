@@ -22,7 +22,7 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
-            android:id="@+id/txPerfil"
+            android:id="@+id/tv_Perfil"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/txPerfil"
@@ -31,7 +31,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/txInfo"
+            android:id="@+id/tv_Info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
@@ -41,7 +41,7 @@
             android:textStyle="bold" />
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/iv_Perfil"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_marginTop="40dp"
@@ -61,7 +61,7 @@
 
             <!-- Número de empleado -->
             <TextView
-                android:id="@+id/labelNumEmpleado"
+                android:id="@+id/lb_NumeroEmpleado"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/perfilNum_empleado"
@@ -70,7 +70,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tvNumeroEmpleado"
+                android:id="@+id/tv_NumeroEmpleado"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -82,7 +82,7 @@
 
             <!-- Nombre -->
             <TextView
-                android:id="@+id/labelNombre"
+                android:id="@+id/lb_Nombre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/perfilNombre"
@@ -91,7 +91,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tvNombre"
+                android:id="@+id/tv_NombrePerfil"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -103,7 +103,7 @@
 
             <!-- Rol -->
             <TextView
-                android:id="@+id/labelRol"
+                android:id="@+id/lb_Rol"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/perfilRol"
@@ -112,7 +112,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tvRol"
+                android:id="@+id/tv_RolPerfil"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -124,7 +124,7 @@
 
             <!-- Correo -->
             <TextView
-                android:id="@+id/labelCorreo"
+                android:id="@+id/lb_Correo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/perfilCorreo"
@@ -133,7 +133,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tvCorreo"
+                android:id="@+id/tv_CorreoPerfil"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"

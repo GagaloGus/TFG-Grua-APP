@@ -5,33 +5,28 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import ifp.tfg_grua_app.databinding.ActivityPerfilBinding
 
 class PerfilActivity : AppCompatActivity() {
 
-    private lateinit var tvNumeroEmpleado: TextView
-    private lateinit var tvNombre: TextView
-    private lateinit var tvRol: TextView
-    private lateinit var tvCorreo: TextView
-    private lateinit var btnVolver: Button
-    private lateinit var imageViewPerfil: ImageView
+    private lateinit var binding: ActivityPerfilBinding
 
+    // Selector de imagen del galería: cuando el usuario elige una foto,
+    // la mostramos en el ImageView y guardamos su URI para la próxima vez
     private val pickImageLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri ->
-        uri?.let {
-            imageViewPerfil.setImageURI(it)
+        if (uri != null) {
+            binding.ivPerfil.setImageURI(uri)
 
             getSharedPreferences("perfil", MODE_PRIVATE)
                 .edit()
-                .putString("imagen_uri", it.toString())
+                .putString("imagen_uri", uri.toString())
                 .apply()
         }
     }
@@ -39,67 +34,63 @@ class PerfilActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_perfil)
+        binding = ActivityPerfilBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
+            val sb = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(sb.left, sb.top, sb.right, sb.bottom)
             insets
         }
 
-        initViews()
         cargarDatosUsuario()
         cargarImagenGuardada()
         configurarEventos()
     }
 
-    private fun initViews() {
-        tvNumeroEmpleado = findViewById(R.id.tvNumeroEmpleado)
-        tvNombre = findViewById(R.id.tvNombre)
-        tvRol = findViewById(R.id.tvRol)
-        tvCorreo = findViewById(R.id.tvCorreo)
-        btnVolver = findViewById(R.id.btnVolver)
-        imageViewPerfil = findViewById(R.id.imageView2)
-    }
-
+    // Rellena los TextView del perfil con los datos del usuario logueado
     private fun cargarDatosUsuario() {
         val numeroEmpleado = SesionUsuario.getNumEmpleado(this)
         val nombre = SesionUsuario.getNombre(this)
         val rol = SesionUsuario.getRol(this)
         val correo = SesionUsuario.getMail(this)
 
-        tvNumeroEmpleado.text = numeroEmpleado?.toString() ?: "-"
-        tvNombre.text = nombre ?: "-"
+        binding.tvNumeroEmpleado.text = numeroEmpleado?.toString() ?: "-"
+        binding.tvNombrePerfil.text = nombre ?: "-"
+        binding.tvCorreoPerfil.text = correo ?: "-"
 
         // Traduce el código de rol (T / A) al texto que ve el usuario
-        tvRol.text = when (rol?.uppercase()) {
-            "T" -> "Conductor"
-            "A" -> "Admin"
-            else -> "-"
+        if (rol?.uppercase() == "T") {
+            binding.tvRolPerfil.text = "Conductor"
+        } else if (rol?.uppercase() == "A") {
+            binding.tvRolPerfil.text = "Admin"
+        } else {
+            binding.tvRolPerfil.text = "-"
         }
-
-        tvCorreo.text = correo ?: "-"
     }
 
+    // Si el usuario eligió una foto en una sesión anterior, la cargamos
     private fun cargarImagenGuardada() {
         val uriString = getSharedPreferences("perfil", MODE_PRIVATE)
             .getString("imagen_uri", null)
 
         if (uriString != null) {
-            imageViewPerfil.setImageURI(Uri.parse(uriString))
+            binding.ivPerfil.setImageURI(Uri.parse(uriString))
         }
     }
 
     private fun configurarEventos() {
-        btnVolver.setOnClickListener {
+        binding.btnVolver.setOnClickListener {
             ChangeActivity(this, MenuActivity::class.java)
         }
 
-        imageViewPerfil.setOnClickListener {
+        // Tocar la foto abre la galería para cambiarla
+        binding.ivPerfil.setOnClickListener {
             pickImageLauncher.launch("image/*")
         }
     }
 
+    // Funciones utiles
     private fun <T> ChangeActivity(context: Context, cls: Class<T>) {
         context.startActivity(Intent(context, cls))
         if (context is Activity) context.finish()

@@ -5,114 +5,98 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import ifp.tfg_grua_app.databinding.ActivityHistorialBinding
 import ifp.tfg_grua_app.databinding.ItemViajeBinding
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.launch
 
 class HistorialActivity : AppCompatActivity() {
 
-    private lateinit var tvVacio: TextView
-    private lateinit var listaHistorial: LinearLayout
-    private lateinit var btnActualizar: Button
-    private lateinit var btnVolverBottom: Button
+    private lateinit var binding: ActivityHistorialBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_historial)
+        binding = ActivityHistorialBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
+            val sb = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(sb.left, sb.top, sb.right, sb.bottom)
             insets
         }
 
-        tvVacio = findViewById(R.id.tvVacio)
-        listaHistorial = findViewById(R.id.listaHistorial)
-        btnActualizar = findViewById(R.id.btnActualizar)
-        btnVolverBottom = findViewById(R.id.btnVolverBottom)
-
-        btnVolverBottom.setOnClickListener {
-            changeActivity(this, MenuActivity::class.java)
+        binding.btnVolverBottom.setOnClickListener {
+            ChangeActivity(this, MenuActivity::class.java)
         }
 
-        btnActualizar.setOnClickListener {
+        binding.btnActualizarHistorial.setOnClickListener {
             cargarServiciosRealizados()
         }
 
         cargarServiciosRealizados()
     }
 
+    // Descarga los servicios "Terminado" del empleado y los pinta
     private fun cargarServiciosRealizados() {
         lifecycleScope.launch {
             try {
                 val numEmpleado = SesionUsuario.getNumEmpleado(this@HistorialActivity)
-
                 if (numEmpleado == null) {
-                    Toast.makeText(
-                        this@HistorialActivity,
-                        "Sesión sin número de empleado",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    toast("Sesión sin número de empleado")
                     return@launch
                 }
 
                 val servicios = SupabaseClient.client
                     .from("servicios")
-                    .select {
-                        filter {
-                            eq("num_empleado", numEmpleado)
-                        }
-                    }
+                    .select { filter { eq("num_empleado", numEmpleado) } }
                     .decodeList<Recogida>()
                     .filter { it.estado == "Terminado" }
 
-                listaHistorial.removeAllViews()
+                binding.listaHistorial.removeAllViews()
 
                 if (servicios.isEmpty()) {
-                    tvVacio.visibility = View.VISIBLE
+                    binding.tvVacio.visibility = View.VISIBLE
                 } else {
-                    tvVacio.visibility = View.GONE
+                    binding.tvVacio.visibility = View.GONE
                     for (viaje in servicios) {
                         anadirTarjeta(viaje)
                     }
                 }
-
             } catch (e: Exception) {
                 android.util.Log.e("HISTORIAL", "Error cargando historial", e)
-                Toast.makeText(
-                    this@HistorialActivity,
-                    "Error: ${e.message ?: e.javaClass.simpleName}",
-                    Toast.LENGTH_LONG
-                ).show()
+                toast("Error: ${e.message ?: e.javaClass.simpleName}")
             }
         }
     }
 
+    // Crea una tarjeta visual con los datos del servicio (sin botón Navegar)
     private fun anadirTarjeta(viaje: Recogida) {
-        val tarjeta = ItemViajeBinding.inflate(layoutInflater, listaHistorial, false)
+        val tarjeta = ItemViajeBinding.inflate(layoutInflater, binding.listaHistorial, false)
 
         tarjeta.tvCliente.text = viaje.cliente ?: ""
         tarjeta.tvMatricula.text = viaje.matricula ?: ""
         tarjeta.tvMotivo.text = viaje.motivo ?: ""
         tarjeta.tvTelefono.text = viaje.telefono ?: ""
 
+        // En el historial no hace falta marcar urgente ni tener botón
         tarjeta.tvUrgente.visibility = View.GONE
         tarjeta.btnNavegar.visibility = View.GONE
 
-        listaHistorial.addView(tarjeta.root)
+        binding.listaHistorial.addView(tarjeta.root)
     }
 
-    private fun <T> changeActivity(context: Context, cls: Class<T>) {
+    // Funciones utiles
+    private fun toast(texto: String) =
+        Toast.makeText(this, texto, Toast.LENGTH_LONG).show()
+
+    private fun <T> ChangeActivity(context: Context, cls: Class<T>) {
         context.startActivity(Intent(context, cls))
         if (context is Activity) context.finish()
     }
