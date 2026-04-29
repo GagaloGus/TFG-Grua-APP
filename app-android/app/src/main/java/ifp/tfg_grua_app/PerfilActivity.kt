@@ -78,10 +78,9 @@ class PerfilActivity : AppCompatActivity() {
                     }
                     .decodeSingle<Usuario>()
 
+                // Glide modificado: sin placeholder ni error
                 Glide.with(this@PerfilActivity)
                     .load(usuario.avatarUrl)
-                    .placeholder(R.drawable.avatar_circulo)
-                    .error(R.drawable.avatar_circulo)
                     .circleCrop()
                     .into(imageViewPerfil)
 
