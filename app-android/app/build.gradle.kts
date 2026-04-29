@@ -61,6 +61,8 @@ dependencies {
     implementation("io.ktor:ktor-client-okhttp:2.3.7")
     implementation("io.github.jan-tennert.supabase:gotrue-kt")
     implementation("io.github.jan-tennert.supabase:realtime-kt")
+    //ImagenesdesdeURL
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 
 
     implementation(libs.androidx.core.ktx)

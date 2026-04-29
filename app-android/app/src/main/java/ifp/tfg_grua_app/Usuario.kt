@@ -27,5 +27,6 @@ data class Usuario(
     val rol: String? = null,
 
     @SerialName("num_empleado") val numEmpleado: Int? = null,
-    @SerialName("vehiculo_asignado") val vehiculoAsignado: String? = null
+    @SerialName("vehiculo_asignado") val vehiculoAsignado: String? = null,
+    @SerialName("avatar_url") val avatarUrl: String? = null
 )

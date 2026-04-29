@@ -3,33 +3,21 @@ package ifp.tfg_grua_app
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import ifp.tfg_grua_app.databinding.ActivityPerfilBinding
+import io.github.jan.supabase.postgrest.from
+import kotlinx.coroutines.launch
 
 class PerfilActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPerfilBinding
-
-    // Selector de imagen del galería: cuando el usuario elige una foto,
-    // la mostramos en el ImageView y guardamos su URI para la próxima vez
-    private val pickImageLauncher = registerForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { uri ->
-        if (uri != null) {
-            binding.ivPerfil.setImageURI(uri)
-
-            getSharedPreferences("perfil", MODE_PRIVATE)
-                .edit()
-                .putString("imagen_uri", uri.toString())
-                .apply()
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +32,7 @@ class PerfilActivity : AppCompatActivity() {
         }
 
         cargarDatosUsuario()
-        cargarImagenGuardada()
+        cargarImagenDesdeSupabase()
         configurarEventos()
     }
 
@@ -70,12 +58,25 @@ class PerfilActivity : AppCompatActivity() {
     }
 
     // Si el usuario eligió una foto en una sesión anterior, la cargamos
-    private fun cargarImagenGuardada() {
-        val uriString = getSharedPreferences("perfil", MODE_PRIVATE)
-            .getString("imagen_uri", null)
+    private fun cargarImagenDesdeSupabase() {
+        val numeroEmpleado = SesionUsuario.getNumEmpleado(this) ?: return
 
-        if (uriString != null) {
-            binding.ivPerfil.setImageURI(Uri.parse(uriString))
+        lifecycleScope.launch {
+            val usuario = SupabaseClient.client
+                .from("usuarios")
+                .select {
+                    filter {
+                        eq("num_empleado", numeroEmpleado)
+                    }
+                }
+                .decodeSingle<Usuario>()
+
+            Glide.with(this@PerfilActivity)
+                .load(usuario.avatarUrl)
+                .placeholder(R.drawable.avatar_circulo)
+                .error(R.drawable.avatar_circulo)
+                .circleCrop()
+                .into(binding.ivPerfil)
         }
     }
 
@@ -84,9 +85,8 @@ class PerfilActivity : AppCompatActivity() {
             ChangeActivity(this, MenuActivity::class.java)
         }
 
-        // Tocar la foto abre la galería para cambiarla
         binding.ivPerfil.setOnClickListener {
-            pickImageLauncher.launch("image/*")
+            Toast.makeText(this, "La foto viene desde Supabase", Toast.LENGTH_SHORT).show()
         }
     }
 
