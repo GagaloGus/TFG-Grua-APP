@@ -18,6 +18,7 @@ export class Login {
   email = "";
   password = ""
   error = signal("");
+  recordarSesion = false;
   validatingLogin = signal(false);
   data = signal<Usuario[]>([]);
 
@@ -26,16 +27,16 @@ export class Login {
     private router: Router) { }
 
   async login() {
+    this.error.set('')
     this.validatingLogin.set(true)
-    let sucess = await this.authService.login(this.email, this.password)
+    const result = await this.authService.login(this.email, this.password)
 
-    if (sucess == '') {
-      console.log("Valido")
+    if (result == '') {
       this.router.navigate(['/home'])
     }
     else {
-      console.log(sucess)
-      this.error.set(sucess)
+      console.log(result)
+      this.error.set(result)
     }
     this.validatingLogin.set(false)
   }

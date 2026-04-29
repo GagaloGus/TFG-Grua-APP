@@ -346,10 +346,10 @@
                             <p class="top-name obs-cell">{{ u.email }}</p>
                             <div class="top-bar-track">
                                 <div class="top-bar-fill"
-                                    [style.width.%]="((u.serv_completados_total) / maxServCompletados()) * 100"></div>
+                                    [style.width.%]="((u.get_serv_completados_total(this.servicios()).length) / maxServCompletados()) * 100"></div>
                             </div>
                         </div>
-                        <span class="top-num">{{ u.serv_completados_total }}</span>
+                        <span class="top-num">{{ u.get_serv_completados_total(this.servicios()).length }}</span>
                     </div>
                     }
                     <div (click)="redirigir('usuarios')" class="top-row fw-semibold small mt-2">

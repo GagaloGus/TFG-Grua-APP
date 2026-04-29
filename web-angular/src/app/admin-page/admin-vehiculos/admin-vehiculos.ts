@@ -16,21 +16,21 @@ export class AdminVehiculos implements OnInit {
 
   // ── Signals
   finishedLoading = signal(false);
-  vehiculos       = signal<Vehiculo[]>([]);
-  usuarios        = signal<Usuario[]>([]);
-  errorMsg        = signal('');
-  successMsg      = signal('');
-  modalErrorMsg   = signal('');
+  vehiculos = signal<Vehiculo[]>([]);
+  usuarios = signal<Usuario[]>([]);
+  errorMsg = signal('');
+  successMsg = signal('');
+  modalErrorMsg = signal('');
 
   // ── Local
   showConfirmacion = false;
-  showFormModal    = false;
+  showFormModal = false;
   showAsignarTrabajador = false;
-  modoEdicion   = false;
+  modoEdicion = false;
   selected: Vehiculo | null = null;
   formData = Vehiculo.empty();
 
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(private supabaseService: SupabaseService) { }
 
   private recargaIntervalo: ReturnType<typeof setInterval> | null = null;
 
@@ -40,19 +40,19 @@ export class AdminVehiculos implements OnInit {
     this.recargaIntervalo = setInterval(() => this.cargarSegundoPlano(), 10000);
   }
 
-  ngOnDestroy(){
-    if(this.recargaIntervalo)
+  ngOnDestroy() {
+    if (this.recargaIntervalo)
       clearInterval(this.recargaIntervalo)
   }
 
-  async cargarTodo(){
+  async cargarTodo() {
     this.finishedLoading.set(false);
     await this.cargarVehiculos()
     await this.cargarUsuarios()
     this.finishedLoading.set(true);
   }
 
-  async cargarSegundoPlano(){
+  async cargarSegundoPlano() {
     await this.cargarUsuarios()
     await this.cargarVehiculos()
   }
@@ -84,7 +84,7 @@ export class AdminVehiculos implements OnInit {
     return u ?? []
   }
 
-    // ── Ordenar
+  // ── Ordenar
   sortCol = signal<string | null>(null);
   sortAsc = signal(true);
 
@@ -98,10 +98,11 @@ export class AdminVehiculos implements OnInit {
   }
 
   // ── Filtrado
-  searchQuery   = signal('');
-  filtroDisp    = signal('');
+  searchQuery = signal('');
+  filtroDisp = signal('');
 
   vehiculosFiltrados = computed(() => {
+    console.log(this.filtroDisp())
     const q = this.searchQuery().toLowerCase().trim();
     const disp = this.filtroDisp();
 
@@ -198,20 +199,6 @@ export class AdminVehiculos implements OnInit {
   }
 
   async confirmarAsignar() {
-    /*if (this.formData.num_empleado == null) {
-      this.modalErrorMsg.set('Para guardar debes asignar algún trabajador');
-      return;
-    }
-    try {
-      await this.supabaseService.update(
-        Tablas.VEHICULOS, 'id', this.formData.id.toString(),
-        { num_empleado: this.formData.num_empleado }
-      );
-      await this.cargarVehiculos();
-      this.successMsg.set('Trabajador asignado correctamente');
-    } catch (err: any) {
-      this.modalErrorMsg.set(`Error al asignar: ${err.message}`);
-    }*/
     this.cerrarAsignar();
   }
 

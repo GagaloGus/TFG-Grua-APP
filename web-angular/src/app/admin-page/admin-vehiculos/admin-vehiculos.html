@@ -24,7 +24,7 @@
             <input class="form-control search-input" type="text" placeholder="Buscar por matrícula, marca o zona..."
                 [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" />
         </div>
-        <select class="form-select estado-select" [value]="filtroDisp()" (input)="searchQuery.set($any($event.target).value)">
+        <select class="form-select estado-select" [value]="filtroDisp()" (change)="filtroDisp.set($any($event.target).value)">
             <option value="">Todos</option>
             <option value="disponible">Disponible</option>
             <option value="no-disponible">No disponible</option>
@@ -107,24 +107,34 @@
                         <th class="th-sortable" (click)="toggleSort('id')" [class.th-active]="sortCol()==='id'">
                             ID <span class="sort-icon">{{ sortCol()==='id' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
                         </th>
-                        <th class="th-sortable" (click)="toggleSort('matricula')" [class.th-active]="sortCol()==='matricula'">
-                            Matricula <span class="sort-icon">{{ sortCol()==='matricula' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
+                        <th class="th-sortable" (click)="toggleSort('matricula')"
+                            [class.th-active]="sortCol()==='matricula'">
+                            Matricula <span class="sort-icon">{{ sortCol()==='matricula' ? (sortAsc() ? '▲' : '▼') : '↕'
+                                }}</span>
                         </th>
                         <th class="th-sortable" (click)="toggleSort('marca')" [class.th-active]="sortCol()==='marca'">
-                            Marca <span class="sort-icon">{{ sortCol()==='marca' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
+                            Marca <span class="sort-icon">{{ sortCol()==='marca' ? (sortAsc() ? '▲' : '▼') : '↕'
+                                }}</span>
                         </th>
-                        <th class="th-sortable" (click)="toggleSort('zona_trabajo')" [class.th-active]="sortCol()==='zona_trabajo'">
-                            Zona trabajo <span class="sort-icon">{{ sortCol()==='zona_trabajo' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
+                        <th class="th-sortable" (click)="toggleSort('zona_trabajo')"
+                            [class.th-active]="sortCol()==='zona_trabajo'">
+                            Zona trabajo <span class="sort-icon">{{ sortCol()==='zona_trabajo' ? (sortAsc() ? '▲' : '▼')
+                                : '↕' }}</span>
                         </th>
                         <th>Trabajadores asignados</th>
-                        <th class="th-sortable" (click)="toggleSort('disponible')" [class.th-active]="sortCol()==='disponible'">
-                            Disponible <span class="sort-icon">{{ sortCol()==='disponible' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
+                        <th class="th-sortable" (click)="toggleSort('disponible')"
+                            [class.th-active]="sortCol()==='disponible'">
+                            Disponible <span class="sort-icon">{{ sortCol()==='disponible' ? (sortAsc() ? '▲' : '▼') :
+                                '↕' }}</span>
                         </th>
                         <th class="th-sortable" (click)="toggleSort('activo')" [class.th-active]="sortCol()==='activo'">
-                            Activo <span class="sort-icon">{{ sortCol()==='activo' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
+                            Activo <span class="sort-icon">{{ sortCol()==='activo' ? (sortAsc() ? '▲' : '▼') : '↕'
+                                }}</span>
                         </th>
-                        <th class="th-sortable" (click)="toggleSort('litro_combustible_km')" [class.th-active]="sortCol()==='litro_combustible_km'">
-                            L/KM Combustible <span class="sort-icon">{{ sortCol()==='litro_combustible_km' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
+                        <th class="th-sortable" (click)="toggleSort('litro_combustible_km')"
+                            [class.th-active]="sortCol()==='litro_combustible_km'">
+                            L/KM Combustible <span class="sort-icon">{{ sortCol()==='litro_combustible_km' ? (sortAsc()
+                                ? '▲' : '▼') : '↕' }}</span>
                         </th>
                         <th class="text-center">Acciones</th>
                     </tr>
@@ -278,7 +288,8 @@
                 @if (modalErrorMsg() !== '') {
                 <p class="text-danger mt-2">{{ modalErrorMsg() }}</p>
                 }
-                <p class="mt-2 text-secondary">Para asignar trabajadores a vehiculos se hace desde la pestaña <a class="text-primary fw-bold" routerLink="/admin/usuarios">Usuarios</a></p>
+                <p class="mt-2 text-secondary">Para asignar trabajadores a vehiculos se hace desde la pestaña <a
+                        class="text-primary fw-bold" routerLink="/admin/usuarios">Usuarios</a></p>
             </div>
             <div class="modal-footer border-0 gap-2">
                 <button class="btn btn-outline-secondary px-4" (click)="cerrarForm()">Cancelar</button>

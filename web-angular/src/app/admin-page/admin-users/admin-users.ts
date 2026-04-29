@@ -3,8 +3,9 @@ import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase.service';
-import { CarnetsConducir, Tablas, Usuario, Vehiculo } from '../../services/tablas.supabase';
+import { CarnetsConducir, Servicio, Tablas, Usuario, Vehiculo } from '../../services/tablas.supabase';
 import { AuthService } from '@services/auth-service/auth-service';
+import { PATH_DEFAULT_AVATAR } from '@services/global/global.service';
 
 @Component({
   selector: 'app-admin-users',
@@ -19,6 +20,7 @@ export class AdminUsers implements OnInit, OnDestroy {
   // ── Signals
   vistaTabla = signal(true)
   finishedLoading = signal(false);
+  servicios = signal<Servicio[]>([]);
   usuarios = signal<Usuario[]>([]);
   vehiculos = signal<Vehiculo[]>([]);
   errorMsg = signal('');
@@ -40,7 +42,7 @@ export class AdminUsers implements OnInit, OnDestroy {
     { value: 'U', label: 'Usuario' },
     { value: 'T', label: 'Trabajador' },
   ];
-  filtrosRol = new Set<string>();
+  filtrosRol = signal<Set<string>>(new Set())
   dropdownRolAbierto = false;
 
   // ── Filtros por disponibilidad
@@ -49,7 +51,7 @@ export class AdminUsers implements OnInit, OnDestroy {
     { value: 'En servicio', label: 'En servicio' },
     { value: 'Inactivo', label: 'Inactivo' },
   ];
-  filtrosDisp = new Set<string>();
+  filtrosDisp = signal<Set<string>>(new Set())
   dropdownDispAbierto = false;
 
   // Avatar
@@ -57,7 +59,7 @@ export class AdminUsers implements OnInit, OnDestroy {
   imagenPreview = signal<string | null>(null);
   modalimagen = signal(false);
   cargandoImagen = signal(false);
-  avatar_path = "/img/pfp_default.jpg"
+  avatar_path = PATH_DEFAULT_AVATAR
 
   // Recargar
   private recargaIntervalo: ReturnType<typeof setInterval> | null = null;
@@ -90,10 +92,12 @@ export class AdminUsers implements OnInit, OnDestroy {
     this.finishedLoading.set(false);
     await this.cargarUsuarios()
     await this.cargarVehiculos()
+    await this.cargarServicios()
     this.finishedLoading.set(true);
   }
 
   async cargarSegundoPlano() {
+    await this.cargarServicios()
     await this.cargarUsuarios()
     await this.cargarVehiculos()
 
@@ -118,6 +122,15 @@ export class AdminUsers implements OnInit, OnDestroy {
       console.error('Error al cargar vehiculos:', err.message);
     }
   }
+
+    async cargarServicios() {
+    this.errorMsg.set('');
+    try {
+      const data = await this.supabaseService.getAll(Tablas.SERVICIOS);
+      this.servicios.set(data.map((u: any) => new Servicio(u)));
+    } catch (err: any) { this.errorMsg.set('Error al cargar servicios: ' + err.message); }
+  }
+
 
   // ── Obtener el vehiculo del usuario
   get_vehiculoUsuario(u: Usuario): string {
@@ -153,11 +166,11 @@ export class AdminUsers implements OnInit, OnDestroy {
 
       // Filtro por rol (si no hay ninguno marcado, pasan todos)
       const matchRol =
-        this.filtrosRol.size === 0 || this.filtrosRol.has(u.rol);
+        this.filtrosRol().size === 0 || this.filtrosRol().has(u.rol);
 
       // Filtro por disponibilidad
       const matchDisp =
-        this.filtrosDisp.size === 0 || this.filtrosDisp.has(u.disponibilidad);
+        this.filtrosDisp().size === 0 || this.filtrosDisp().has(u.disponibilidad);
 
       return matchTexto && matchRol && matchDisp;
     }).sort((a, b) => b.id - a.id)
@@ -178,7 +191,7 @@ export class AdminUsers implements OnInit, OnDestroy {
   });
 
   hayFiltrosActivos(): boolean {
-    return this.filtrosRol.size > 0 || this.filtrosDisp.size > 0 || this.searchQuery().trim() !== '';
+    return this.filtrosRol().size > 0 || this.filtrosDisp().size > 0 || this.searchQuery().trim() !== '';
   }
 
   // ── Dropdown Rol
@@ -188,16 +201,16 @@ export class AdminUsers implements OnInit, OnDestroy {
   }
 
   toggleFiltroRol(value: string) {
-    if (this.filtrosRol.has(value)) {
-      this.filtrosRol.delete(value);
+    if (this.filtrosRol().has(value)) {
+      this.filtrosRol().delete(value);
     } else {
-      this.filtrosRol.add(value);
+      this.filtrosRol().add(value);
     }
-    this.filtrosRol = new Set(this.filtrosRol); // fuerza deteccion de cambio
+    this.filtrosRol.set(new Set(this.filtrosRol())); // fuerza deteccion de cambio
   }
 
   limpiarRol() {
-    this.filtrosRol = new Set();
+    this.filtrosRol.set(new Set())
   }
 
   // ── Dropdown Disponibilidad
@@ -207,21 +220,21 @@ export class AdminUsers implements OnInit, OnDestroy {
   }
 
   toggleFiltroDisp(value: string) {
-    if (this.filtrosDisp.has(value)) {
-      this.filtrosDisp.delete(value);
+    if (this.filtrosDisp().has(value)) {
+      this.filtrosDisp().delete(value);
     } else {
-      this.filtrosDisp.add(value);
+      this.filtrosDisp().add(value);
     }
-    this.filtrosDisp = new Set(this.filtrosDisp);
+    this.filtrosDisp.set(new Set(this.filtrosDisp()));
   }
 
   limpiarDisp() {
-    this.filtrosDisp = new Set();
+    this.filtrosDisp.set(new Set());
   }
 
   limpiarTodo() {
-    this.filtrosRol = new Set();
-    this.filtrosDisp = new Set();
+    this.limpiarDisp()
+    this.limpiarRol()
     this.searchQuery.set('');
   }
 
@@ -264,7 +277,7 @@ export class AdminUsers implements OnInit, OnDestroy {
   abrirEditar(u: Usuario) {
     this.formData = new Usuario({ ...u });
     this.modalErrorMsg.set('');
-    this.avatar_path = this.formData.avatar_url ?? "/img/pfp_default.jpg"
+    this.avatar_path = this.formData.avatar_url ?? PATH_DEFAULT_AVATAR
     this.showEditModal = true;
 
   }

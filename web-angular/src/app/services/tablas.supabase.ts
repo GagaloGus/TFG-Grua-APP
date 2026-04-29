@@ -4,21 +4,21 @@ export enum Tablas {
   SERVICIOS = 'servicios'
 }
 
-export enum Roles{
+export enum Roles {
   A = 'ADMIN',
   T = 'Trabajador',
   U = 'Usuario',
   N = 'Sin rol'
 }
 
-export enum Disponibilidad{
+export enum Disponibilidad {
   DISPONIBLE = 'Disponible',
   EN_SERVICIO = 'En servicio',
   OCUPADO = 'Ocupado',
   INACTIVO = 'Inactivo',
 }
 
-export enum Estado{
+export enum Estado {
   SIN_EMPEZAR = 'Sin empezar',
   EN_CURSO = 'En curso',
   TERMINADO = 'Terminado',
@@ -109,7 +109,7 @@ export class Servicio {
     return map[this.estado] ?? '';
   }
 
-  get recogidoClass():string{
+  get recogidoClass(): string {
     return this.vehiculo_recogido ? 'badge-estado-terminado' : 'badge-estado-borrado'
   }
 
@@ -121,7 +121,7 @@ export class Servicio {
     return `${this.ubicacion_destino_lat.toFixed(4)}, ${this.ubicacion_destino_lng.toFixed(4)}`
   }
 
-  get distancia_real(){
+  get distancia_real() {
     return this.calcularDistanciaTierra(this.ubicacion_recogida_lat, this.ubicacion_recogida_lng, this.ubicacion_destino_lat, this.ubicacion_destino_lng)
   }
 
@@ -152,8 +152,6 @@ export class Usuario {
   password!: string;
   rol!: string;
   disponibilidad!: Disponibilidad;
-  serv_completados_total: number = 0;
-  serv_completados_hoy: number = 0;
   licencia_conducir: string[] = [];
   telefono!: string | null;
   email!: string | null;
@@ -167,12 +165,12 @@ export class Usuario {
     return new Usuario({});
   }
 
-  get apellidos(): string|null{
-    const res = `${this.apellido1??""} ${this.apellido2??""}`.trim()
+  get apellidos(): string | null {
+    const res = `${this.apellido1 ?? ""} ${this.apellido2 ?? ""}`.trim()
     return res == "" ? null : res
   }
 
-  get nombreCompleto(): string|null {
+  get nombreCompleto(): string | null {
     const res = `${this.nombre ?? ""} ${this.apellido1 ?? ""} ${this.apellido2 ?? ""}`.trim();
     return res == "" ? null : res
   }
@@ -189,13 +187,13 @@ export class Usuario {
   }
 
 
-get rolNombre(): string {
-  if (Object.keys(Roles).includes(this.rol)) {
-    return (Roles as any)[this.rol];
+  get rolNombre(): string {
+    if (Object.keys(Roles).includes(this.rol)) {
+      return (Roles as any)[this.rol];
+    }
+    console.log(`Rol indefinido (${this.id}): ${this.rol}`)
+    return `Rol indefinido`;
   }
-  console.log(`Rol indefinido (${this.id}): ${this.rol}`)
-  return `Rol indefinido`;
-}
 
   get rolCSSClass(): string {
     if (this.rol == "N") return "badge-estado-grey"
@@ -203,5 +201,24 @@ get rolNombre(): string {
     else if (this.rol == "U") return "badge-estado-blue"
     else if (this.rol == "T") return "badge-estado-red"
     return "badge-estado"
+  }
+
+  get_serv_completados_total(servicios:Servicio[]): Servicio[]{
+    return servicios.filter(s => s.num_empleado == this.num_empleado && s.estado == Estado.TERMINADO)
+  }
+  get_serv_completados_hoy(servicios:Servicio[]): Servicio[]{
+    const hoy = new Date();
+    const serv_total = this.get_serv_completados_total(servicios)
+    let result = serv_total.filter(s =>{
+      const fecha = new Date(s.fecha);
+      const esHoy = (
+        fecha.getFullYear() === hoy.getFullYear() &&
+        fecha.getMonth() === hoy.getMonth() &&
+        fecha.getDate() === hoy.getDate()
+      );
+      return esHoy
+    })
+
+    return result
   }
 }

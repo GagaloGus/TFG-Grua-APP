@@ -15,44 +15,44 @@ export class AdminDashboard {
 
   // ── SIGNALS ──────────────────────────────────────────────────────────────────
   finishedLoading = signal(false);
-  servicios       = signal<Servicio[]>([]);
-  vehiculos       = signal<Vehiculo[]>([]);
-  usuarios        = signal<Usuario[]>([]);
-  successMsg      = signal('');
-  errorMsg        = signal('');
-  modalErrorMsg   = signal('');
+  servicios = signal<Servicio[]>([]);
+  vehiculos = signal<Vehiculo[]>([]);
+  usuarios = signal<Usuario[]>([]);
+  successMsg = signal('');
+  errorMsg = signal('');
+  modalErrorMsg = signal('');
 
   // ── KPIs ──────────────────────────────────────────────────────────────────────
-  contarTrabajActivos        = computed(() => this.usuarios().filter(u => u.disponibilidad == Disponibilidad.EN_SERVICIO).length);
-  contarServiciosActivos     = computed(() => this.servicios().filter(s => s.estado == Estado.EN_CURSO).length);
+  contarTrabajActivos = computed(() => this.usuarios().filter(u => u.disponibilidad == Disponibilidad.EN_SERVICIO).length);
+  contarServiciosActivos = computed(() => this.servicios().filter(s => s.estado == Estado.EN_CURSO).length);
   contarServiciosCompletados = computed(() => this.servicios().filter(s => s.estado == Estado.TERMINADO).length);
   contarVehiculosDisponibles = computed(() => this.vehiculos().filter(v => v.disponible).length);
-  totalServicios             = computed(() => this.servicios().length);
+  totalServicios = computed(() => this.servicios().length);
   serviciosHoy = computed(() => {
     const hoy = new Date();
     return this.servicios().filter(s => {
       if (!s.fecha) return false;
       const dateServ = new Date(s.fecha);
-      return dateServ.getDate()     === hoy.getDate()     &&
-             dateServ.getMonth()    === hoy.getMonth()    &&
-             dateServ.getFullYear() === hoy.getFullYear();
+      return dateServ.getDate() === hoy.getDate() &&
+        dateServ.getMonth() === hoy.getMonth() &&
+        dateServ.getFullYear() === hoy.getFullYear();
     });
   });
 
   // ── DONUT ─────────────────────────────────────────────────────────────────────
   donutSegmentosServicios = computed(() => {
     const counts = [
-      { value: this.serviciosHoy().filter(s => s.estado === 'En curso' && s.fecha).length,    color: '#3b82f6', label: 'En curso' },
-      { value: this.serviciosHoy().filter(s => s.estado === 'Terminado').length,   color: '#10b981', label: 'Terminado' },
+      { value: this.serviciosHoy().filter(s => s.estado === 'En curso' && s.fecha).length, color: '#3b82f6', label: 'En curso' },
+      { value: this.serviciosHoy().filter(s => s.estado === 'Terminado').length, color: '#10b981', label: 'Terminado' },
       { value: this.serviciosHoy().filter(s => s.estado === 'Sin empezar').length, color: '#f59e0b', label: 'Sin empezar' },
-      { value: this.serviciosHoy().filter(s => s.estado === 'Cancelado').length,   color: '#9ca3af', label: 'Cancelado' },
+      { value: this.serviciosHoy().filter(s => s.estado === 'Cancelado').length, color: '#9ca3af', label: 'Cancelado' },
     ];
     const total = counts.reduce((s, c) => s + c.value, 0) || 1;
     const circ = 2 * Math.PI * 60;
     let offset = 0;
     return counts.map(seg => {
       const dash = (seg.value / total) * circ;
-      const gap  = circ - dash;
+      const gap = circ - dash;
       const result = { ...seg, dash, gap, offset, pct: Math.round((seg.value / total) * 100) };
       offset += dash;
       return result;
@@ -63,25 +63,25 @@ export class AdminDashboard {
   disponibilidadTrabajadores = computed(() => {
     const disponible = this.usuarios().filter(u => u.disponibilidad === 'Disponible').length;
     const enServicio = this.usuarios().filter(u => u.disponibilidad === 'En servicio').length;
-    const inactivo   = this.usuarios().filter(u => u.disponibilidad === 'Inactivo').length;
+    const inactivo = this.usuarios().filter(u => u.disponibilidad === 'Inactivo').length;
     const max = Math.max(disponible, enServicio, inactivo, 1);
     return [
-      { label: 'Disponible',  count: disponible, pct: (disponible / max) * 100, color: '#10b981' },
-      { label: 'En servicio', count: enServicio,  pct: (enServicio  / max) * 100, color: '#3b82f6' },
-      { label: 'Inactivo',    count: inactivo,    pct: (inactivo    / max) * 100, color: '#9ca3af' },
+      { label: 'Disponible', count: disponible, pct: (disponible / max) * 100, color: '#10b981' },
+      { label: 'En servicio', count: enServicio, pct: (enServicio / max) * 100, color: '#3b82f6' },
+      { label: 'Inactivo', count: inactivo, pct: (inactivo / max) * 100, color: '#9ca3af' },
     ];
   });
 
   // ── BARRAS VEHÍCULOS ──────────────────────────────────────────────────────────
   disponibilidadVehiculos = computed(() => {
     const disponible = this.vehiculos().filter(v => v.disponible && v.activo).length;
-    const ocupada    = this.vehiculos().filter(v => !v.disponible && v.activo).length;
-    const inactiva   = this.vehiculos().filter(v => !v.activo).length;
+    const ocupada = this.vehiculos().filter(v => !v.disponible && v.activo).length;
+    const inactiva = this.vehiculos().filter(v => !v.activo).length;
     const max = Math.max(disponible, ocupada, inactiva, 1);
     return [
       { label: 'Disponible', count: disponible, pct: (disponible / max) * 100, color: '#10b981' },
-      { label: 'Ocupada',    count: ocupada,    pct: (ocupada    / max) * 100, color: '#f59e0b' },
-      { label: 'Inactiva',   count: inactiva,   pct: (inactiva   / max) * 100, color: '#9ca3af' },
+      { label: 'Ocupada', count: ocupada, pct: (ocupada / max) * 100, color: '#f59e0b' },
+      { label: 'Inactiva', count: inactiva, pct: (inactiva / max) * 100, color: '#9ca3af' },
     ];
   });
 
@@ -149,14 +149,14 @@ export class AdminDashboard {
 
 
   lineChartSvg = computed(() => {
-    const dias  = this.lineChartDias();
+    const dias = this.lineChartDias();
     const W = 420, H = 140, padX = 8, padTop = 10, padBot = 24;
     const innerH = H - padTop - padBot;
 
     const maxY = Math.max(...dias.flatMap(d => [d.ingresos, d.gastos]), 1);
-    const xStep  = (W - padX * 2) / (dias.length - 1);
-    const xOf    = (i: number) => padX + i * xStep;
-    const yOf    = (v: number) => padTop + innerH - (v / maxY) * innerH;
+    const xStep = (W - padX * 2) / (dias.length - 1);
+    const xOf = (i: number) => padX + i * xStep;
+    const yOf = (v: number) => padTop + innerH - (v / maxY) * innerH;
 
     const polyline = (key: 'ingresos' | 'gastos') =>
       dias.map((d, i) => `${xOf(i).toFixed(1)},${yOf(d[key]).toFixed(1)}`).join(' ');
@@ -174,7 +174,7 @@ export class AdminDashboard {
 
     // etiquetas Y (3 niveles)
     const yLabels = [0, 0.5, 1].map(f => ({
-      y:     yOf(maxY * f).toFixed(1),
+      y: yOf(maxY * f).toFixed(1),
       label: Math.round(maxY * f) + '€',
     }));
 
@@ -193,15 +193,15 @@ export class AdminDashboard {
   });
 
   // ── COSTOS TOTALES ────────────────────────────────────────────────────────────
-  totalIngresos = computed(() =>{
+  totalIngresos = computed(() => {
     let data = this.lineChartDias().reduce((s, x) => s + (x.ingresos ?? 0), 0)
-    return Math.round(data*100)/100
+    return Math.round(data * 100) / 100
   });
-  totalGastos   = computed(() => {
+  totalGastos = computed(() => {
     let data = this.lineChartDias().reduce((s, x) => s + (x.gastos ?? 0), 0)
-    return Math.round(data*100)/100
+    return Math.round(data * 100) / 100
   });
-  totalBeneficios = computed(() => Math.round((this.totalIngresos() - this.totalGastos())*100)/100);
+  totalBeneficios = computed(() => Math.round((this.totalIngresos() - this.totalGastos()) * 100) / 100);
 
   // ── TABLA & RANKING ───────────────────────────────────────────────────────────
   ultimosServicios = computed(() =>
@@ -211,12 +211,12 @@ export class AdminDashboard {
   topTrabajadores = computed(() =>
     [...this.usuarios()]
       .filter(u => u.rol == "T")
-      .sort((a, b) => (b.serv_completados_total ?? 0) - (a.serv_completados_total ?? 0))
+      .sort((a, b) => (b.get_serv_completados_total(this.servicios()).length) - (a.get_serv_completados_total(this.servicios()).length))
       .slice(0, 6)
   );
 
   maxServCompletados = computed(() =>
-    Math.max(...this.topTrabajadores().map(u => u.serv_completados_total ?? 0), 1)
+    Math.max(...this.topTrabajadores().map(u => u.get_serv_completados_total(this.servicios()).length ?? 0), 1)
   );
 
   // ── HELPERS ───────────────────────────────────────────────────────────────────
@@ -230,8 +230,8 @@ export class AdminDashboard {
     this.recargaIntervalo = setInterval(() => this.cargarSegundoPlano(), 10000);
   }
 
-  ngOnDestroy(){
-    if(this.recargaIntervalo)
+  ngOnDestroy() {
+    if (this.recargaIntervalo)
       clearInterval(this.recargaIntervalo)
   }
 

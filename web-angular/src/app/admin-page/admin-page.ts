@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet, RouterLinkWithHref, Router } from '@angular/router';
 import { AuthService } from '../services/auth-service/auth-service';
+import { PATH_DEFAULT_AVATAR } from '@services/global/global.service';
 
 @Component({
   selector: 'app-admin-page',
@@ -10,7 +11,9 @@ import { AuthService } from '../services/auth-service/auth-service';
 })
 export class AdminPage {
 
-    constructor(private authService:AuthService, private router: Router,){}
+    constructor(private authService:AuthService, private router: Router){}
+
+    PATH_DEFAULT_AVATAR = PATH_DEFAULT_AVATAR
 
     isLoggedIn(): boolean {
       return this.authService.isLoggedIn()
@@ -33,7 +36,7 @@ export class AdminPage {
     get nombre(){
       return this.authService.nombre
     }
-    
+
     get apellido1(){
       return this.authService.apellido1
     }

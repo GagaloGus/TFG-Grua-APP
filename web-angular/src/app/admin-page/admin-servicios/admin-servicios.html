@@ -24,12 +24,12 @@
             <input class="form-control search-input" type="text" placeholder="Buscar por ID, cliente u observaciones..."
                 [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)" />
         </div>
-        <select class="form-select estado-select" [value]="filtroEstado()" (input)="searchQuery.set($any($event.target).value)" >
+        <select class="form-select estado-select" [value]="filtroEstado()" (change)="filtroEstado.set($any($event.target).value)" >
             <option value="">Todos los estados</option>
             <option value="Sin empezar">Sin empezar</option>
             <option value="En curso">En curso</option>
             <option value="Terminado">Terminado</option>
-            <option value="Cancelado">Cancelado</option>
+            <option value='Cancelado'>Cancelado</option>
         </select>
         <button class="btn btn-outline-secondary btn-sm d-flex align-items-center" (click)="cargarSegundoPlano()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"

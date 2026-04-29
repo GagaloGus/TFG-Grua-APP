@@ -21,7 +21,6 @@ export class Home {
   }
 
   logout() {
-    console.log("bai")
     this.authService.logout()
   }
 

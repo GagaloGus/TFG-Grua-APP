@@ -75,7 +75,7 @@
                     } @else if(isLoggedIn()) {
                     <span>{{ nombre?.charAt(0) }}{{ apellido1?.charAt(0) }}</span>
                     } @else {
-                    <img src="/img/pfp_default.jpg" alt="foto">
+                    <img [src]="PATH_DEFAULT_AVATAR" alt="foto">
                     }
                 </figure>
             </div>
@@ -142,7 +142,7 @@
                     } @else if(isLoggedIn()) {
                     <span>{{ nombre?.charAt(0) }}{{ apellido1?.charAt(0) }}</span>
                     } @else {
-                    <img src="/img/pfp_default.jpg" alt="foto">
+                    <img [src]="PATH_DEFAULT_AVATAR" alt="foto">
                     }
                 </figure>
                 <button (click)="logout()" title="Cerrar Sesion" class="nav-button btn btn-sm btn-outline-danger">

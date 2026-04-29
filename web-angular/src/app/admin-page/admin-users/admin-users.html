@@ -35,8 +35,8 @@
                         d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
                 </svg>
                 Rol
-                @if (filtrosRol.size > 0) {
-                <p class="filtro-badge">{{ filtrosRol.size }}</p>
+                @if (filtrosRol().size > 0) {
+                <p class="filtro-badge">{{ filtrosRol().size }}</p>
                 } @else {
                 <svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor" class="chevron">
                     <path
@@ -47,13 +47,13 @@
             <div class="filtro-menu">
                 @for (opcion of opcionesRol; track opcion.value) {
                 <label class="filtro-opcion">
-                    <input type="checkbox" [checked]="filtrosRol.has(opcion.value)"
+                    <input type="checkbox" [checked]="filtrosRol().has(opcion.value)"
                         (change)="toggleFiltroRol(opcion.value)" />
                     <p class="filtro-check"></p>
                     {{ opcion.label }}
                 </label>
                 }
-                @if (filtrosRol.size > 0) {
+                @if (filtrosRol().size > 0) {
                 <button class="filtro-limpiar" (click)="limpiarRol()">Limpiar</button>
                 }
             </div>
@@ -67,8 +67,8 @@
                     <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0" />
                 </svg>
                 Disponibilidad
-                @if (filtrosDisp.size > 0) {
-                <span class="filtro-badge">{{ filtrosDisp.size }}</span>
+                @if (filtrosDisp().size > 0) {
+                <span class="filtro-badge">{{ filtrosDisp().size }}</span>
                 } @else {
                 <svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor" class="chevron">
                     <path
@@ -79,13 +79,13 @@
             <div class="filtro-menu">
                 @for (opcion of opcionesDisp; track opcion.value) {
                 <label class="filtro-opcion">
-                    <input type="checkbox" [checked]="filtrosDisp.has(opcion.value)"
+                    <input type="checkbox" [checked]="filtrosDisp().has(opcion.value)"
                         (change)="toggleFiltroDisp(opcion.value)" />
                     <span class="filtro-check"></span>
                     {{ opcion.label }}
                 </label>
                 }
-                @if (filtrosDisp.size > 0) {
+                @if (filtrosDisp().size > 0) {
                 <button class="filtro-limpiar" (click)="limpiarDisp()">Limpiar</button>
                 }
             </div>
@@ -125,7 +125,8 @@
         </p>
 
         <!-- toggle vistas -->
-        <button class="btn btn-sm" [ngClass]="(vistaTabla() ? 'btn-outline-primary' : 'btn-outline-dark')" (click)="vistaTabla.set(!vistaTabla())">
+        <button class="btn btn-sm" [ngClass]="(vistaTabla() ? 'btn-outline-primary' : 'btn-outline-dark')"
+            (click)="vistaTabla.set(!vistaTabla())">
             {{vistaTabla() ? 'Cambiar a vista card':'Cambiar a vista tabla'}}
         </button>
     </div>
@@ -154,187 +155,191 @@
     </div>
     }
     @else {
-        @if (vistaTabla()) {
-        <div class="table-wrapper">
-            <div class="table-responsive">
-                <table class="table tabla-datos mb-0">
-                    <thead>
-                        <th class="th-sortable" (click)="toggleSort('num_empleado')" [class.th-active]="sortCol()==='num_empleado'">
-                            Nº EMP <span class="sort-icon">{{ sortCol()==='num_empleado' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
-                        </th>
-                        <th class="th-sortable" (click)="toggleSort('nombre')" [class.th-active]="sortCol()==='nombre'">
-                            Nombre <span class="sort-icon">{{ sortCol()==='nombre' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
-                        </th>
-                        <th>Apellidos</th>
-                        <th class="th-sortable" (click)="toggleSort('rol')" [class.th-active]="sortCol()==='rol'">
-                            Rol <span class="sort-icon">{{ sortCol()==='rol' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
-                        </th>
-                        <th class="th-sortable" (click)="toggleSort('disponibilidad')" [class.th-active]="sortCol()==='disponibilidad'">
-                            Disponible <span class="sort-icon">{{ sortCol()==='disponibilidad' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
-                        </th>
-                        <th class="th-sortable" (click)="toggleSort('email')" [class.th-active]="sortCol()==='email'">
-                            Email <span class="sort-icon">{{ sortCol()==='email' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
-                        </th>
-                        <th class="th-sortable" (click)="toggleSort('telefono')" [class.th-active]="sortCol()==='telefono'">
-                            Telefono <span class="sort-icon">{{ sortCol()==='telefono' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
-                        </th>
-                        <th class="th-sortable" (click)="toggleSort('vehiculo_asignado')" [class.th-active]="sortCol()==='vehiculo_asignado'">
-                            Vehiculo asignado <span class="sort-icon">{{ sortCol()==='vehiculo_asignado' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
-                        </th>
-                        <th class="text-center">Acciones</th>
-                    </thead>
-                    <tbody>
-                        @for (u of usuariosFiltrados(); track u.id){
-                        <tr>
-                            <td><span class="coordenadas">EMP-{{u.num_empleado}}</span></td>
-                            <td>{{u.nombre}}</td>
-                            <td>{{u.apellidos??'—'}}</td>
-                            <td>
-                                <div [ngClass]="u.rolCSSClass">
-                                    <p>{{u.rolNombre}}</p>
-                                </div>
-                            </td>
-                            <td>
-                                <div [ngClass]="u.disponibilidadCSSClass">
-                                    <p>{{u.disponibilidad}}</p>
-                                </div>
-                            </td>
-                            <td>{{u.email??'—'}}</td>
-                            <td>{{u.telefono??'—'}}</td>
-                            <td>{{u.vehiculo_asignado??'—'}}</td>
-                            <td class="btn-accion-col">
-                                <button class="btn btn-sm btn-accion-white" (click)="abrirDetalles(u)" title="Ver detalles">
-                                    <svg width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"
-                                        fill="currentColor">
-                                        <path
-                                            d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
-                                        <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
+    @if (vistaTabla()) {
+    <div class="table-wrapper">
+        <div class="table-responsive">
+            <table class="table tabla-datos mb-0">
+                <thead>
+                    <th class="th-sortable" (click)="toggleSort('num_empleado')"
+                        [class.th-active]="sortCol()==='num_empleado'">
+                        Nº EMP <span class="sort-icon">{{ sortCol()==='num_empleado' ? (sortAsc() ? '▲' : '▼') : '↕'
+                            }}</span>
+                    </th>
+                    <th class="th-sortable" (click)="toggleSort('nombre')" [class.th-active]="sortCol()==='nombre'">
+                        Nombre <span class="sort-icon">{{ sortCol()==='nombre' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
+                    </th>
+                    <th>Apellidos</th>
+                    <th class="th-sortable" (click)="toggleSort('rol')" [class.th-active]="sortCol()==='rol'">
+                        Rol <span class="sort-icon">{{ sortCol()==='rol' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
+                    </th>
+                    <th class="th-sortable" (click)="toggleSort('disponibilidad')"
+                        [class.th-active]="sortCol()==='disponibilidad'">
+                        Disponible <span class="sort-icon">{{ sortCol()==='disponibilidad' ? (sortAsc() ? '▲' : '▼') :
+                            '↕' }}</span>
+                    </th>
+                    <th class="th-sortable" (click)="toggleSort('email')" [class.th-active]="sortCol()==='email'">
+                        Email <span class="sort-icon">{{ sortCol()==='email' ? (sortAsc() ? '▲' : '▼') : '↕' }}</span>
+                    </th>
+                    <th class="th-sortable" (click)="toggleSort('telefono')" [class.th-active]="sortCol()==='telefono'">
+                        Telefono <span class="sort-icon">{{ sortCol()==='telefono' ? (sortAsc() ? '▲' : '▼') : '↕'
+                            }}</span>
+                    </th>
+                    <th class="th-sortable" (click)="toggleSort('vehiculo_asignado')"
+                        [class.th-active]="sortCol()==='vehiculo_asignado'">
+                        Vehiculo asignado <span class="sort-icon">{{ sortCol()==='vehiculo_asignado' ? (sortAsc() ? '▲'
+                            : '▼') : '↕' }}</span>
+                    </th>
+                    <th class="text-center">Acciones</th>
+                </thead>
+                <tbody>
+                    @for (u of usuariosFiltrados(); track u.id){
+                    <tr>
+                        <td><span class="coordenadas">EMP-{{u.num_empleado}}</span></td>
+                        <td>{{u.nombre}}</td>
+                        <td>{{u.apellidos??'—'}}</td>
+                        <td>
+                            <div [ngClass]="u.rolCSSClass">
+                                <p>{{u.rolNombre}}</p>
+                            </div>
+                        </td>
+                        <td>
+                            <div [ngClass]="u.disponibilidadCSSClass">
+                                <p>{{u.disponibilidad}}</p>
+                            </div>
+                        </td>
+                        <td>{{u.email??'—'}}</td>
+                        <td>{{u.telefono??'—'}}</td>
+                        <td>{{u.vehiculo_asignado??'—'}}</td>
+                        <td class="btn-accion-col">
+                            <button class="btn btn-sm btn-accion-white" (click)="abrirDetalles(u)" title="Ver detalles">
+                                <svg width="16px" height="16px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                                    fill="none">
+                                    <path d="M9 4.45962C9.91153 4.16968 10.9104 4 12 4C16.1819 4 19.028 6.49956 20.7251 8.70433C21.575 9.80853 22 10.3606 22 12C22 13.6394 21.575 14.1915 20.7251 15.2957C19.028 17.5004 16.1819 20 12 20C7.81811 20 4.97196 17.5004 3.27489 15.2957C2.42496 14.1915 2 13.6394 2 12C2 10.3606 2.42496 9.80853 3.27489 8.70433C3.75612 8.07914 4.32973 7.43025 5 6.82137" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                                            <path d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z" stroke="currentColor" stroke-width="1.5"/>
                                     </svg>
-                                </button>
-                                <button class="btn btn-sm btn-accion-edit" (click)="abrirEditar(u)" title="Editar">
-                                    <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
-                                        <path
-                                            d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" />
-                                    </svg>
-                                </button>
-                                <button class="btn btn-sm btn-accion-delete" (click)="abrirEliminar(u)" title="Eliminar">
-                                    <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
-                                        <path
-                                            d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                                        <path
-                                            d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                                    </svg>
-                                </button>
-                            </td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        }
-        @else {
-            <section class="d-flex flex-wrap gap-3 p-3 bg-dark rounded overflow-hidden">
-                @for (u of usuariosFiltrados(); track u.id) {
-                <div class="flex-grow-1">
-                    <div class="card h-100 p-4">
-                        <div class="card-title d-flex gap-3">
-                            <figure class="user-pfp">
-                                @if (u.avatar_url) {
-                                <img [src]="u.avatar_url" [alt]="u.nombreCompleto">
-                                } @else {
-                                <span>{{ u.nombre.charAt(0) }}{{ u.apellido1.charAt(0) }}</span>
-                                }
-                            </figure>
-                            <div class="user-name">
-                                <h4 class="m-0 mb-1 text-wrap">{{ u.nombreCompleto }}</h4>
-                                <p class="text-secondary">EMP-{{ u.num_empleado }}</p>
-                            </div>
-                        </div>
-                        <div class="d-flex flex-wrap mt-1">
-                            <div class="align-self-start" [ngClass]="u.disponibilidadCSSClass">
-                                <p>{{ u.disponibilidad }}</p>
-                            </div>
-                            <div class="align-self-start ms-3" [ngClass]="u.rolCSSClass">
-                                <p>{{ u.rolNombre }}</p>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="d-flex align-items-center mb-2">
-                                <svg class="text-secondary me-2" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-                                </svg>
-                                <p>{{ u.email }}</p>
-                            </div>
-                            <div class="d-flex align-items-center mb-2">
-                                <svg class="text-secondary me-2" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            </button>
+                            <button class="btn btn-sm btn-accion-edit" (click)="abrirEditar(u)" title="Editar">
+                                <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
                                     <path
-                                        d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
-                                    </path>
+                                        d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" />
                                 </svg>
-                                <p>{{ u.telefono }}</p>
-                            </div>
-                            @if(get_vehiculoUsuario(u) != ""){
+                            </button>
+                            <button class="btn btn-sm btn-accion-delete" (click)="abrirEliminar(u)" title="Eliminar">
+                                <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+                                    <path
+                                        d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                    <path
+                                        d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-                            <div class="d-flex flex-wrap align-items-center mb-2">
-                                <svg class="text-secondary me-2" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
-                                    <path d="M15 18H9"></path>
-                                    <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14">
-                                    </path>
-                                    <circle cx="17" cy="18" r="2"></circle>
-                                    <circle cx="7" cy="18" r="2"></circle>
-                                </svg>
-                                <p>{{ get_vehiculoUsuario(u) }}</p>
-                            </div>
+    }
+    @else {
+    <section class="row row-cols-1 row-cols-lg-3 row-cols-xl-5 bg-dark rounded overflow-hidden">
+        @for (u of usuariosFiltrados(); track u.id) {
+        <div class="col p-3">
+            <div class="h-100 card d-flex flex-column justify-content-between ">
+                <div class="card-body p-3">
+                    <div class="card-title d-flex gap-3 w-100">
+                        <figure class="user-pfp">
+                            @if (u.avatar_url) {
+                            <img [src]="u.avatar_url" [alt]="u.nombreCompleto">
+                            } @else {
+                            <span>{{ u.nombre.charAt(0) }}{{ u.apellido1.charAt(0) }}</span>
                             }
-                            <hr>
-                            <div class="d-flex text-center">
-                                <div class="w-50">
-                                    <h2 class="fw-bold text-primary">{{ u.serv_completados_total }}</h2>
-                                    <p>Completados</p>
-                                </div>
-                                <div class="vr"></div>
-                                <div class="w-50">
-                                    <h2 class="fw-bold text-dark">{{ u.serv_completados_hoy }}</h2>
-                                    <p>Hoy</p>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="d-flex gap-2 mt-2 align-items-center justify-content-end">
-                                <button class="btn btn-sm btn-accion-white w-fit px-4 py-2" (click)="abrirDetalles(u)" title="Ver detalles">
-                                    <svg width="14" height="14" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-                                        <path
-                                            d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
-                                        <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
-                                    </svg>
-                                </button>
-                                <button class="btn btn-sm btn-accion-edit w-fit px-4 py-2 " (click)="abrirEditar(u)" title="Editar">
-                                    <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" class="me-1">
-                                        <path
-                                            d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" />
-                                    </svg>
-                                </button>
-                                <button class="btn btn-sm btn-accion-delete w-fit px-4 py-2" (click)="abrirEliminar(u)" title="Eliminar">
-                                    <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" class="me-1">
-                                        <path
-                                            d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                                        <path
-                                            d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                                    </svg>
-                                </button>
-                            </div>
+                        </figure>
+                        <div class="user-name">
+                            <h4 class="m-0 mb-1 text-wrap">{{ u.nombreCompleto }}</h4>
+                            <p class="text-secondary">EMP-{{ u.num_empleado }}</p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-wrap mt-3">
+                        <div class="align-self-start" [ngClass]="u.disponibilidadCSSClass">
+                            <p>{{ u.disponibilidad }}</p>
+                        </div>
+                        <div class="align-self-start ms-3" [ngClass]="u.rolCSSClass">
+                            <p>{{ u.rolNombre }}</p>
+                        </div>
+                    </div>
+                    <div class="w-100 p-0 py-3 align-items-center ">
+
+                        <div class="row g-2">
+                            <svg class="text-secondary col-2 px-1" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                            </svg>
+                            <p class="col-10">{{ u.email }}</p>
+
+                            <svg class="text-secondary col-2 px-1" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path
+                                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                                </path>
+                            </svg>
+                            <p class="col-10">{{ u.telefono }}</p>
+
+                            @if(get_vehiculoUsuario(u) != ""){
+                            <svg class="text-secondary col-2 px-1" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
+                                <path d="M15 18H9"></path>
+                                <path
+                                    d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14">
+                                </path>
+                                <circle cx="17" cy="18" r="2"></circle>
+                                <circle cx="7" cy="18" r="2"></circle>
+                            </svg>
+                            <p class="col-10">{{ get_vehiculoUsuario(u) }}</p>
+                            }
                         </div>
                     </div>
                 </div>
-                }
-            </section>
+                <div class="card-footer align-self-baseline w-100">
+                    <div class="d-flex flex-wrap gap-2 mt-2 align-items-center justify-content-center">
+                        <button class="btn btn-sm btn-accion-white w-fit px-4 py-2" (click)="abrirDetalles(u)"
+                            title="Ver detalles">
+                            <svg width="14" height="14" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor">
+                                <path
+                                    d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
+                                <path
+                                    d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
+                            </svg>
+                        </button>
+                        <button class="btn btn-sm btn-accion-edit w-fit px-4 py-2 " (click)="abrirEditar(u)"
+                            title="Editar">
+                            <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" class="me-1">
+                                <path
+                                    d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" />
+                            </svg>
+                        </button>
+                        <button class="btn btn-sm btn-accion-delete w-fit px-4 py-2" (click)="abrirEliminar(u)"
+                            title="Eliminar">
+                            <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" class="me-1">
+                                <path
+                                    d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                <path
+                                    d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
         }
+    </section>
+    }
     }
 
     <!-- Confirmacion eliminar -->
@@ -364,31 +369,73 @@
             (click)="$event.stopPropagation()">
             <div class="modal-content modal-custom">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold">Editar usuario — {{ formData.nombreCompleto }}</h5>
+                    <h5 class="modal-title fw-bold">Editar usuario <span
+                            class="text-primary">EMP-{{formData.num_empleado}}</span> — {{ formData.nombreCompleto }}
+                    </h5>
                     <button type="button" class="btn-close" (click)="cerrarEditar()"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row g-3">
-                        <!-- Nombre -->
+                        <!-- Informacion -->
                         <div class="row">
-                            <div class="col-8">
-                                <div class="w-100">
-                                    <label class="form-label fw-medium">Nombre</label>
-                                    <input class="form-control" type="text" [(ngModel)]="formData.nombre" placeholder="Nombre">
-                                </div>
-                                <div class="d-lg-flex gap-3 mt-2">
-                                    <div class="flex-grow-1">
-                                        <label class="form-label fw-medium">Primer apellido</label>
-                                        <input class="form-control" type="text" [(ngModel)]="formData.apellido1" placeholder="Apellido 1">
-                                    </div>
-                                    <div class="flex-grow-1 mt-2 mt-lg-0">
-                                        <label class="form-label fw-medium">Segundo apellido</label>
-                                        <input class="form-control" type="text" [(ngModel)]="formData.apellido2" placeholder="Apellido 2">
-                                    </div>
-                                </div>
+                            <div class="col-9 px-0">
+                                <div class="row row-cols-2 px-0">
+                                    <!-- Nombre y apelidos -->
+                                    <section class="d-flex flex-column gap-3">
+                                        <div>
+                                            <label class="form-label fw-semibold">Nombre</label>
+                                            <input class="form-control" type="text" [(ngModel)]="formData.nombre"
+                                                placeholder="Nombre">
+                                        </div>
+                                        <div>
+                                            <label class="form-label fw-semibold">Primer apellido</label>
+                                            <input class="form-control" type="text" [(ngModel)]="formData.apellido1"
+                                                placeholder="Apellido 1">
+                                        </div>
+                                        <div>
+                                            <label class="form-label fw-semibold">Segundo apellido</label>
+                                            <input class="form-control" type="text" [(ngModel)]="formData.apellido2"
+                                                placeholder="Apellido 2">
+                                        </div>
+                                    </section>
+                                    <!-- Contraseña y contacto -->
+                                    <section class="d-flex flex-column gap-3">
+                                        <div>
+                                            <label class="form-label fw-semibold">Contraseña</label>
+                                            <div class="d-flex gap-2">
+                                                <input class="form-control flex-grow-1"
+                                                    [type]="mostrarPassword() && selected?.rol == 'A' ? 'text': 'password'"
+                                                    [disabled]="selected?.rol != 'A'" placeholder="••••••••"
+                                                    [(ngModel)]="formData.password">
+                                                <button class="btn btn-sm btn-outline-dark" title="Mostrar contraseña"
+                                                    type="button" (click)="mostrarPassword.update(v => !v)">
+                                                    <svg width="16px" height="16px" viewBox="0 0 16 16"
+                                                        xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                                                        <path
+                                                            d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
+                                                        <path
+                                                            d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="form-label fw-semibold">Email</label>
+                                            <input class="form-control" type="email" [(ngModel)]="formData.email"
+                                                placeholder="email@ejemplo.com">
+                                        </div>
+                                        <div>
+                                            <label class="form-label fw-semibold">Teléfono</label>
+                                            <input class="form-control" type="tel" [(ngModel)]="formData.telefono"
+                                                placeholder="+34 600 000 000">
+                                        </div>
+                                    </section>
 
+                                </div>
                             </div>
-                            <div class="col-4 mt-2 mt-lg-0 d-flex flex-column justify-content-center" (click)="fileInput.click()">
+                            <!-- Avatar -->
+                            <div class="col-3 mt-2 mt-lg-0 d-flex flex-column justify-content-center"
+                                (click)="fileInput.click()">
                                 <label class="w-100 text-center">Foto de Perfil</label>
                                 <figure class="user-pfp user-pfp--edit mt-2 mx-auto">
                                     <img src="{{avatar_path}}" alt="">
@@ -399,28 +446,15 @@
                                         </svg>
                                     </span>
                                 </figure>
-                                <input #fileInput class="d-none" type="file" accept="image/*" (change)="onArchivoSeleccionado($event)">
-                            </div>
-                        </div>
-
-                        <!-- Contacto -->
-                        <div class="d-flex gap-3">
-                            <div class="flex-grow-1">
-                                <label class="form-label fw-medium">Email</label>
-                                <input class="form-control" type="email" [(ngModel)]="formData.email"
-                                    placeholder="email@ejemplo.com">
-                            </div>
-                            <div class="flex-grow-1">
-                                <label class="form-label fw-medium">Teléfono</label>
-                                <input class="form-control" type="tel" [(ngModel)]="formData.telefono"
-                                    placeholder="+34 600 000 000">
+                                <input #fileInput class="d-none" type="file" accept="image/*"
+                                    (change)="onArchivoSeleccionado($event)">
                             </div>
                         </div>
 
                         <!-- Rol, disponibilidad y vehiculo -->
                         <div class="d-flex gap-3">
                             <div class="flex-grow-1">
-                                <label class="form-label fw-medium">Disponibilidad</label>
+                                <label class="form-label fw-semibold">Disponibilidad</label>
                                 <select class="form-select" [(ngModel)]="formData.disponibilidad">
                                     <option disabled>Seleccione un estado</option>
                                     <option value="Disponible">Disponible</option>
@@ -429,7 +463,7 @@
                                 </select>
                             </div>
                             <div class="flex-grow-1">
-                                <label class="form-label fw-medium">Rol</label>
+                                <label class="form-label fw-semibold">Rol</label>
                                 @if(rol_actual == "A"){
                                 <select class="form-select" [(ngModel)]="formData.rol">
                                     <option value="N" disabled>Sin rol</option>
@@ -445,7 +479,7 @@
                             </div>
                             @if(formData.rol == "T"){
                             <div class="flex-grow-1">
-                                <label class="form-label fw-medium">Grua Asignada</label>
+                                <label class="form-label fw-semibold">Grua Asignada</label>
                                 <select class="form-select" type="text" [(ngModel)]="formData.vehiculo_asignado">
                                     <option [value]="null" disabled>Seleccione una grua</option>
                                     @for (v of vehiculos(); track v.matricula){
@@ -458,7 +492,7 @@
 
                         <!-- Licencias -->
                         <div>
-                            <label class="form-label fw-medium">Licencias de conducir</label>
+                            <label class="form-label fw-semibold">Licencias de conducir</label>
                             <div class="d-flex flex-wrap gap-4 p-2">
                                 @for (lic of opcionesLicencia; track lic) {
                                 <div class=" form-check form-switch">
@@ -473,116 +507,146 @@
                             </div>
                         </div>
 
+                        @if (modalErrorMsg() !== '') {
+                        <p class="text-danger mt-3 mb-0">{{ modalErrorMsg() }}</p>
+                        }
                     </div>
-
-                    @if (modalErrorMsg() !== '') {
-                    <p class="text-danger mt-3 mb-0">{{ modalErrorMsg() }}</p>
-                    }
-                </div>
-                <div class="modal-footer border-0 gap-2">
-                    <button class="btn btn-outline-secondary px-4" (click)="cerrarEditar()">Cancelar</button>
-                    <button class="btn btn-primary px-4" (click)="guardarUsuario()">Guardar cambios</button>
+                    <div class="modal-footer border-0 gap-2">
+                        <button class="btn btn-outline-secondary px-4" (click)="cerrarEditar()">Cancelar</button>
+                        <button class="btn btn-primary px-4" (click)="guardarUsuario()">Guardar cambios</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     }
 
+    <!-- ===== MODAL DETALLES USUARIO ===== -->
     @if (showDetailsModal) {
     <div class="tabla-detalles modal d-block modal-overlay" (click)="cerrarDetalles()">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable"
             (click)="$event.stopPropagation()">
             <div class="modal-content modal-custom">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold">Detalles de usuario — EMP-{{selected?.num_empleado}} {{ selected?.nombreCompleto }}</h5>
+                    <h5 class="modal-title fw-bold">Detalles de usuario <span
+                            class="text-primary">EMP-{{selected?.num_empleado}}</span> — {{ selected?.nombreCompleto }}
+                    </h5>
                     <button type="button" class="btn-close" (click)="cerrarDetalles()"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row g-3">
-                        <!-- Nombre -->
-                        <div class="row">
-                            <div class="col-8">
-                                <div class="row p-0">
-                                    <div class="col-12 col-lg-6 mb-3">
-                                        <label class="form-label">Nombre</label>
-                                        <p>{{selected?.nombre?? '—'}}</p>
-                                    </div>
-                                    <div class="col-12 col-lg-6 mb-3">
-                                        <label class="form-label">Contraseña</label>
-                                        <div class="d-flex">
-                                            <p class="flex-grow-1">{{mostrarPassword() ? (selected?.password?? '—'): '••••••••'}}</p>
-                                            <button class="btn btn-sm btn-outline-dark" title="Mostrar contraseña" type="button" (click)="mostrarPassword.update(v => !v)">
-                                                <svg width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-                                                    <path
-                                                        d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
-                                                    <path
-                                                        d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-lg-6 mb-3">
-                                        <label class="form-label">Primer apellido</label>
-                                        <p>{{selected?.apellido1 ?? '—'}}</p>
-                                    </div>
-                                    <div class="col-12 col-lg-6 mb-3">
-                                        <label class="form-label">Segundo apellido</label>
-                                        <p>{{selected?.apellido2 ?? '—'}}</p>
-                                    </div>
-                                </div>
 
+                        <!-- Informacion -->
+                        <div class="row">
+                            <div class="col-9 px-0">
+                                <div class="row row-cols-2 px-0">
+                                    <!-- Nombre y apellidos -->
+                                    <section class="d-flex flex-column gap-3">
+                                        <div>
+                                            <label class="form-label fw-semibold">Nombre</label>
+                                            <p>{{ selected?.nombre ?? '—' }}</p>
+                                        </div>
+                                        <div>
+                                            <label class="form-label fw-semibold">Primer apellido</label>
+                                            <p>{{ selected?.apellido1 ?? '—' }}</p>
+                                        </div>
+                                        <div>
+                                            <label class="form-label fw-semibold">Segundo apellido</label>
+                                            <p>{{ selected?.apellido2 ?? '—' }}</p>
+                                        </div>
+                                    </section>
+                                    <!-- Contraseña y contacto -->
+                                    <section class="d-flex flex-column gap-3">
+                                        <div>
+                                            <label class="form-label fw-semibold">Contraseña</label>
+                                            <div class="d-flex gap-2">
+                                                <p class="flex-grow-1">{{ mostrarPassword() ? (selected?.password ?? '—') : '••••••••' }}</p>
+                                                <button class="btn btn-sm btn-outline-dark" title="Mostrar contraseña"
+                                                    type="button" (click)="mostrarPassword.update(v => !v)">
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                                        @if (mostrarPassword()){
+                                                            <path d="M2.68936 6.70456C2.52619 6.32384 2.08528 6.14747 1.70456 6.31064C1.32384 6.47381 1.14747 6.91472 1.31064 7.29544L2.68936 6.70456ZM15.5872 13.3287L15.3125 12.6308L15.5872 13.3287ZM9.04145 13.7377C9.26736 13.3906 9.16904 12.926 8.82185 12.7001C8.47466 12.4742 8.01008 12.5725 7.78417 12.9197L9.04145 13.7377ZM6.37136 15.091C6.14545 15.4381 6.24377 15.9027 6.59096 16.1286C6.93815 16.3545 7.40273 16.2562 7.62864 15.909L6.37136 15.091ZM22.6894 7.29544C22.8525 6.91472 22.6762 6.47381 22.2954 6.31064C21.9147 6.14747 21.4738 6.32384 21.3106 6.70456L22.6894 7.29544ZM19 11.1288L18.4867 10.582V10.582L19 11.1288ZM19.9697 13.1592C20.2626 13.4521 20.7374 13.4521 21.0303 13.1592C21.3232 12.8663 21.3232 12.3914 21.0303 12.0985L19.9697 13.1592ZM11.25 16.5C11.25 16.9142 11.5858 17.25 12 17.25C12.4142 17.25 12.75 16.9142 12.75 16.5H11.25ZM16.3714
+                                                            15.909C16.5973 16.2562 17.0619 16.3545 17.409 16.1286C17.7562 15.9027 17.8545 15.4381 17.6286 15.091L16.3714 15.909ZM5.53033 11.6592C5.82322 11.3663 5.82322 10.8914 5.53033 10.5985C5.23744 10.3056 4.76256 10.3056 4.46967 10.5985L5.53033 11.6592ZM2.96967 12.0985C2.67678 12.3914 2.67678 12.8663 2.96967 13.1592C3.26256 13.4521 3.73744 13.4521 4.03033 13.1592L2.96967 12.0985ZM12 13.25C8.77611 13.25 6.46133 11.6446 4.9246 9.98966C4.15645 9.16243 3.59325 8.33284 3.22259 7.71014C3.03769 7.3995 2.90187 7.14232 2.8134 6.96537C2.76919 6.87696 2.73689 6.80875 2.71627 6.76411C2.70597 6.7418 2.69859 6.7254 2.69411 6.71533C2.69187 6.7103 2.69036 6.70684 2.68957 6.70503C2.68917 6.70413 2.68896 6.70363 2.68892 6.70355C2.68891 6.70351 2.68893 6.70357 2.68901 6.70374C2.68904 6.70382 2.68913 6.70403 2.68915 6.70407C2.68925 6.7043 2.68936 6.70456 2 7C1.31064
+                                                            7.29544 1.31077 7.29575 1.31092 7.29609C1.31098 7.29624 1.31114 7.2966 1.31127 7.2969C1.31152 7.29749 1.31183 7.2982 1.31218 7.299C1.31287 7.30062 1.31376 7.30266 1.31483 7.30512C1.31698 7.31003 1.31988 7.31662 1.32353 7.32483C1.33083 7.34125 1.34115 7.36415 1.35453 7.39311C1.38127 7.45102 1.42026 7.5332 1.47176 7.63619C1.57469 7.84206 1.72794 8.13175 1.93366 8.47736C2.34425 9.16716 2.96855 10.0876 3.8254 11.0103C5.53867 12.8554 8.22389 14.75 12 14.75V13.25ZM15.3125 12.6308C14.3421 13.0128 13.2417 13.25 12 13.25V14.75C13.4382 14.75 14.7246 14.4742 15.8619 14.0266L15.3125 12.6308ZM7.78417 12.9197L6.37136 15.091L7.62864 15.909L9.04145 13.7377L7.78417 12.9197ZM22 7C21.3106 6.70456 21.3107 6.70441 21.3108 6.70427C21.3108 6.70423 21.3108 6.7041 21.3109 6.70402C21.3109 6.70388 21.311 6.70376 21.311 6.70368C21.3111 6.70352 21.3111 6.70349 21.3111
+                                                            6.7036C21.311 6.7038 21.3107 6.70452 21.3101 6.70576C21.309 6.70823 21.307 6.71275 21.3041 6.71924C21.2983 6.73223 21.2889 6.75309 21.2758 6.78125C21.2495 6.83757 21.2086 6.92295 21.1526 7.03267C21.0406 7.25227 20.869 7.56831 20.6354 7.9432C20.1669 8.69516 19.4563 9.67197 18.4867 10.582L19.5133 11.6757C20.6023 10.6535 21.3917 9.56587 21.9085 8.73646C22.1676 8.32068 22.36 7.9668 22.4889 7.71415C22.5533 7.58775 22.602 7.48643 22.6353 7.41507C22.6519 7.37939 22.6647 7.35118 22.6737 7.33104C22.6782 7.32097 22.6818 7.31292 22.6844 7.30696C22.6857 7.30398 22.6867 7.30153 22.6876 7.2996C22.688 7.29864 22.6883 7.29781 22.6886 7.29712C22.6888 7.29677 22.6889 7.29646 22.689 7.29618C22.6891 7.29604 22.6892 7.29585 22.6892 7.29578C22.6893 7.29561 22.6894 7.29544 22 7ZM18.4867 10.582C17.6277 11.3882 16.5739 12.1343 15.3125 12.6308L15.8619 14.0266C17.3355
+                                                            13.4466 18.5466 12.583 19.5133 11.6757L18.4867 10.582ZM18.4697 11.6592L19.9697 13.1592L21.0303 12.0985L19.5303 10.5985L18.4697 11.6592ZM11.25 14V16.5H12.75V14H11.25ZM14.9586 13.7377L16.3714 15.909L17.6286 15.091L16.2158 12.9197L14.9586 13.7377ZM4.46967 10.5985L2.96967 12.0985L4.03033 13.1592L5.53033 11.6592L4.46967 10.5985Z" fill="currentColor"/>
+                                                        }
+                                                        @else {
+                                                            <path d="M9 4.45962C9.91153 4.16968 10.9104 4 12 4C16.1819 4 19.028 6.49956 20.7251 8.70433C21.575 9.80853 22 10.3606 22 12C22 13.6394 21.575 14.1915 20.7251 15.2957C19.028 17.5004 16.1819 20 12 20C7.81811 20 4.97196 17.5004 3.27489 15.2957C2.42496 14.1915 2 13.6394 2 12C2 10.3606 2.42496 9.80853 3.27489 8.70433C3.75612 8.07914 4.32973 7.43025 5 6.82137" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                                            <path d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z" stroke="currentColor" stroke-width="1.5"/>
+                                                        }
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="form-label fw-semibold">Email</label>
+                                            <p>{{ selected?.email ?? '—' }}</p>
+                                        </div>
+                                        <div>
+                                            <label class="form-label fw-semibold">Teléfono</label>
+                                            <p>{{ selected?.telefono ?? '—' }}</p>
+                                        </div>
+                                    </section>
+                                </div>
                             </div>
-                            <div class="col-4 mt-2 mt-lg-0 d-flex flex-column justify-content-center">
+                            <!-- Avatar -->
+                            <div class="col-3 mt-2 mt-lg-0 d-flex flex-column justify-content-center">
                                 <label class="w-100 text-center">Foto de Perfil</label>
                                 <figure class="user-pfp mt-2 mx-auto">
                                     <img src="{{avatar_path}}" alt="">
                                 </figure>
                             </div>
                         </div>
-
-                        <!-- Contacto -->
-                        <div class="d-flex gap-3">
-                            <div class="flex-grow-1">
-                                <label class="form-label">Email</label>
-                                <p>{{selected?.email ?? '—'}}</p>
-                            </div>
-                            <div class="flex-grow-1">
-                                <label class="form-label">Teléfono</label>
-                                <p>{{selected?.telefono ?? '—'}}</p>
-                            </div>
-                        </div>
-
+                        <hr>
                         <!-- Rol, disponibilidad y vehiculo -->
-                        <div class="d-flex gap-3">
+                        <div class="d-flex gap-3 mt-0 mb-4">
                             <div class="flex-grow-1">
-                                <label class="form-label">Disponibilidad</label>
-                                <p>{{selected?.disponibilidad}}</p>
+                                <label class="form-label fw-semibold">Disponibilidad</label>
+                                <br>
+                                <div [ngClass]="selected?.disponibilidadCSSClass">
+                                    <p>{{selected?.disponibilidad}}</p>
+                                </div>
                             </div>
                             <div class="flex-grow-1">
-                                <label class="form-label">Rol</label>
-                                <p>{{selected?.rolNombre}}</p>
+                                <label class="form-label fw-semibold">Rol</label>
+                                <br>
+                                <div [ngClass]="selected?.rolCSSClass">
+                                    <p>{{selected?.rolNombre}}</p>
+                                </div>
                             </div>
-                            @if(formData.rol == "T"){
+                            @if(selected?.rol == "T"){
                             <div class="flex-grow-1">
-                                <label class="form-label">Grua Asignada</label>
-                                <p>{{selected?.vehiculo_asignado ?? '—'}}</p>
+                                <label class="form-label fw-semibold">Grua Asignada</label>
+                                <p>{{ selected?.vehiculo_asignado ?? '—' }}</p>
                             </div>
                             }
                         </div>
+                        <!-- Licencias y servicios -->
+                        <div class="row px-2">
+                            @if(selected?.rol == 'T'){
+                            <div class="col-4 ps-0 pe-4">
+                                <label class=" form-label fw-semibold">Servicios Completados</label>
+                                <p>{{selected?.get_serv_completados_total(servicios())?.length}}</p>
+                                <hr class="my-2">
+                                <label class=" form-label fw-semibold">Servicios Completados Hoy</label>
+                                <p>{{selected?.get_serv_completados_hoy(servicios())?.length}}</p>
+                            </div>
+                            }
 
-                        <!-- Licencias -->
-                        <div>
-                            <label class="form-label">Licencias de conducir</label>
-                            <div class="d-flex flex-wrap gap-4 p-2">
-                                @for (lic of opcionesLicencia; track lic) {
-                                <div class=" form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" [id]="'lic-' + lic"
-                                        [checked]="selected?.licencia_conducir?.includes(lic)"[disabled]="true">
-                                    <label class="form-check-label" [for]="'lic-' + lic">
-                                        <kbd>{{ lic }}</kbd>
-                                    </label>
+                            <div class="{{ selected?.rol == 'T' ? 'col-8': 'col-12'}}  px-0">
+                                <label class=" form-label fw-semibold">Licencias de conducir</label>
+                                <div class="d-flex flex-wrap gap-4 p-2">
+                                    @for (lic of opcionesLicencia; track lic) {
+                                    <div class=" form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" [id]="'lic-' + lic"
+                                            [checked]="selected?.licencia_conducir?.includes(lic)" [disabled]="true">
+                                        <label class="form-check-label" [for]="'lic-' + lic">
+                                            <kbd>{{ lic }}</kbd>
+                                        </label>
+                                    </div>
+                                    }
                                 </div>
-                                }
                             </div>
                         </div>
                     </div>
@@ -592,7 +656,7 @@
     </div>
     }
 
-        <!-- MODAL IMAGEN -->
+    <!-- MODAL IMAGEN -->
     @if (modalimagen()) {
     <div class="modal d-block modal-overlay">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
@@ -611,7 +675,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" (click)="confirmarImagen()">Confirmar</button>
-                    <button type="button" class="btn btn-outline-secondary" (click)="cerrarModalImagen()">Cancelar</button>
+                    <button type="button" class="btn btn-outline-secondary"
+                        (click)="cerrarModalImagen()">Cancelar</button>
                 </div>
             </div>
         </div>

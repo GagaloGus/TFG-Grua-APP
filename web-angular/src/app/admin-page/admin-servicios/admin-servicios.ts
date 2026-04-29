@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { Roles, Servicio, Tablas, Usuario, Vehiculo } from '../../services/tablas.supabase';
 import { SupabaseService } from '../../services/supabase.service';
 import { MapPickerComponent } from '../../shared/map-picker/map-picker';
+import { PRECIO_LITRO_COMBUSTIBLE } from '@services/global/global.service';
 
 @Component({
   selector: 'app-servicios',
@@ -61,12 +62,12 @@ export class AdminServicios implements OnInit {
   }
 
   async cargarServicios() {
-    this.errorMsg.set('');
     try {
       const data = await this.supabaseService.getAll(Tablas.SERVICIOS);
       this.servicios.set(data.map((u: any) => new Servicio(u)));
     } catch (err: any) {
-      this.errorMsg.set(err.message ?? 'Error al cargar servicios');
+      this.errorMsg.set('Error al cargar servicios');
+      console.error('Error al cargar servicios:', err.message);
     }
   }
 
@@ -75,7 +76,7 @@ export class AdminServicios implements OnInit {
       const data = await this.supabaseService.getAll(Tablas.VEHICULOS);
       this.vehiculos.set(data.map((v: any) => new Vehiculo(v)));
     } catch (err: any) {
-      this.errorMsg.set(err.message ?? 'Error al cargar vehiculos');
+      this.errorMsg.set('Error al cargar vehiculos');
       console.error('Error al cargar vehiculos:', err.message);
     }
   }
@@ -85,7 +86,7 @@ export class AdminServicios implements OnInit {
       const data = await this.supabaseService.getAll(Tablas.USUARIOS);
       this.usuarios.set(data.map((v: any) => new Usuario(v)));
     } catch (err: any) {
-      this.errorMsg.set(err.message ?? 'Error al cargar usuarios');
+      this.errorMsg.set('Error al cargar usuarios');
       console.error('Error al cargar usuarios:', err.message);
     }
   }
@@ -295,7 +296,7 @@ export class AdminServicios implements OnInit {
     }
 
     console.log(this.formData.distancia_real)
-    this.formData.costo = Math.round(this.formData.distancia_real * v.litro_combustible_km * 100)/100
+    this.formData.costo = Math.round(this.formData.distancia_real * v.litro_combustible_km * PRECIO_LITRO_COMBUSTIBLE * 100)/100
   }
 
   validarServicio(): string {

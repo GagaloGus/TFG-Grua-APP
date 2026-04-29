@@ -4,6 +4,7 @@ import { SupabaseService } from '../../services/supabase.service';
 import { CommonModule } from '@angular/common';
 import { CarnetsConducir, Roles, Tablas, Usuario } from '../../services/tablas.supabase';
 import { RouterLink } from "@angular/router";
+import { PATH_DEFAULT_AVATAR } from '@services/global/global.service';
 
 @Component({
   selector: 'app-admin-createuser',
@@ -22,7 +23,10 @@ export class AdminCreateuser {
   password2: string = "";
   tel: string = "";
   mail: string = "";
-  avatar_path: string = "/img/pfp_default.jpg"
+  avatar_path: string = PATH_DEFAULT_AVATAR;
+
+  mostrarPassword = signal(false)
+  mostrarPassword2 = signal(false)
 
   // Rol
   chosenRol = Roles.N
