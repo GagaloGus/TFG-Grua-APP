@@ -125,23 +125,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
-            android:backgroundTint="@color/blue_light"
-            android:text="@string/btnVolver"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/btnCerrarSesion"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
             android:backgroundTint="@color/orange_dark"
-            android:text="@string/btnCerrarSesion"
+            android:text="@string/btnVolver"
             android:textAllCaps="false"
             android:textColor="@color/blue_dark"
             android:textStyle="bold" />
+
+
 
     </LinearLayout>
 

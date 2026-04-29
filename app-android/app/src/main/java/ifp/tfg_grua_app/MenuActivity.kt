@@ -70,10 +70,6 @@ class MenuActivity : AppCompatActivity() {
             txNombre.text = "Hola"
             txInicial.text = ""
         }
-
-        if (!rol.isNullOrEmpty()) {
-            txRol.text = rol
-        }
     }
 
     private fun eventos() {

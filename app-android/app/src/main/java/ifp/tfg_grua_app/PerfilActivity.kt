@@ -3,16 +3,19 @@ package ifp.tfg_grua_app
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
+import io.github.jan.supabase.postgrest.from
+import kotlinx.coroutines.launch
 
 class PerfilActivity : AppCompatActivity() {
 
@@ -22,19 +25,6 @@ class PerfilActivity : AppCompatActivity() {
     private lateinit var tvCorreo: TextView
     private lateinit var btnVolver: Button
     private lateinit var imageViewPerfil: ImageView
-
-    private val pickImageLauncher = registerForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { uri ->
-        uri?.let {
-            imageViewPerfil.setImageURI(it)
-
-            getSharedPreferences("perfil", MODE_PRIVATE)
-                .edit()
-                .putString("imagen_uri", it.toString())
-                .apply()
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +39,7 @@ class PerfilActivity : AppCompatActivity() {
 
         initViews()
         cargarDatosUsuario()
-        cargarImagenGuardada()
+        cargarImagenDesdeSupabase()
         configurarEventos()
     }
 
@@ -74,12 +64,34 @@ class PerfilActivity : AppCompatActivity() {
         tvCorreo.text = correo ?: "-"
     }
 
-    private fun cargarImagenGuardada() {
-        val uriString = getSharedPreferences("perfil", MODE_PRIVATE)
-            .getString("imagen_uri", null)
+    private fun cargarImagenDesdeSupabase() {
+        val numeroEmpleado = SesionUsuario.getNumEmpleado(this) ?: return
 
-        if (uriString != null) {
-            imageViewPerfil.setImageURI(Uri.parse(uriString))
+        lifecycleScope.launch {
+            try {
+                val usuario = SupabaseClient.client
+                    .from("usuarios")
+                    .select {
+                        filter {
+                            eq("num_empleado", numeroEmpleado)
+                        }
+                    }
+                    .decodeSingle<Usuario>()
+
+                Glide.with(this@PerfilActivity)
+                    .load(usuario.avatarUrl)
+                    .placeholder(R.drawable.avatar_circulo)
+                    .error(R.drawable.avatar_circulo)
+                    .circleCrop()
+                    .into(imageViewPerfil)
+
+            } catch (e: Exception) {
+                Toast.makeText(
+                    this@PerfilActivity,
+                    "Error cargando imagen",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 
@@ -89,7 +101,7 @@ class PerfilActivity : AppCompatActivity() {
         }
 
         imageViewPerfil.setOnClickListener {
-            pickImageLauncher.launch("image/*")
+            Toast.makeText(this, "La foto viene desde Supabase", Toast.LENGTH_SHORT).show()
         }
     }
 

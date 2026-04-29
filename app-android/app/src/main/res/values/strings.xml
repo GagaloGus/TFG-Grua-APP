@@ -15,7 +15,7 @@
 
 
     <!-- Menú principal -->
-    <string name="txBienvenido">Bienvenido</string>
+    <string name="txBienvenido">Bienvenido a TowApp Systems</string>
     <string name="txNombre">Hola</string>
     <string name="txRol">Conductor de grúa</string>
     <string name="txInicial">CL</string>
@@ -39,7 +39,7 @@
     <string name="mainVacio">No hay servicios asignados.</string>
     <string name="mainActualizar">Actualizar</string>
     <string name="mainVover">Volver</string>
-    <string name="btnCerrarSesion">Cerrar sesión</string>
+
 
     <!-- Historial -->
     <string name="srTitulo">Servicios realizados</string>

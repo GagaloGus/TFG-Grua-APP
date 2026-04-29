@@ -56,10 +56,6 @@ class MainActivity : AppCompatActivity() {
         val nombre = SesionUsuario.getNombre(this)
         binding.tvTitle.text = if (!nombre.isNullOrBlank()) "Hola, $nombre" else "Hola"
 
-        binding.btnCerrarSesion.setOnClickListener {
-            SesionUsuario.cerrarSesion(this)
-            ChangeActivity(this, Login::class.java)
-        }
 
         binding.btnVolver.setOnClickListener {
             ChangeActivity(this, MenuActivity::class.java)
