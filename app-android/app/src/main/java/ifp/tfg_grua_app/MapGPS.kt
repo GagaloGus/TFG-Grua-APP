@@ -5,12 +5,12 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Looper
 import android.speech.tts.TextToSpeech
@@ -56,6 +56,7 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMapGpsBinding
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var destino: LatLng
+
     private var posicionActual: LatLng? = null
     private var marcadorUsuario: Marker? = null
     private var rutaPolyline: Polyline? = null
@@ -64,10 +65,10 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
     private var fase: String = FASE_RECOGIDA
     private var popupMostrado = false   // Evita que el popup salga más de una vez
 
-    // Voz
+    // Voz (text to speech)
     private var tts: TextToSpeech? = null
     private var ttsListo = false
-    private var ultimaInstruccionDicha: String? = null   // Evita repetir la misma indicación
+    private var ultimaInstruccionDicha: String? = null   // Evita repetir la misma frase
 
     companion object {
         const val API_KEY = "AIzaSyAxLBlpI6vtCy658BaQDMH8Mpmepl6CafM"
@@ -84,33 +85,34 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityMapGpsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Pantalla completa (sin barra de estado)
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
 
-        // Datos recibidos del Intent
+        // Datos que llegan desde MainActivity por Intent
         val lat = intent.getDoubleExtra(EXTRA_LAT, 0.0)
         val lng = intent.getDoubleExtra(EXTRA_LNG, 0.0)
         recogidaID = intent.getIntExtra(EXTRA_ID, -1)
         fase = intent.getStringExtra(EXTRA_FASE) ?: FASE_RECOGIDA
         destino = LatLng(lat, lng)
 
-        // Panel inferior con los datos del viaje
+        // Rellena el panel inferior con los datos del viaje
         val viaje = RecogidasRepo.Recogidas.find { it.id == recogidaID }
-        viaje?.let {
-            binding.tvCliente.text   = "Cliente: ${it.cliente}"
-            binding.tvMatricula.text = "Matrícula: ${it.matricula}"
-            binding.tvMotivo.text    = "Motivo: ${it.motivo}"
-            binding.tvTelefono.text  = "Tel: ${it.telefono}"
+        if (viaje != null) {
+            binding.tvCliente.text = "Cliente: ${viaje.cliente}"
+            binding.tvMatricula.text = "Matrícula: ${viaje.matricula}"
+            binding.tvMotivo.text = "Motivo: ${viaje.motivo}"
+            binding.tvTelefono.text = "Tel: ${viaje.telefono}"
         }
 
-        // GPS + Mapa
+        // Inicializa GPS y carga el mapa
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        // Voz (TTS) en español
+        // Inicializa la voz en español
         tts = TextToSpeech(this) { status ->
             if (status == TextToSpeech.SUCCESS) {
                 tts?.language = Locale("es", "ES")
@@ -118,34 +120,9 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
-        binding.btnSalir.setOnClickListener { ChangeActivity(this, MainActivity::class.java) }
-    }
-
-    // Dice una frase por el altavoz (solo si el TTS ya está listo)
-    private fun hablar(texto: String) {
-        if (ttsListo && texto.isNotBlank()) {
-            tts?.speak(texto, TextToSpeech.QUEUE_FLUSH, null, null)
+        binding.btnSalir.setOnClickListener {
+            ChangeActivity(this, MainActivity::class.java)
         }
-    }
-
-    // Anuncia 'frase' solo si la clave cambió respecto a la última vez.
-    // Se usa para no repetir la misma zona/maniobra en cada tick.
-    private fun anunciar(clave: String, frase: String) {
-        if (clave != ultimaInstruccionDicha) {
-            ultimaInstruccionDicha = clave
-            hablar(frase)
-        }
-    }
-
-    // "Gira a la derecha..." → "gira a la derecha..."
-    // Lo usamos para que "En 200 metros, gira..." suene natural.
-    private fun enMinuscula(s: String): String =
-        if (s.isEmpty()) s else s[0].lowercaseChar() + s.substring(1)
-
-    // 250 → "250 m", 1500 → "1.5 km"
-    private fun formatearDistancia(metros: Int): String = when {
-        metros < 1000 -> "$metros m"
-        else          -> String.format(Locale.US, "%.1f km", metros / 1000.0)
     }
 
     override fun onDestroy() {
@@ -155,59 +132,117 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         tts = null
     }
 
+    // --- Voz (TTS) ----------------------------------------------------------
+    // Lee una frase por el altavoz si la voz ya está lista
+    private fun hablar(texto: String) {
+        if (ttsListo && texto.isNotBlank()) {
+            tts?.speak(texto, TextToSpeech.QUEUE_FLUSH, null, null)
+        }
+    }
+
+    // Solo dice la frase si la clave es nueva (evita repetir cada actualización)
+    private fun anunciar(clave: String, frase: String) {
+        if (clave != ultimaInstruccionDicha) {
+            ultimaInstruccionDicha = clave
+            hablar(frase)
+        }
+    }
+
+    // "Gira a la derecha" → "gira a la derecha"
+    private fun enMinuscula(s: String): String {
+        if (s.isEmpty()) {
+            return s
+        }
+        return s[0].lowercaseChar() + s.substring(1)
+    }
+
+    // 250 → "250 m"  ·  1500 → "1.5 km"
+    private fun formatearDistancia(metros: Int): String {
+        if (metros < 1000) {
+            return "$metros m"
+        }
+        return String.format(Locale.US, "%.1f km", metros / 1000.0)
+    }
+
+    // --- Mapa y GPS ---------------------------------------------------------
+
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        mMap.uiSettings.isMapToolbarEnabled       = false
+        mMap.uiSettings.isMapToolbarEnabled = false
         mMap.uiSettings.isMyLocationButtonEnabled = false
         mMap.isTrafficEnabled = false
 
-        // Click en el mapa mueve al usuario (modo prueba)
+        // Tocar en el mapa mueve al usuario (modo prueba)
         mMap.setOnMapClickListener { punto ->
             posicionActual = punto
             marcadorUsuario?.position = punto
             calcularRuta()
         }
 
-        // Permisos de ubicación
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED) {
+        // Pide permiso de ubicación si aún no está concedido
+        val concedido = ActivityCompat.checkSelfPermission(
+            this, Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (concedido) {
             iniciarGPS()
         } else {
-            ActivityCompat.requestPermissions(this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1001)
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1001
+            )
         }
     }
 
+    // Empieza a recibir actualizaciones del GPS cada segundo o cada 2 metros
     private fun iniciarGPS() {
         val request = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000L)
-            .setMinUpdateDistanceMeters(2f).build()
+            .setMinUpdateDistanceMeters(2f)
+            .build()
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED) return
+        val concedido = ActivityCompat.checkSelfPermission(
+            this, Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+        if (!concedido) {
+            return
+        }
 
         fusedLocationClient.requestLocationUpdates(request, object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
                 val loc = result.lastLocation ?: return
-                posicionActual = LatLng(loc.latitude, loc.longitude)
+                val nueva = LatLng(loc.latitude, loc.longitude)
+                posicionActual = nueva
 
+                // Crea el marcador la primera vez, mueve el existente las siguientes
                 if (marcadorUsuario == null) {
                     marcadorUsuario = mMap.addMarker(
                         MarkerOptions()
-                            .position(posicionActual!!)
+                            .position(nueva)
                             .anchor(0.5f, 0.5f)
                             .flat(true)
                             .icon(crearIconoUsuario())
                     )
                 } else {
-                    marcadorUsuario!!.position = posicionActual!!
+                    marcadorUsuario!!.position = nueva
                 }
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(posicionActual!!, 15f))
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nueva, 15f))
                 calcularRuta()
             }
         }, Looper.getMainLooper())
     }
 
-    // Llama a la API de Google Directions, parsea la respuesta y actualiza la UI
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1001 &&
+            grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
+            iniciarGPS()
+        }
+    }
+
+    // --- Cálculo de la ruta -------------------------------------------------
+
+    // Llama a la API de Directions, parsea el JSON y actualiza la pantalla
     private fun calcularRuta() {
         val origen = posicionActual ?: return
         binding.tvInstruccion.text = "Calculando ruta..."
@@ -231,28 +266,38 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
                     return@launch
                 }
 
-                // Datos que nos interesan de la ruta
-                val tramo           = obj.getJSONArray("routes").getJSONObject(0)
+                // Datos del primer "leg" de la primera ruta
+                val tramo = obj.getJSONArray("routes").getJSONObject(0)
                                          .getJSONArray("legs").getJSONObject(0)
-                val distancia       = tramo.getJSONObject("distance").getString("text")
+                val distancia = tramo.getJSONObject("distance").getString("text")
                 val distanciaMetros = tramo.getJSONObject("distance").getInt("value")
-                val tiempo          = tramo.getJSONObject("duration").getString("text")
-                val segundos        = tramo.getJSONObject("duration").getInt("value")
-                val steps           = tramo.getJSONArray("steps")
+                val tiempo = tramo.getJSONObject("duration").getString("text")
+                val segundos = tramo.getJSONObject("duration").getInt("value")
+                val steps = tramo.getJSONArray("steps")
 
-                // Metros que te quedan hasta la PRÓXIMA maniobra (no al destino)
+                // Metros y maniobra inmediatamente siguiente
                 val metrosHastaManiobra = steps.getJSONObject(0)
                     .getJSONObject("distance").getInt("value")
-                val hayManiobraProxima  = steps.length() > 1
-                val instruccionActual   = parsearInstruccion(steps.getJSONObject(0))
+                val hayManiobraProxima = steps.length() > 1
+                val instruccionActual = parsearInstruccion(steps.getJSONObject(0))
                     .substringBefore(" · ")
-                val instruccionSiguiente = if (hayManiobraProxima)
-                    parsearInstruccion(steps.getJSONObject(1)).substringBefore(" · ")
-                else ""
-                // "Después" ya muestra lo que viene tras la próxima maniobra
-                val siguiente = if (steps.length() > 2)
-                    "Después: ${parsearInstruccion(steps.getJSONObject(2)).substringBefore(" · ")}"
-                else "Después: llegarás al destino"
+
+                val instruccionSiguiente: String
+                if (hayManiobraProxima) {
+                    instruccionSiguiente = parsearInstruccion(steps.getJSONObject(1))
+                        .substringBefore(" · ")
+                } else {
+                    instruccionSiguiente = ""
+                }
+
+                // "Después" muestra lo que viene tras la próxima maniobra
+                val siguiente: String
+                if (steps.length() > 2) {
+                    val texto = parsearInstruccion(steps.getJSONObject(2)).substringBefore(" · ")
+                    siguiente = "Después: $texto"
+                } else {
+                    siguiente = "Después: llegarás al destino"
+                }
 
                 val puntos = decodificarPolyline(
                     obj.getJSONArray("routes").getJSONObject(0)
@@ -261,57 +306,11 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
 
                 withContext(Dispatchers.Main) {
                     dibujarRuta(puntos)
-
-                    when {
-                        // Detección de llegada
-                        distanciaMetros <= 5 -> {
-                            val aviso = "Ya has llegado"
-                            binding.tvInstruccion.text = aviso
-                            anunciar("llegada", aviso)
-                            if (!popupMostrado) {
-                                popupMostrado = true
-                                if (fase == FASE_RECOGIDA) mostrarPopupRecogida()
-                                else                      mostrarPopupEntrega()
-                            }
-                        }
-                        // Hay una maniobra próxima: avisos por zonas
-                        hayManiobraProxima -> {
-                            val distTexto = formatearDistancia(metrosHastaManiobra)
-                            binding.tvInstruccion.text = "$distTexto · $instruccionSiguiente"
-
-                            val zona = when {
-                                metrosHastaManiobra <= 30  -> "ahora"
-                                metrosHastaManiobra <= 150 -> "150"
-                                metrosHastaManiobra <= 500 -> "500"
-                                else                        -> "lejos"
-                            }
-                            // Clave = maniobra + zona → cada zona se anuncia solo una vez
-                            val clave = "$instruccionSiguiente|$zona"
-                            val frase = when (zona) {
-                                "ahora" -> instruccionSiguiente
-                                "150"   -> "En 150 metros, ${enMinuscula(instruccionSiguiente)}"
-                                "500"   -> "En 500 metros, ${enMinuscula(instruccionSiguiente)}"
-                                else    -> instruccionActual   // "Continúa por Calle X"
-                            }
-                            anunciar(clave, frase)
-                        }
-                        // Recta final sin más maniobras antes del destino
-                        else -> {
-                            binding.tvInstruccion.text = instruccionActual
-                            anunciar(instruccionActual, instruccionActual)
-                        }
-                    }
-
-                    binding.tvDistancia.text = distancia
-                    binding.tvTiempo.text    = tiempo
-                    binding.tvSiguiente.text = siguiente
-
-                    // Hora estimada de llegada (ahora + segundos)
-                    val calendar = Calendar.getInstance()
-                    calendar.add(Calendar.SECOND, segundos)
-                    binding.tvHoraLlegada.text = String.format("%02d:%02d",
-                        calendar.get(Calendar.HOUR_OF_DAY),
-                        calendar.get(Calendar.MINUTE))
+                    actualizarUI(
+                        distancia, tiempo, siguiente, segundos,
+                        distanciaMetros, hayManiobraProxima,
+                        metrosHastaManiobra, instruccionActual, instruccionSiguiente
+                    )
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -321,19 +320,99 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    // --- Popups de llegada ---------------------------------------------------
+    // Aplica todos los datos de la ruta al panel inferior y a la voz
+    private fun actualizarUI(
+        distancia: String, tiempo: String, siguiente: String, segundos: Int,
+        distanciaMetros: Int, hayManiobraProxima: Boolean,
+        metrosHastaManiobra: Int, instruccionActual: String, instruccionSiguiente: String
+    ) {
+        // Has llegado al destino
+        if (distanciaMetros <= 5) {
+            val aviso = "Ya has llegado"
+            binding.tvInstruccion.text = aviso
+            anunciar("llegada", aviso)
 
-    // Muestra el popup al llegar al punto de recogida.
-    // Al pulsar "Recogido": marca vehiculo_recogido=true y relanza MapGPS hacia el destino.
+            if (!popupMostrado) {
+                popupMostrado = true
+                if (fase == FASE_RECOGIDA) {
+                    mostrarPopupRecogida()
+                } else {
+                    mostrarPopupEntrega()
+                }
+            }
+        }
+        // Hay una maniobra próxima: avisos por zonas
+        else if (hayManiobraProxima) {
+            val distTexto = formatearDistancia(metrosHastaManiobra)
+            binding.tvInstruccion.text = "$distTexto · $instruccionSiguiente"
+
+            // Calculamos en qué "zona" está el conductor respecto a la maniobra
+            val zona: String
+            if (metrosHastaManiobra <= 30) {
+                zona = "ahora"
+            } else if (metrosHastaManiobra <= 150) {
+                zona = "150"
+            } else if (metrosHastaManiobra <= 500) {
+                zona = "500"
+            } else {
+                zona = "lejos"
+            }
+
+            // Frase a decir según la zona
+            val frase: String
+            if (zona == "ahora") {
+                frase = instruccionSiguiente
+            } else if (zona == "150") {
+                frase = "En 150 metros, ${enMinuscula(instruccionSiguiente)}"
+            } else if (zona == "500") {
+                frase = "En 500 metros, ${enMinuscula(instruccionSiguiente)}"
+            } else {
+                frase = instruccionActual   // "Continúa por Calle X"
+            }
+
+            // Cada par maniobra+zona se anuncia una sola vez
+            anunciar("$instruccionSiguiente|$zona", frase)
+        }
+        // Recta final, no hay más maniobras antes del destino
+        else {
+            binding.tvInstruccion.text = instruccionActual
+            anunciar(instruccionActual, instruccionActual)
+        }
+
+        binding.tvDistancia.text = distancia
+        binding.tvTiempo.text = tiempo
+        binding.tvSiguiente.text = siguiente
+
+        // Hora estimada de llegada = ahora + duración de la ruta
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.SECOND, segundos)
+        binding.tvHoraLlegada.text = String.format("%02d:%02d",
+            calendar.get(Calendar.HOUR_OF_DAY),
+            calendar.get(Calendar.MINUTE))
+    }
+
+    // --- Popups -------------------------------------------------------------
+
+    // Popup al llegar al cliente. Al pulsar "Recogido" pasa a fase ENTREGA.
     private fun mostrarPopupRecogida() {
         val viaje = RecogidasRepo.Recogidas.find { it.id == recogidaID }
+
         mostrarPopup("¿Has recogido el vehículo?", "Recogido", "#1565C0") {
-            val destLat = viaje?.destinoLat ?: 0.0
-            val destLng = viaje?.destinoLng ?: 0.0
+            val destLat: Double
+            val destLng: Double
+            if (viaje != null) {
+                destLat = viaje.destinoLat
+                destLng = viaje.destinoLng
+            } else {
+                destLat = 0.0
+                destLng = 0.0
+            }
+
             if (destLat == 0.0 && destLng == 0.0) {
-                Toast.makeText(this, "El servicio no tiene destino definido", Toast.LENGTH_LONG).show()
+                toast("El servicio no tiene destino definido")
                 return@mostrarPopup
             }
+
             lifecycleScope.launch {
                 marcarVehiculoRecogido()
                 abrirNavegacion(destLat, destLng, FASE_ENTREGA)
@@ -341,8 +420,7 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    // Muestra el popup al llegar al destino final.
-    // Al pulsar "Entregado": marca el servicio como "Terminado" y vuelve al Main.
+    // Popup al llegar al destino. Al pulsar "Entregado" cierra el servicio.
     private fun mostrarPopupEntrega() {
         mostrarPopup("¿Has entregado el vehículo?", "Entregado", "#2E7D32") {
             lifecycleScope.launch {
@@ -352,7 +430,7 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    // Helper común: infla dialog_popup.xml, rellena datos y muestra el AlertDialog.
+    // Helper común: infla dialog_popup.xml, lo rellena y lo muestra
     private fun mostrarPopup(
         pregunta: String,
         textoBoton: String,
@@ -362,10 +440,12 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         val viaje = RecogidasRepo.Recogidas.find { it.id == recogidaID }
         val popup = DialogPopupBinding.inflate(layoutInflater)
 
-        popup.tvPreguntaPopup.text  = pregunta
-        popup.tvClientePopup.text   = viaje?.cliente?.let { "Cliente: $it" } ?: ""
-        popup.tvMatriculaPopup.text = viaje?.matricula?.let { "Matrícula: $it" } ?: ""
-        popup.tvMotivoPopup.text    = viaje?.motivo?.let { "Motivo: $it" } ?: ""
+        popup.tvPreguntaPopup.text = pregunta
+        if (viaje != null) {
+            popup.tvClientePopup.text = "Cliente: ${viaje.cliente}"
+            popup.tvMatriculaPopup.text = "Matrícula: ${viaje.matricula}"
+            popup.tvMotivoPopup.text = "Motivo: ${viaje.motivo}"
+        }
 
         popup.btnAccionPopup.text = textoBoton
         popup.btnAccionPopup.backgroundTintList =
@@ -375,7 +455,8 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
             .setView(popup.root)
             .setCancelable(false)
             .create()
-        // Fondo transparente para que se vea la CardView limpia
+
+        // Fondo transparente para que se vea solo la CardView
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         popup.btnAccionPopup.setOnClickListener {
@@ -385,9 +466,13 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         dialog.show()
     }
 
-    // Marca en Supabase el servicio actual como "vehículo recogido"
+    // --- Acciones sobre Supabase --------------------------------------------
+
+    // Marca en la BBDD que el vehículo ha sido recogido
     private suspend fun marcarVehiculoRecogido() {
-        if (recogidaID == -1) return
+        if (recogidaID == -1) {
+            return
+        }
         try {
             SupabaseClient.client.from("servicios").update(
                 { set("vehiculo_recogido", true) }
@@ -399,9 +484,11 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    // Cambia el campo "estado" del servicio actual (ej: "Terminado")
+    // Cambia el campo "estado" del servicio actual (por ejemplo "Terminado")
     private suspend fun marcarEstado(estado: String) {
-        if (recogidaID == -1) return
+        if (recogidaID == -1) {
+            return
+        }
         try {
             SupabaseClient.client.from("servicios").update(
                 { set("estado", estado) }
@@ -413,7 +500,7 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    // Relanza MapGPS en otra fase (ej: pasar de RECOGIDA a ENTREGA).
+    // Relanza esta misma activity con la nueva fase (RECOGIDA → ENTREGA)
     private fun abrirNavegacion(lat: Double, lng: Double, nuevaFase: String) {
         val i = Intent(this, MapGPS::class.java).apply {
             putExtra(EXTRA_LAT,  lat)
@@ -425,14 +512,20 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         finish()
     }
 
-    // --- Parseo de instrucciones y ruta --------------------------------------
+    // --- Parseo de instrucciones de Google ----------------------------------
 
+    // Convierte un step de Directions a un texto en castellano + " · distancia"
     private fun parsearInstruccion(step: JSONObject): String {
-        val maniobra  = if (step.has("maneuver")) step.getString("maneuver") else ""
-        val html      = step.getString("html_instructions")
+        val maniobra: String
+        if (step.has("maneuver")) {
+            maniobra = step.getString("maneuver")
+        } else {
+            maniobra = ""
+        }
+        val html = step.getString("html_instructions")
         val distancia = step.getJSONObject("distance").getString("text")
 
-        // Limpia el HTML para quedarnos con el texto plano
+        // Limpia el HTML para quedarnos con texto plano
         val textoLimpio = html
             .replace(Regex("<div[^>]*>"), " ")
             .replace("</div>", "")
@@ -441,18 +534,43 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
             .replace(Regex("\\s+"), " ")
             .trim()
 
-        // Todas las <b>...</b>. Filtramos los puntos cardinales para quedarnos con calles.
-        val cardinales = setOf("norte","sur","este","oeste",
-            "noreste","noroeste","sureste","suroeste")
-        val bolds        = Regex("<b>(.*?)</b>").findAll(html).map { it.groupValues[1] }.toList()
-        val calle        = bolds.lastOrNull  { it.lowercase() !in cardinales } ?: ""
-        val primeraCalle = bolds.firstOrNull { it.lowercase() !in cardinales } ?: ""
-        // Para rotondas, sacamos el número de salida
-        val salida = if (maniobra.contains("roundabout"))
-            Regex("(\\d+)").find(textoLimpio)?.value ?: "" else ""
+        // Saca todas las cadenas <b>...</b> del HTML
+        val cardinales = setOf("norte", "sur", "este", "oeste",
+            "noreste", "noroeste", "sureste", "suroeste")
+        val bolds = Regex("<b>(.*?)</b>").findAll(html).map { it.groupValues[1] }.toList()
 
+        // "calle" = última cadena en negrita que no sea un punto cardinal
+        var calle = ""
+        for (b in bolds) {
+            if (b.lowercase() !in cardinales) {
+                calle = b
+            }
+        }
+
+        // "primeraCalle" = primera cadena en negrita que no sea un punto cardinal
+        var primeraCalle = ""
+        for (b in bolds) {
+            if (b.lowercase() !in cardinales) {
+                primeraCalle = b
+                break
+            }
+        }
+
+        // Para rotondas saca el número de salida (1, 2, 3...)
+        val salida: String
+        if (maniobra.contains("roundabout")) {
+            val match = Regex("(\\d+)").find(textoLimpio)
+            if (match != null) {
+                salida = match.value
+            } else {
+                salida = ""
+            }
+        } else {
+            salida = ""
+        }
+
+        // Hay 15 tipos de maniobra distintos: el when es la forma más legible
         val texto = when {
-            // uturn y arrive primero: "uturn-right" contiene "turn-right"
             maniobra.contains("uturn")  -> "Dé la vuelta"
             maniobra.contains("arrive") -> "Ha llegado al destino"
             maniobra.contains("roundabout") -> when {
@@ -480,7 +598,6 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
                 if (calle.isNotEmpty()) "Coja la salida hacia $calle" else textoLimpio
             maniobra.contains("merge") ->
                 if (calle.isNotEmpty()) "Incorpórate a $calle" else textoLimpio
-            // Sin maniobra / depart / straight → "Continúa por X" (antes salía "ve al norte...")
             maniobra.isEmpty() || maniobra.contains("depart") || maniobra.contains("straight") ->
                 if (primeraCalle.isNotEmpty()) "Continúa por $primeraCalle" else "Sigue recto"
             else -> textoLimpio
@@ -489,6 +606,9 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         return "$texto · $distancia"
     }
 
+    // --- Pintar ruta y marcador ---------------------------------------------
+
+    // Pinta la línea azul de la ruta sobre el mapa
     private fun dibujarRuta(puntos: List<LatLng>) {
         rutaPolyline?.remove()
         rutaPolyline = mMap.addPolyline(
@@ -502,55 +622,80 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         )
     }
 
+    // Convierte la "polyline encoded" de Google en una lista de coordenadas
     private fun decodificarPolyline(encoded: String): List<LatLng> {
         val puntos = mutableListOf<LatLng>()
-        var index = 0; var lat = 0; var lng = 0
+        var index = 0
+        var lat = 0
+        var lng = 0
+
         while (index < encoded.length) {
-            var b: Int; var shift = 0; var result = 0
-            do { b = encoded[index++].code - 63
-                result = result or (b and 0x1f shl shift); shift += 5 } while (b >= 0x20)
-            lat += if (result and 1 != 0) (result shr 1).inv() else result shr 1
-            shift = 0; result = 0
-            do { b = encoded[index++].code - 63
-                result = result or (b and 0x1f shl shift); shift += 5 } while (b >= 0x20)
-            lng += if (result and 1 != 0) (result shr 1).inv() else result shr 1
+            // Decodifica latitud
+            var b: Int
+            var shift = 0
+            var result = 0
+            do {
+                b = encoded[index++].code - 63
+                result = result or (b and 0x1f shl shift)
+                shift += 5
+            } while (b >= 0x20)
+
+            if (result and 1 != 0) {
+                lat += (result shr 1).inv()
+            } else {
+                lat += result shr 1
+            }
+
+            // Decodifica longitud
+            shift = 0
+            result = 0
+            do {
+                b = encoded[index++].code - 63
+                result = result or (b and 0x1f shl shift)
+                shift += 5
+            } while (b >= 0x20)
+
+            if (result and 1 != 0) {
+                lng += (result shr 1).inv()
+            } else {
+                lng += result shr 1
+            }
+
             puntos.add(LatLng(lat / 1E5, lng / 1E5))
         }
         return puntos
     }
 
-    // Icono azul para el marcador del usuario
+    // Crea un círculo azul con halo y borde blanco para el marcador del usuario
     private fun crearIconoUsuario(): BitmapDescriptor {
         val bitmap = Bitmap.createBitmap(60, 60, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
 
-        Paint(Paint.ANTI_ALIAS_FLAG).also {
-            it.color = Color.parseColor("#554285F4")   // halo azul translúcido
-            canvas.drawCircle(30f, 30f, 28f, it)
-        }
-        Paint(Paint.ANTI_ALIAS_FLAG).also {
-            it.color = Color.parseColor("#4285F4")     // azul sólido
-            canvas.drawCircle(30f, 30f, 14f, it)
-        }
-        Paint(Paint.ANTI_ALIAS_FLAG).also {
-            it.color       = Color.WHITE               // borde blanco
-            it.style       = Paint.Style.STROKE
-            it.strokeWidth = 3f
-            canvas.drawCircle(30f, 30f, 14f, it)
-        }
+        // Halo azul translúcido
+        val halo = Paint(Paint.ANTI_ALIAS_FLAG)
+        halo.color = Color.parseColor("#554285F4")
+        canvas.drawCircle(30f, 30f, 28f, halo)
+
+        // Círculo central azul sólido
+        val centro = Paint(Paint.ANTI_ALIAS_FLAG)
+        centro.color = Color.parseColor("#4285F4")
+        canvas.drawCircle(30f, 30f, 14f, centro)
+
+        // Borde blanco alrededor del círculo central
+        val borde = Paint(Paint.ANTI_ALIAS_FLAG)
+        borde.color = Color.WHITE
+        borde.style = Paint.Style.STROKE
+        borde.strokeWidth = 3f
+        canvas.drawCircle(30f, 30f, 14f, borde)
+
         return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 1001 &&
-            grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
-            iniciarGPS()
-        }
-    }
+    // --- Funciones útiles ---------------------------------------------------
+    private fun toast(texto: String) =
+        Toast.makeText(this, texto, Toast.LENGTH_LONG).show()
 
-    private fun <T> ChangeActivity(context: Context, cls: Class<T>){
+    private fun <T> ChangeActivity(context: Context, cls: Class<T>) {
         context.startActivity(Intent(context, cls))
         if (context is Activity) context.finish()
     }

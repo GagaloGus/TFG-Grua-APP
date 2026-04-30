@@ -57,9 +57,12 @@ dependencies {
     // Supabase
     implementation(platform("io.github.jan-tennert.supabase:bom:2.5.4"))
     implementation("io.github.jan-tennert.supabase:postgrest-kt")
-    implementation("io.ktor:ktor-client-android:2.3.7")
+    // OkHttp en vez de ktor-client-android porque Realtime necesita WebSockets
+    implementation("io.ktor:ktor-client-okhttp:2.3.7")
     implementation("io.github.jan-tennert.supabase:gotrue-kt")
     implementation("io.github.jan-tennert.supabase:realtime-kt")
+    //ImagenesdesdeURL
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 
 
     implementation(libs.androidx.core.ktx)

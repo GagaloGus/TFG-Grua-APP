@@ -25,7 +25,7 @@
 
         <!-- Instrucción actual GRANDE -->
         <TextView
-            android:id="@+id/tvInstruccion"
+            android:id="@+id/tv_Instruccion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Calculando ruta..."
@@ -36,7 +36,7 @@
 
         <!-- Siguiente instrucción pequeña debajo -->
         <TextView
-            android:id="@+id/tvSiguiente"
+            android:id="@+id/tv_Siguiente"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text=""
@@ -66,7 +66,7 @@
             android:paddingBottom="8dp">
 
             <TextView
-                android:id="@+id/tvCliente"
+                android:id="@+id/tv_Cliente"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -75,7 +75,7 @@
                 android:text="Cliente: --"/>
 
             <TextView
-                android:id="@+id/tvMatricula"
+                android:id="@+id/tv_Matricula"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -92,7 +92,7 @@
             android:paddingBottom="8dp">
 
             <TextView
-                android:id="@+id/tvMotivo"
+                android:id="@+id/tv_Motivo"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -101,7 +101,7 @@
                 android:text="Motivo: --"/>
 
             <TextView
-                android:id="@+id/tvTelefono"
+                android:id="@+id/tv_Telefono"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -119,7 +119,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/tvDistancia"
+                android:id="@+id/tv_Distancia"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -130,7 +130,7 @@
                 android:textStyle="bold"/>
 
             <TextView
-                android:id="@+id/tvTiempo"
+                android:id="@+id/tv_Tiempo"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -141,7 +141,7 @@
                 android:textStyle="bold"/>
 
             <TextView
-                android:id="@+id/tvHoraLlegada"
+                android:id="@+id/tv_HoraLlegada"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -152,7 +152,7 @@
                 android:textStyle="bold"/>
 
             <Button
-                android:id="@+id/btnSalir"
+                android:id="@+id/btn_Salir"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#E53935"
