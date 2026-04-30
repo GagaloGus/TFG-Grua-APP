@@ -203,9 +203,12 @@ export class Usuario {
     return "badge-estado"
   }
 
+  //Filtra los servicios Terminados hechos por el usuario
   get_serv_completados_total(servicios:Servicio[]): Servicio[]{
     return servicios.filter(s => s.num_empleado == this.num_empleado && s.estado == Estado.TERMINADO)
   }
+
+  //Tambien filtra para que el dia sea hoy
   get_serv_completados_hoy(servicios:Servicio[]): Servicio[]{
     const hoy = new Date();
     const serv_total = this.get_serv_completados_total(servicios)

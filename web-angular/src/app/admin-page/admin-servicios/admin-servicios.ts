@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { Roles, Servicio, Tablas, Usuario, Vehiculo } from '../../services/tablas.supabase';
 import { SupabaseService } from '../../services/supabase.service';
 import { MapPickerComponent } from '../../shared/map-picker/map-picker';
-import { PRECIO_LITRO_COMBUSTIBLE } from '@services/global/global.service';
+import { MAP_COORDENADAS_POR_DEFECTO, PRECIO_LITRO_COMBUSTIBLE } from '@services/global/global.service';
 
 @Component({
   selector: 'app-servicios',
@@ -317,11 +317,11 @@ export class AdminServicios implements OnInit {
   abrirMapa(target: 'recogida' | 'destino') {
   this.mapPickerTarget = target;
   if (target === 'recogida') {
-    this.mapPickerLat = this.formData.ubicacion_recogida_lat ?? 40.4168;
-    this.mapPickerLng = this.formData.ubicacion_recogida_lng ?? -3.7038;
+    this.mapPickerLat = this.formData.ubicacion_recogida_lat ?? MAP_COORDENADAS_POR_DEFECTO.LAT;
+    this.mapPickerLng = this.formData.ubicacion_recogida_lng ?? MAP_COORDENADAS_POR_DEFECTO.LNG;
   } else {
-    this.mapPickerLat = this.formData.ubicacion_destino_lat ?? 40.4168;
-    this.mapPickerLng = this.formData.ubicacion_destino_lng ?? -3.7038;
+    this.mapPickerLat = this.formData.ubicacion_destino_lat ?? MAP_COORDENADAS_POR_DEFECTO.LAT;
+    this.mapPickerLng = this.formData.ubicacion_destino_lng ?? MAP_COORDENADAS_POR_DEFECTO.LNG;
   }
   this.showMapPicker = true;
 }

@@ -193,7 +193,7 @@
                 </thead>
                 <tbody>
                     @for (u of usuariosFiltrados(); track u.id){
-                    <tr>
+                    <tr (click)="abrirDetalles(u)">
                         <td><span class="coordenadas">EMP-{{u.num_empleado}}</span></td>
                         <td>{{u.nombre}}</td>
                         <td>{{u.apellidos??'—'}}</td>
@@ -210,7 +210,7 @@
                         <td>{{u.email??'—'}}</td>
                         <td>{{u.telefono??'—'}}</td>
                         <td>{{u.vehiculo_asignado??'—'}}</td>
-                        <td class="btn-accion-col">
+                        <td (click)="$event.stopPropagation();" class="btn-accion-col">
                             <button class="btn btn-sm btn-accion-white" (click)="abrirDetalles(u)" title="Ver detalles">
                                 <svg width="16px" height="16px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
                                     fill="none">
@@ -242,7 +242,7 @@
 
     }
     @else {
-    <section class="row row-cols-1 row-cols-lg-3 row-cols-xl-5 bg-dark rounded overflow-hidden">
+    <section class="row row-cols-1 row-cols-lg-2 row-cols-xl-4 bg-dark rounded overflow-hidden">
         @for (u of usuariosFiltrados(); track u.id) {
         <div class="col p-3">
             <div class="h-100 card d-flex flex-column justify-content-between ">

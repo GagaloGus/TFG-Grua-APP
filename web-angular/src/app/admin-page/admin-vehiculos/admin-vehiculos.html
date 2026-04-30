@@ -167,7 +167,7 @@
                     </tr>
                     } @else {
                     @for (v of vehiculosFiltrados(); track v.id) {
-                    <tr>
+                    <tr (click)="abrirEditar(v)">
                         <td><span class="coordenadas">{{ v.id }}</span></td>
                         <td class="coordenadas fw-medium">{{ v.matricula }}</td>
                         <td>{{ v.marca ?? '—' }}</td>
@@ -186,7 +186,7 @@
                             </span>
                         </td>
                         <td>{{v.litro_combustible_km}} L/km</td>
-                        <td class="btn-accion-col">
+                        <td class="btn-accion-col" (click)="$event.stopPropagation();">
                             <button class="btn btn-sm btn-accion-edit" (click)="abrirEditar(v)" title="Editar">
                                 <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
                                     <path

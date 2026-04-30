@@ -29,7 +29,10 @@ export class Login {
   async login() {
     this.error.set('')
     this.validatingLogin.set(true)
-    const result = await this.authService.login(this.email, this.password)
+    const result = await this.authService.login(
+      this.email,
+      this.password,
+      this.recordarSesion)
 
     if (result == '') {
       this.router.navigate(['/home'])

@@ -159,7 +159,7 @@
                     </tr>
                     } @else {
                     @for (s of serviciosFiltrados(); track s.id) {
-                    <tr>
+                    <tr (click)="abrirDetalles(s)">
                         <td><span class="coordenadas">S-{{ s.id }}</span></td>
                         <td class="fw-medium">{{ s.nombre_cliente ?? '—' }}</td>
                         <td>{{ s.tel_cliente ?? '—' }}</td>
@@ -169,7 +169,7 @@
                         <td class="obs-cell">{{ s.num_empleado == null ? '—' : `${s.num_empleado} -
                             ${getUserByNumEmpleado(s.num_empleado)?.nombre}` }}</td>
                         <td>{{ s.vehiculo_matricula ?? '—' }}</td>
-                        <td class="btn-accion-col">
+                        <td class="btn-accion-col" (click)="$event.stopPropagation();">
                             <button class="btn btn-sm btn-accion-white" (click)="abrirDetalles(s)" title="Ver detalles">
                                 <svg width="16px" height="16px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
                                     <path

@@ -84,6 +84,8 @@ export class AuthService {
         await this.cargarAvatar();
         this._isLoggedIn = true;
         this.guardarSesion(recordarSesion);  // <- guarda si el checkbox esta marcado
+        if(recordarSesion)
+          console.log('Sesion guardada en storage: '+ localStorage.getItem(SESSION_KEY));
       } else {
         throw new Error('La contraseña no coincide!');
       }

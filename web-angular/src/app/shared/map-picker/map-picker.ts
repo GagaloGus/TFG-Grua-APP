@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MAP_COORDENADAS_POR_DEFECTO } from '@services/global/global.service';
 
 @Component({
   selector: 'app-map-picker',
@@ -97,9 +98,14 @@ import { FormsModule } from '@angular/forms';
   `]
 })
 export class MapPickerComponent implements AfterViewInit, OnDestroy {
-  @Input() lat = 40.4168;
-  @Input() lng = -3.7038;
+  // Coordenadas iniciales por defecto (Madrid)
+  @Input() lat = MAP_COORDENADAS_POR_DEFECTO.LAT;
+  @Input() lng = MAP_COORDENADAS_POR_DEFECTO.LNG;
+
+  // Notifica al padre de que el modal se debe cerrar
   @Output() cerrar = new EventEmitter<void>();
+
+  // Envia las coordenadas al padre
   @Output() ubicacionSeleccionada = new EventEmitter<{
     lat: number; lng: number; direccion: string
   }>();
@@ -114,21 +120,31 @@ export class MapPickerComponent implements AfterViewInit, OnDestroy {
   private marker: any = null;
   private L: any = null;
 
+  // Recibe PLATFORM_ID, que es un token de Angular que indica en que plataforma se esta ejecutando (browser o server)
   constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
 
   async ngAfterViewInit() {
     // Solo ejecutar en el navegador, nunca en SSR
     if (!isPlatformBrowser(this.platformId)) return;
 
-    // Import dinámico: Leaflet solo se carga en el browser
+    // Import dinamico: Leaflet solo se carga en el browser
     this.L = await import('leaflet');
     setTimeout(() => this.initMap(), 50);
   }
 
+  /**
+   * El nucleo de la inicializacion del mapa
+   *
+   * Define el icono del marcador
+   *
+   * Crea el mapa vinculandolo al div por su id y le pone unas coordenadas por defecto
+   *
+   * Añade la capa de tiles de 'OpenStreetMap', que son las imagenes cuadradas que formas el mapa.
+   * La URL con {s}, {z}, {x}, {y} es una plantilla que Leaflet reconoce para cuadrar el mapa
+   */
   private initMap() {
-    const L = this.L;
 
-    const iconDefault = L.icon({
+    const iconDefault = this.L.icon({
       iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
       shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
       iconSize: [25, 41],
@@ -136,11 +152,12 @@ export class MapPickerComponent implements AfterViewInit, OnDestroy {
       popupAnchor: [1, -34],
     });
 
-    this.map = L.map('map-picker-map').setView(
-      [this.lat || 40.4168, this.lng || -3.7038], 13
+    // Coordenadas por defecto
+    this.map = this.L.map('map-picker-map').setView(
+      [this.lat || MAP_COORDENADAS_POR_DEFECTO.LAT, this.lng || MAP_COORDENADAS_POR_DEFECTO.LNG], 13
     );
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    this.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
     }).addTo(this.map);
 
@@ -148,6 +165,7 @@ export class MapPickerComponent implements AfterViewInit, OnDestroy {
       this.colocarMarcador(this.lat, this.lng, iconDefault);
     }
 
+    // Al hacer click en el mapa, coloca el marcador y llama a nominatim para obtener la direccion
     this.map.on('click', async (e: any) => {
       const { lat, lng } = e.latlng;
       this.colocarMarcador(lat, lng, iconDefault);
@@ -155,9 +173,16 @@ export class MapPickerComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  /**
+   * Coloca el icono del marcador en un punto del mapa
+   * @param lat latitud
+   * @param lng longitud
+   * @param icon icono
+   */
   private colocarMarcador(lat: number, lng: number, icon: any) {
     const L = this.L;
     if (this.marker) this.map.removeLayer(this.marker);
+    // Actualiza el draggable a true para qe pueda ser arrastrado
     this.marker = L.marker([lat, lng], { icon, draggable: true }).addTo(this.map);
     this.coordenadas.set({ lat, lng });
 
@@ -168,12 +193,19 @@ export class MapPickerComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  /**
+   * Intenta buscar una direccion.
+   *
+   * Si lo consigue, mueve el mapa a esa direccion, pone y marcador y guarda la direccion en 'this.direccionSeleccionada'
+   */
   async buscar() {
-    if (!this.searchQuery.trim()) return;
+    if (!this.searchQuery.trim())
+      return;
     this.buscando.set(true);
     this.errorBusqueda.set('');
 
     try {
+      // 'countrycodes=es' limita las busquedas a españa
       const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(this.searchQuery)}&format=json&limit=1&countrycodes=es`;
       const res = await fetch(url, { headers: { 'Accept-Language': 'es' } });
       const data = await res.json();
@@ -185,15 +217,17 @@ export class MapPickerComponent implements AfterViewInit, OnDestroy {
 
       const { lat, lon, display_name } = data[0];
       const latN = parseFloat(lat), lngN = parseFloat(lon);
+      // Mueve el mapa al centro de donde hicimos click
       this.map.setView([latN, lngN], 17);
 
+      // Coloca el marcador en el punto que hicimos click
       const iconDefault = this.L.icon({
         iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
         shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
         iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34],
       });
-
       this.colocarMarcador(latN, lngN, iconDefault);
+
       this.direccionSeleccionada.set(display_name);
     } catch {
       this.errorBusqueda.set('Error al buscar. Comprueba tu conexión.');
@@ -202,18 +236,31 @@ export class MapPickerComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+ /**
+  * Intenta obtener una direccion segun unas coordenadas, si lo consigue cambia el valor de la variable 'this.direccionSeleccionada'
+  * @param lat latitud
+  * @param lng longitud
+  */
   private async reverseGeocode(lat: number, lng: number) {
     try {
       const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
       const res = await fetch(url, { headers: { 'Accept-Language': 'es' } });
       const data = await res.json();
       this.direccionSeleccionada.set(data.display_name ?? '');
-    } catch { /* silencioso */ }
+    } catch { /* Nada */ }
   }
 
+  /**
+   * El punto final del componente
+   *
+   * Lee el valor de 'this.coordenadas' y se lo emite al padre a traves del 'Output'
+   *
+   * Despues cierra el modal con el evento 'cerrar'
+   */
   confirmar() {
     const c = this.coordenadas();
-    if (!c) return;
+    if (!c)
+      return;
     this.ubicacionSeleccionada.emit({
       lat: c.lat,
       lng: c.lng,

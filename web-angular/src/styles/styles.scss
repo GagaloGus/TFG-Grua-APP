@@ -354,18 +354,18 @@ p {
 
   tbody tr {
     border-bottom: 1px solid $border;
-    transition: ease-in-out 0.12s;
 
     &:last-child {
       border-bottom: none;
     }
 
-    &:hover {
-      background: #f0f4ff;
+    &:hover td {
+      background: #eff1f4;
     }
   }
 
   tbody td {
+    transition: all ease 0.15s;
     padding: 0.75rem 1rem;
     vertical-align: middle;
     border: none;
