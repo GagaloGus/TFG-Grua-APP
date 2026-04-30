@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Tablas, Usuario, Vehiculo } from '@services/tablas.supabase';
 import { SupabaseService } from '@services/supabase.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-admin-vehiculos',
@@ -30,12 +31,13 @@ export class AdminVehiculos implements OnInit {
   selected: Vehiculo | null = null;
   formData = Vehiculo.empty();
 
-  constructor(private supabaseService: SupabaseService) { }
+  constructor(private supabaseService: SupabaseService,private title: Title) { }
 
   private recargaIntervalo: ReturnType<typeof setInterval> | null = null;
 
 
   async ngOnInit() {
+    this.title.setTitle("Vehiculo")
     this.cargarTodo()
     this.recargaIntervalo = setInterval(() => this.cargarSegundoPlano(), 10000);
   }

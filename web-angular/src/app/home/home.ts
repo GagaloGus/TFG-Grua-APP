@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterLink } from "@angular/router";
 import { AuthService } from '../services/auth-service/auth-service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-home',
@@ -8,9 +9,13 @@ import { AuthService } from '../services/auth-service/auth-service';
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
-export class Home {
+export class Home implements OnInit {
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private title: Title) { }
+
+  ngOnInit(): void {
+    this.title.setTitle("TowApp")
+  }
 
   isLoggedIn(): boolean {
     return this.authService.isLoggedIn()

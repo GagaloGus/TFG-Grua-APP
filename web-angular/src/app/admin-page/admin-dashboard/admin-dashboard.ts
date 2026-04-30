@@ -1,5 +1,6 @@
 import { Component, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { SupabaseService } from '@services/supabase.service';
 import { Servicio, Vehiculo, Usuario, Tablas, Disponibilidad, Estado, Roles } from '@services/tablas.supabase';
@@ -11,7 +12,7 @@ import { Servicio, Vehiculo, Usuario, Tablas, Disponibilidad, Estado, Roles } fr
   styleUrl: './admin-dashboard.scss',
 })
 export class AdminDashboard {
-  constructor(private supabaseService: SupabaseService, private router: Router) { }
+  constructor(private supabaseService: SupabaseService, private router: Router, private title: Title) { }
 
   // ── SIGNALS ──────────────────────────────────────────────────────────────────
   finishedLoading = signal(false);
@@ -226,6 +227,7 @@ export class AdminDashboard {
 
 
   async ngOnInit() {
+    this.title.setTitle("Dashboard")
     this.cargarTodo()
     this.recargaIntervalo = setInterval(() => this.cargarSegundoPlano(), 10000);
   }

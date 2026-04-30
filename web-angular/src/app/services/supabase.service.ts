@@ -93,7 +93,7 @@ export class SupabaseService {
     const imagenNombre = `${Math.random()}.${imagenExt}`;
     const imagenPath = `avatares/${imagenNombre}`;
 
-    // 1. Subir el archivo
+    // 1. Subir el archivo a la carpeta 'imagenes'
     let { error } = await this.supabase.storage
       .from('imagenes')
       .upload(imagenPath, imagen);

@@ -11,37 +11,37 @@ import { PATH_DEFAULT_AVATAR } from '@services/global/global.service';
 })
 export class AdminPage {
 
-    constructor(private authService:AuthService, private router: Router){}
+  constructor(private authService: AuthService, private router: Router) { }
 
-    PATH_DEFAULT_AVATAR = PATH_DEFAULT_AVATAR
+  PATH_DEFAULT_AVATAR = PATH_DEFAULT_AVATAR
 
-    isLoggedIn(): boolean {
-      return this.authService.isLoggedIn()
-    }
+  isLoggedIn(): boolean {
+    return this.authService.isLoggedIn()
+  }
 
-    isAdmin(): boolean {
-      return this.authService.isAdmin()
-    }
+  isAdmin(): boolean {
+    return this.authService.isAdmin()
+  }
 
-    logout() {
-      console.log("bai")
-      this.authService.logout()
-      this.router.navigate(['/home'])
-    }
+  logout() {
+    console.log("bai")
+    this.authService.logout()
+    this.router.navigate(['/home'])
+  }
 
-    get email() {
-      return this.authService.email
-    }
+  get email() {
+    return this.authService.email
+  }
 
-    get nombre(){
-      return this.authService.nombre
-    }
+  get nombre() {
+    return this.authService.nombre
+  }
 
-    get apellido1(){
-      return this.authService.apellido1
-    }
+  get apellido1() {
+    return this.authService.apellido1
+  }
 
-    get avatar(){
-      return this.authService.avatarUrl()
-    }
+  get avatar() {
+    return this.authService.avatarUrl()
+  }
 }

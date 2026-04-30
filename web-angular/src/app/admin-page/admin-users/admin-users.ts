@@ -6,6 +6,7 @@ import { SupabaseService } from '../../services/supabase.service';
 import { CarnetsConducir, Servicio, Tablas, Usuario, Vehiculo } from '../../services/tablas.supabase';
 import { AuthService } from '@services/auth-service/auth-service';
 import { PATH_DEFAULT_AVATAR } from '@services/global/global.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-admin-users',
@@ -15,7 +16,7 @@ import { PATH_DEFAULT_AVATAR } from '@services/global/global.service';
 })
 export class AdminUsers implements OnInit, OnDestroy {
 
-  constructor(private supabaseService: SupabaseService, private authService: AuthService) { }
+  constructor(private supabaseService: SupabaseService, private authService: AuthService, private title: Title) { }
 
   // ── Signals
   vistaTabla = signal(true)
@@ -65,6 +66,7 @@ export class AdminUsers implements OnInit, OnDestroy {
   private recargaIntervalo: ReturnType<typeof setInterval> | null = null;
 
   async ngOnInit() {
+    this.title.setTitle("Usuarios")
     this.cargarTodo()
     this.recargaIntervalo = setInterval(() => this.cargarSegundoPlano(), 10000);
   }

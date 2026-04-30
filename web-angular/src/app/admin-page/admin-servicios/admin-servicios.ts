@@ -6,6 +6,7 @@ import { Roles, Servicio, Tablas, Usuario, Vehiculo } from '../../services/tabla
 import { SupabaseService } from '../../services/supabase.service';
 import { MapPickerComponent } from '../../shared/map-picker/map-picker';
 import { MAP_COORDENADAS_POR_DEFECTO, PRECIO_LITRO_COMBUSTIBLE } from '@services/global/global.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-servicios',
@@ -15,7 +16,7 @@ import { MAP_COORDENADAS_POR_DEFECTO, PRECIO_LITRO_COMBUSTIBLE } from '@services
   styleUrl: './admin-servicios.scss',
 })
 export class AdminServicios implements OnInit {
-  constructor(private supabaseService: SupabaseService) { }
+  constructor(private supabaseService: SupabaseService, private title: Title) { }
 
   // ── Signals — se actualizan solos sin Zone.js
   finishedLoading = signal(false);
@@ -38,6 +39,7 @@ export class AdminServicios implements OnInit {
   private recargaIntervalo: ReturnType<typeof setInterval> | null = null;
 
   async ngOnInit() {
+    this.title.setTitle("Servicios")
     this.cargarTodo()
     this.recargaIntervalo = setInterval(() => this.cargarSegundoPlano(), 10000);
   }

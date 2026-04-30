@@ -1,9 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth-service/auth-service';
 import { Usuario } from '@services/tablas.supabase';
 import { CommonModule } from '@angular/common';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,7 @@ import { CommonModule } from '@angular/common';
 })
 
 
-export class Login {
+export class Login implements OnInit{
   email = "";
   password = ""
   error = signal("");
@@ -24,7 +25,14 @@ export class Login {
 
   constructor(
     private authService: AuthService,
-    private router: Router) { }
+    private router: Router,
+  private title: Title) { }
+
+  ngOnInit(): void {
+    this.title.setTitle("Login")
+  }
+
+  
 
   async login() {
     this.error.set('')
