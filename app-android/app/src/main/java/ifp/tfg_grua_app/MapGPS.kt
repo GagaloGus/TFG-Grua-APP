@@ -72,12 +72,12 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
 
     companion object {
         const val API_KEY = "AIzaSyAxLBlpI6vtCy658BaQDMH8Mpmepl6CafM"
-        const val EXTRA_LAT  = "destino_lat"
-        const val EXTRA_LNG  = "destino_lng"
-        const val EXTRA_ID   = "viaje_id"
+        const val EXTRA_LAT = "destino_lat"
+        const val EXTRA_LNG = "destino_lng"
+        const val EXTRA_ID = "viaje_id"
         const val EXTRA_FASE = "fase"
         const val FASE_RECOGIDA = "RECOGIDA"
-        const val FASE_ENTREGA  = "ENTREGA"
+        const val FASE_ENTREGA = "ENTREGA"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -132,7 +132,7 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         tts = null
     }
 
-    // --- Voz (TTS) ----------------------------------------------------------
+    // Voz (TTS)
     // Lee una frase por el altavoz si la voz ya está lista
     private fun hablar(texto: String) {
         if (ttsListo && texto.isNotBlank()) {
@@ -164,7 +164,7 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         return String.format(Locale.US, "%.1f km", metros / 1000.0)
     }
 
-    // --- Mapa y GPS ---------------------------------------------------------
+    // Mapa y GPS
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
@@ -240,8 +240,7 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    // --- Cálculo de la ruta -------------------------------------------------
-
+    // Cálculo de la ruta
     // Llama a la API de Directions, parsea el JSON y actualiza la pantalla
     private fun calcularRuta() {
         val origen = posicionActual ?: return
@@ -391,8 +390,7 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
             calendar.get(Calendar.MINUTE))
     }
 
-    // --- Popups -------------------------------------------------------------
-
+    // Popups
     // Popup al llegar al cliente. Al pulsar "Recogido" pasa a fase ENTREGA.
     private fun mostrarPopupRecogida() {
         val viaje = RecogidasRepo.Recogidas.find { it.id == recogidaID }
@@ -466,8 +464,7 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         dialog.show()
     }
 
-    // --- Acciones sobre Supabase --------------------------------------------
-
+    // Acciones sobre Supabase
     // Marca en la BBDD que el vehículo ha sido recogido
     private suspend fun marcarVehiculoRecogido() {
         if (recogidaID == -1) {
@@ -512,8 +509,7 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         finish()
     }
 
-    // --- Parseo de instrucciones de Google ----------------------------------
-
+    // Parseo de instrucciones de Google
     // Convierte un step de Directions a un texto en castellano + " · distancia"
     private fun parsearInstruccion(step: JSONObject): String {
         val maniobra: String
@@ -606,8 +602,7 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         return "$texto · $distancia"
     }
 
-    // --- Pintar ruta y marcador ---------------------------------------------
-
+    // Pintar ruta y marcador
     // Pinta la línea azul de la ruta sobre el mapa
     private fun dibujarRuta(puntos: List<LatLng>) {
         rutaPolyline?.remove()
@@ -691,7 +686,7 @@ class MapGPS : AppCompatActivity(), OnMapReadyCallback {
         return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
 
-    // --- Funciones útiles ---------------------------------------------------
+    // Funciones útiles
     private fun toast(texto: String) =
         Toast.makeText(this, texto, Toast.LENGTH_LONG).show()
 
