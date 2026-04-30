@@ -210,9 +210,9 @@ class MainActivity : AppCompatActivity() {
     private fun añadirTarjeta(viaje: Recogida) {
         val tarjeta = ItemViajeBinding.inflate(layoutInflater, binding.listaViajes, false)
 
-        tarjeta.tvCliente.text   = viaje.cliente ?: ""
+        tarjeta.tvCliente.text = viaje.cliente ?: ""
         tarjeta.tvMatricula.text = viaje.matricula ?: ""
-        tarjeta.tvMotivo.text    = viaje.motivo ?: ""
+        tarjeta.tvMotivo.text = viaje.motivo ?: ""
         tarjeta.tvTelefono.text  = viaje.telefono ?: ""
 
         // Si es urgente, mostramos la etiqueta; si no, la ocultamos
