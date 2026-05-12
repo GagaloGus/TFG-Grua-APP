@@ -37,7 +37,7 @@
   position: relative;
   background:
     linear-gradient(rgba(8, 22, 38, 0.70), rgba(8, 22, 38, 0.72)),
-    url('/Asistencia.png') center center / cover no-repeat;
+    url('/img/Asistencia.png') center center / cover no-repeat;
   overflow: hidden;
 
   > section {
@@ -184,29 +184,43 @@
 }
 
 /* BOTÓN */
-.btn-login {
+.btn-acciones {
+  margin-top: 40px;
   width: 100%;
   height: 50px;
-  border: none;
-  margin-top: 40px;
-  border-radius: 12px;
-  background: #F5A623;
-  color: #0D1B2E;
-  font-size: 1.1rem;
-  font-weight: 900;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  transition: 0.2s ease;
+
+  >.btn {
+    height: 100%;
+    flex-grow: 1;
+    font-size: 1.1rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.2s ease;
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  }
+
+  >.btn-login {
+    background: #F5A623;
+    color: #0D1B2E;
+
+    &:hover {
+      background: #c77d14;
+    }
+  }
+
+  >.btn-volver {
+    background: #F5A623;
+    color: #0D1B2E;
+  }
 }
 
-.btn-login:hover {
-  background: #c77d14;
-}
-
-.btn-login:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
 
 /* DIVIDER */
 .divider {

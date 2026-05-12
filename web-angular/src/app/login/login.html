@@ -77,14 +77,19 @@
           </a> -->
         </div>
 
-        <button type="submit" class="btn-login" [disabled]="validatingLogin()">
-          @if (!validatingLogin()) {
-          <p>ENTRAR</p>
-          }
-          @else {
-          <p>VALIDANDO...</p>
-          }
-        </button>
+        <div class="btn-acciones d-flex gap-3">
+          <button type="submit" class="btn btn-login" [disabled]="validatingLogin()">
+            @if (!validatingLogin()) {
+            <p>ENTRAR</p>
+            }
+            @else {
+            <p>VALIDANDO...</p>
+            }
+          </button>
+          <button class="btn btn-volver">
+            VOLVER
+          </button>
+        </div>
       </form>
 
       <div class="divider">

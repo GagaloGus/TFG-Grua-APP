@@ -1,5 +1,6 @@
 {
   "name": "web-angular",
+  "main": "main.js",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,7 +8,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:web-angular": "node dist/web-angular/server/server.mjs"
+    "serve:ssr:web-angular": "node dist/web-angular/server/server.mjs",
+    "electron":"electron ."
   },
   "private": true,
   "packageManager": "npm@11.9.0",
@@ -37,6 +39,7 @@
     "@types/express": "^5.0.1",
     "@types/leaflet": "^1.9.21",
     "@types/node": "^20.17.19",
+    "electron": "^42.0.1",
     "jsdom": "^28.0.0",
     "prettier": "^3.8.1",
     "typescript": "~5.9.2",
