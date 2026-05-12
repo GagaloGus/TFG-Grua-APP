@@ -259,7 +259,7 @@ body {
 //  HERO
 // ─────────────────────────────────────────────
 .tow-hero {
-  @include bg-overlay('/img/Tow Truck.jpeg');
+  @include bg-overlay('https://sgyidsdrwqkqtqimozvm.supabase.co/storage/v1/object/public/imagenes/source-img/tow-truck.jpeg');
   position: relative;
   min-height: 70vh;
   padding: 80px 0 60px;
@@ -303,7 +303,7 @@ body {
 //  WORKFLOW
 // ─────────────────────────────────────────────
 .tow-workflow {
-  @include bg-overlay('/img/gps.jpg');
+  @include bg-overlay('https://sgyidsdrwqkqtqimozvm.supabase.co/storage/v1/object/public/imagenes/source-img/gps.jpg');
   padding: 80px 0;
 
   @media (min-width: 768px) {
@@ -336,7 +336,7 @@ body {
 //  PERFILES
 // ─────────────────────────────────────────────
 .tow-profiles {
-  @include bg-overlay('/img/appauto.jpg');
+  @include bg-overlay('https://sgyidsdrwqkqtqimozvm.supabase.co/storage/v1/object/public/imagenes/source-img/tio-mirando-movil.jpg');
   padding: 80px 0;
 
   @media (min-width: 768px) {

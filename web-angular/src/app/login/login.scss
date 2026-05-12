@@ -37,7 +37,7 @@
   position: relative;
   background:
     linear-gradient(rgba(8, 22, 38, 0.70), rgba(8, 22, 38, 0.72)),
-    url('/img/Asistencia.png') center center / cover no-repeat;
+    url('https://sgyidsdrwqkqtqimozvm.supabase.co/storage/v1/object/public/imagenes/source-img/asistencia.png') center center / cover no-repeat;
   overflow: hidden;
 
   > section {
@@ -211,14 +211,20 @@
     color: #0D1B2E;
 
     &:hover {
-      background: #c77d14;
+      background: #ff9500;
     }
   }
 
   >.btn-volver {
-    background: #F5A623;
-    color: #0D1B2E;
+    background: #0000006d;
+    color: #ffffff82;
+
+    &:hover {
+      color: #ffffff;
+      background: #000000a2;
+    }
   }
+
 }
 
 
