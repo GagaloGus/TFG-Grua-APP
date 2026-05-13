@@ -251,7 +251,8 @@ export class AdminUsers implements OnInit, OnDestroy {
     this.showDetailsModal = false;
   }
 
-  mostrarPassword = signal(false);
+  mostrarEditPassword = signal(false);
+  mostrarDetailPassword = signal(false);
 
   // ── Eliminar
   abrirEliminar(u: Usuario) {

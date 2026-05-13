@@ -30,7 +30,7 @@ export class AdminCreateuser {
 
   // Rol
   chosenRol = Roles.N
-  readonly roles = Object.values(Roles)
+  readonly roles = Object.entries(Roles) as [string, Roles][]
 
   // Carnet
   chosenCarnet: Record<string, boolean> = {
@@ -94,13 +94,15 @@ export class AdminCreateuser {
         return;
       }
 
+      let keyRol = (Object.keys(Roles) as (keyof typeof Roles)[]).find(k => Roles[k] == this.chosenRol)
+      
       //Creado correctamente
       const nuevo_usuario = new Usuario({
         nombre: this.nombre,
         apellido1: this.apellido1,
         apellido2: this.apellido2,
         password: this.password,
-        rol: this.chosenRol,
+        rol: keyRol,
         telefono: this.tel,
         email: this.mail,
         licencia_conducir: Object.keys(this.chosenCarnet).filter(key => this.chosenCarnet[key])
