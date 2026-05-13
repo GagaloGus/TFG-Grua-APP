@@ -1,5 +1,5 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth-service/auth-service';
 import { Usuario } from '@services/tablas.supabase';
@@ -8,7 +8,7 @@ import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, RouterLink],
   standalone: true,
   templateUrl: './login.html',
   styleUrl: './login.scss',
@@ -32,7 +32,7 @@ export class Login implements OnInit{
     this.title.setTitle("Login")
   }
 
-  
+
 
   async login() {
     this.error.set('')
